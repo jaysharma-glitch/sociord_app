@@ -39,7 +39,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
               kGlobe,
             ),
           ), // Add your image asset here
-          const SizedBox(height: 40),
+          const SizedBox(height: 50),
           Center(
             child: SizedBox(
               width: double.infinity,

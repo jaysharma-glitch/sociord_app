@@ -15,12 +15,15 @@ class BottomSheetContent extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(
+                height: 15,
+              ),
               Text(
                 'We want to keep things real',
                 style: Theme.of(context)
                     .textTheme
                     .headlineMedium!
-                    .copyWith(color: kAppBlack),
+                    .copyWith(color: kAppBlack, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 8.0),
               Text(
@@ -45,7 +48,7 @@ class BottomSheetContent extends StatelessWidget {
                                 .bodyMedium!
                                 .copyWith(
                                     color: kAppDarkGreen,
-                                    fontWeight: FontWeight.w500)),
+                                    fontWeight: FontWeight.w600)),
                         const SizedBox(height: 8.0),
                         const IconWithText(
                             textt: 'Real People',
@@ -72,7 +75,7 @@ class BottomSheetContent extends StatelessWidget {
                                 .bodyMedium!
                                 .copyWith(
                                     color: kAppRed,
-                                    fontWeight: FontWeight.w500)),
+                                    fontWeight: FontWeight.w600)),
                         const SizedBox(height: 8.0),
                         const IconWithText(
                             textt: 'Bot Accounts',

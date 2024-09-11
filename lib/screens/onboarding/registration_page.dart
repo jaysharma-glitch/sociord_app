@@ -64,8 +64,10 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
           children: [
             TextFormField(
               controller: _firstNameController,
+              textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
                 labelText: 'First Name',
+                labelStyle: Theme.of(context).textTheme.bodyLarge,
                 border: kTextFormFieldBorderStyles,
                 enabledBorder: kTextFormFieldBorderStyles,
                 suffixIcon: userState.firstName!.isNotEmpty
@@ -86,15 +88,17 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                 }
                 return null;
               },
-              style: TextStyle(color: Colors.black),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(
               height: 20,
             ),
             TextFormField(
               controller: _lastNameController,
+              textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
                 labelText: 'Last Name',
+                labelStyle: Theme.of(context).textTheme.bodyLarge,
                 border: kTextFormFieldBorderStyles,
                 enabledBorder: kTextFormFieldBorderStyles,
                 suffixIcon: userState.lastName!.isNotEmpty
@@ -114,6 +118,7 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                 }
                 return null;
               },
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(
               height: 20,
@@ -160,18 +165,9 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                       showCountryOnly: true,
                       showOnlyCountryWhenClosed: false,
                       alignLeft: true,
-                      textStyle: const TextStyle(
-                        fontSize: 18,
-                        color: kAppBlack,
-                      ),
-                      searchStyle: const TextStyle(
-                        fontSize: 15,
-                        color: kAppBlack,
-                      ),
-                      dialogTextStyle: const TextStyle(
-                        fontSize: 15,
-                        color: kAppBlack,
-                      ),
+                      textStyle: Theme.of(context).textTheme.bodyLarge,
+                      searchStyle: Theme.of(context).textTheme.bodyLarge,
+                      dialogTextStyle: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
                   Image.asset(kDropDown),
@@ -188,6 +184,7 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
               controller: _phoneNumberController,
               decoration: InputDecoration(
                 labelText: 'Mobile Number',
+                labelStyle: Theme.of(context).textTheme.bodyLarge,
                 border: kTextFormFieldBorderStyles,
                 enabledBorder: kTextFormFieldBorderStyles,
                 prefixText: userState.countryCode!.isNotEmpty
@@ -227,6 +224,7 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                 }
                 return null;
               },
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             if (sameNumberErr)
               Padding(
@@ -297,8 +295,7 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                         setState(() {
                           sameNumberErr = true;
                         });
-                        print(e.toString().contains(
-                            'User with the same phone number already exists'));
+                        print(e);
                       }
                     }
                   } else {
@@ -362,7 +359,7 @@ class _TandCCheckBoxState extends State<TandCCheckBox> {
             'Terms and Conditions',
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
                 decoration: TextDecoration.underline,
-                fontWeight: FontWeight.w800),
+                fontWeight: FontWeight.w700),
           ),
         ),
       ],

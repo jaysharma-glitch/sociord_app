@@ -52,19 +52,25 @@ class _LocationSearchState extends ConsumerState<LocationSearch> {
   Widget build(BuildContext context) {
     final locationState = ref.watch(locationNotifierProvider);
     print(locationState.suggestions);
+    var height = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Enter Location Manually'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            SizedBox(
+              height: height,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             TextField(
               controller: _controller,
               decoration: InputDecoration(
                 labelText: "Search your location",
                 hintText: "Enter your location",
+                hintStyle: Theme.of(context).textTheme.bodyLarge,
+                labelStyle: Theme.of(context).textTheme.bodyLarge,
                 border: kTextFormFieldBorderStyles,
                 enabledBorder: kTextFormFieldBorderStyles,
                 suffixIcon: Icon(Icons.search),
@@ -79,8 +85,10 @@ class _LocationSearchState extends ConsumerState<LocationSearch> {
                 itemBuilder: (context, index) {
                   return ListTile(
                     leading: Icon(Icons.location_on),
-                    title:
-                        Text(locationState.suggestions![index]['description']),
+                    title: Text(
+                      locationState.suggestions![index]['description'],
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                     onTap: () async {
                       // Handle the location selection here
                       await ref

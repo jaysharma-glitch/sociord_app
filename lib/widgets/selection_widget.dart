@@ -123,24 +123,18 @@ class _SelectionWidgetState extends ConsumerState<SelectionWidget> {
                           style: Theme.of(context)
                               .textTheme
                               .headlineSmall!
-                              .copyWith(
-                                  color: kAppBlack,
-                                  fontWeight: FontWeight.w800)),
-                      const SizedBox(height: 4),
+                              .copyWith(color: kAppBlack)),
                       Text(description,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(
-                                  fontSize: 15.0,
-                                  color: kAppBlack,
-                                  fontWeight: FontWeight.w300)),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: kAppBlack,
+                                  )),
                       const SizedBox(height: 8),
                       Text(subtext,
                           style: Theme.of(context)
                               .textTheme
-                              .bodySmall!
-                              .copyWith(color: kAppPurple)),
+                              .headlineSmall!
+                              .copyWith(color: kAppPurple, fontSize: 12)),
                     ],
                   ),
                 ),

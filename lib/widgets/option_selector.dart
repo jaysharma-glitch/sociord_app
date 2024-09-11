@@ -51,7 +51,7 @@ class OptionSelector extends StatelessWidget {
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                              color: kAppBlack, fontWeight: FontWeight.w800)),
+                              color: kAppBlack, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4),
                 ],
               ),

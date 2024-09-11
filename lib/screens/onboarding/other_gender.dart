@@ -55,9 +55,9 @@ class _OtherGenderDesState extends ConsumerState<OtherGenderDes> {
               Text(
                 'We want to express yourself freely',
                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                    color: kAppPurple,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800),
+                      color: kAppPurple,
+                      fontSize: 15,
+                    ),
               ),
               const SizedBox(
                 height: 20,

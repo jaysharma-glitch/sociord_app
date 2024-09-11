@@ -116,6 +116,7 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var userState = ref.watch(userNotifierProvider);
     var userNotifier = ref.read(userNotifierProvider.notifier);
     return Scaffold(
       body: SafeArea(
@@ -126,16 +127,16 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Welcome Arjun!',
+                'Welcome ${userState.firstName}!',
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               const SizedBox(height: 5),
               Text(
                 'You\'re all set. Ready to update your profile display image ?',
                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                    color: kAppPurple,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800),
+                      color: kAppPurple,
+                      fontSize: 15,
+                    ),
               ),
               SizedBox(
                 height: 50,

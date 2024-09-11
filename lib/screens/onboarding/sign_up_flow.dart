@@ -95,58 +95,79 @@ class _SignUpFlowState extends ConsumerState<SignUpFlow> {
           content: UserType(pageController: _pageController)),
       // Add other pages here
     ];
-
+    var height = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 10,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: height,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: LinearProgressIndicator(
+              value: (_currentPage + 1) / _pages.length,
+              borderRadius: BorderRadius.circular(20),
+              backgroundColor: kAppGreay,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: LinearProgressIndicator(
-                value: (_currentPage + 1) / _pages.length,
-                borderRadius: BorderRadius.circular(20),
-                backgroundColor: kAppGreay,
-              ),
+          ),
+          const SizedBox(
+            height: 25,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: GoBackButton(
+              onPressedFunction: () {
+                if (_currentPage == 0) {
+                  Navigator.pop(context);
+                } else {
+                  _pageController.previousPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeIn,
+                  );
+                }
+              },
             ),
-            const SizedBox(
-              height: 25,
+          ),
+          if (_currentPage == 1)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text("Already have an account? ",
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith()),
+                GestureDetector(
+                  onTap: () {
+                    // Handle Sign Up navigation
+                    Navigator.pushNamed(context, '/login');
+                  },
+                  child: Text('Login',
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: kAppPurple, fontWeight: FontWeight.w800)),
+                ),
+                const SizedBox(
+                  width: 25,
+                )
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0),
-              child: GoBackButton(
-                onPressedFunction: () {
-                  if (_currentPage == 0) {
-                    Navigator.pop(context);
-                  } else {
-                    _pageController.previousPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeIn,
-                    );
-                  }
-                },
-              ),
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              onPageChanged: (int page) {
+                setState(() {
+                  _currentPage = page;
+                });
+              },
+              itemCount: _pages.length,
+              itemBuilder: (context, index) {
+                return _pages[index];
+              },
             ),
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                onPageChanged: (int page) {
-                  setState(() {
-                    _currentPage = page;
-                  });
-                },
-                itemCount: _pages.length,
-                itemBuilder: (context, index) {
-                  return _pages[index];
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -180,9 +201,9 @@ class OnboardingPage extends StatelessWidget {
                 ? Text(
                     subtitle!,
                     style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                        color: kAppPurple,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800),
+                          color: kAppPurple,
+                          fontSize: 15,
+                        ),
                   )
                 : const SizedBox(),
             content

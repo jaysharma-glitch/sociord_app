@@ -338,6 +338,8 @@ class UserService {
 
   Future<String?> userLogin(
       {required phoneNumber, required countryCode}) async {
+    print(countryCode);
+    print(phoneNumber);
     try {
       QueryResult result = await client.query(
         QueryOptions(fetchPolicy: FetchPolicy.noCache, document: gql("""
@@ -349,12 +351,12 @@ class UserService {
           "countryCode": countryCode
         }),
       );
+      print('servicee $result');
       if (result.hasException) {
         throw Exception(result.exception);
       }
-
       var res = result.data?['userLogin'];
-      print(res);
+      print("service $res");
       if (res == null || res.isEmpty) {
         return null;
       }

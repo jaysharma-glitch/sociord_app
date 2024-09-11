@@ -189,6 +189,7 @@ class UserNotifier extends _$UserNotifier {
     if (result != null) {
       setUserId(result);
     }
+    print('provider $result');
     return result;
   }
 }

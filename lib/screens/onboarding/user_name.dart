@@ -66,6 +66,7 @@ class _SetUsernameWidgetState extends ConsumerState<SetUsernameWidget> {
                 FilteringTextInputFormatter.deny(RegExp(r'\s')),
                 CustomInputFormatter()
               ],
+              style: Theme.of(context).textTheme.bodyLarge,
               decoration: InputDecoration(
                 border: kTextFormFieldBorderStyles,
                 enabledBorder: kTextFormFieldBorderStyles,
@@ -210,7 +211,7 @@ class _SetUsernameWidgetState extends ConsumerState<SetUsernameWidget> {
                     style: Theme.of(context)
                         .textTheme
                         .bodyMedium!
-                        .copyWith(fontWeight: FontWeight.w400),
+                        .copyWith(fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 8),
                   Wrap(

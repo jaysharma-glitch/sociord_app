@@ -39,13 +39,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final userState = ref.watch(userNotifierProvider);
     final userNotifier = ref.read(userNotifierProvider.notifier);
+    var height = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 50),
+            SizedBox(
+              height: height,
+            ),
+            const SizedBox(height: 20),
             // Toggle between Personal and Business
             Container(
               decoration: BoxDecoration(
@@ -130,10 +134,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 GestureDetector(
                   onTap: () {
                     // Handle Sign Up navigation
+                    Navigator.pushNamed(context, '/signUpFlow');
                   },
                   child: Text('Sign up',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: kAppPurple, fontWeight: FontWeight.w700)),
+                          color: kAppPurple, fontWeight: FontWeight.w800)),
                 ),
               ],
             ),
@@ -148,8 +153,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const SizedBox(height: 5),
             Text(
               'Crea8. Apprecia8. Celebr8',
-              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                  color: kAppPurple, fontSize: 15, fontWeight: FontWeight.w800),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall!
+                  .copyWith(color: kAppPurple, fontSize: 15),
             ),
             const SizedBox(height: 30),
             Form(
@@ -179,18 +186,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             showCountryOnly: true,
                             showOnlyCountryWhenClosed: false,
                             alignLeft: true,
-                            textStyle: const TextStyle(
-                              fontSize: 18,
-                              color: kAppBlack,
-                            ),
-                            searchStyle: const TextStyle(
-                              fontSize: 15,
-                              color: kAppBlack,
-                            ),
-                            dialogTextStyle: const TextStyle(
-                              fontSize: 15,
-                              color: kAppBlack,
-                            ),
+                            textStyle: Theme.of(context).textTheme.bodyLarge,
+                            searchStyle: Theme.of(context).textTheme.bodyLarge,
+                            dialogTextStyle:
+                                Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
                         Image.asset(kDropDown),
@@ -207,6 +206,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     controller: _phoneNumberController,
                     decoration: InputDecoration(
                       labelText: 'Mobile Number',
+                      labelStyle: Theme.of(context).textTheme.bodyLarge,
                       border: kTextFormFieldBorderStyles,
                       enabledBorder: kTextFormFieldBorderStyles,
                       prefixText: userState.countryCode!.isNotEmpty

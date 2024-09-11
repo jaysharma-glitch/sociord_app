@@ -52,106 +52,108 @@ class _SignInSignUpScreenState extends State<SignInSignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            AbsorbPointer(
-              child: CarouselSlider(
-                options:
-                    CarouselOptions(aspectRatio: 0.9, viewportFraction: 0.85),
-                items: onboardData.map((item) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                              20.0), // Adjust the radius as needed
-                          child: Image.asset(
-                            item['image']!,
-                            fit: BoxFit.fill,
-                          ),
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: height,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          AbsorbPointer(
+            child: CarouselSlider(
+              options:
+                  CarouselOptions(aspectRatio: 0.9, viewportFraction: 0.85),
+              items: onboardData.map((item) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            20.0), // Adjust the radius as needed
+                        child: Image.asset(
+                          item['image']!,
+                          fit: BoxFit.fill,
                         ),
-                      );
-                    },
-                  );
-                }).toList(),
-              ),
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
             ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Welcome to Sociord',
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  Text(
-                    onboardData[0]['title']!.toString(),
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 50),
-                  Center(
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/signUpFlow');
-                        },
-                        child: Text(
-                          'Create an account',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Welcome to Sociord',
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                Text(
+                  onboardData[0]['title']!.toString(),
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 50),
+                Center(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/signUpFlow');
+                      },
+                      child: Text(
+                        'Create an account',
+                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Center(
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/login');
-                        },
-                        child: Text(
-                          'Login',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(color: kAppPurple),
-                        ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Center(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
+                      child: Text(
+                        'Login',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall
+                            ?.copyWith(color: kAppPurple),
                       ),
-                      // child: ElevatedButton(
-                      //   onPressed: () {},
-                      //   style: ElevatedButton.styleFrom(
-                      //       backgroundColor: kAppWhite,
-                      //       side:
-                      //           const BorderSide(color: kAppPurple, width: 1)),
-                      //   child: Text(
-                      //     'Login',
-                      //     style: Theme.of(context)
-                      //         .textTheme
-                      //         .headlineSmall
-                      //         ?.copyWith(color: kAppPurple),
-                      //   ),
-                      // ),
                     ),
+                    // child: ElevatedButton(
+                    //   onPressed: () {},
+                    //   style: ElevatedButton.styleFrom(
+                    //       backgroundColor: kAppWhite,
+                    //       side:
+                    //           const BorderSide(color: kAppPurple, width: 1)),
+                    //   child: Text(
+                    //     'Login',
+                    //     style: Theme.of(context)
+                    //         .textTheme
+                    //         .headlineSmall
+                    //         ?.copyWith(color: kAppPurple),
+                    //   ),
+                    // ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

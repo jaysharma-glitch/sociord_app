@@ -63,7 +63,8 @@ class _GenderSelectionState extends ConsumerState<GenderSelection> {
                   ? true
                   : userState.gender != 'Male' &&
                           userState.gender != 'Female' &&
-                          userState.gender != 'Others'
+                          userState.gender != 'Others' &&
+                          userState.gender != null
                       ? true
                       : false,
               onTap: () {

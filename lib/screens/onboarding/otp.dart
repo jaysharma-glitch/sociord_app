@@ -6,6 +6,7 @@ import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sociord/widgets/custom_snack_bar.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 class Otp extends ConsumerStatefulWidget {
   final pageController;
@@ -17,22 +18,34 @@ class Otp extends ConsumerStatefulWidget {
   _OtpState createState() => _OtpState();
 }
 
-class _OtpState extends ConsumerState<Otp> {
+class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
   TextEditingController _otpController = TextEditingController();
   late Timer _timer;
   int _start = 30;
   bool isLoading = false;
   bool wrongOtp = false;
+  String? otpCode;
+
+  @override
+  void codeUpdated() {
+    setState(() {
+      otpCode = code;
+      _otpController.text = code!;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    listenForCode();
+    unregisterListener();
     startTimer();
   }
 
   @override
   void dispose() {
     _timer.cancel();
+    cancel();
     super.dispose();
   }
 
@@ -197,13 +210,8 @@ class _OtpState extends ConsumerState<Otp> {
               },
               child: isLoading
                   ? kLoadingIndicator
-                  : Text(
-                      'Continue',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
+                  : Text('Continue',
+                      style: Theme.of(context).textTheme.headlineSmall),
             ),
           ),
           SizedBox(height: 20),

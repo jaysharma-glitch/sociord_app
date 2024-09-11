@@ -102,7 +102,13 @@ class _GridSelectorState extends State<GridSelector> {
                                 height: 5,
                               ),
                               Text(option.title,
-                                  style: Theme.of(context).textTheme.bodySmall),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall!
+                                      .copyWith(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w400,
+                                          color: kAppBlack)),
                               Text(
                                 option.description,
                                 style: Theme.of(context)
