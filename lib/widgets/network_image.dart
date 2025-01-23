@@ -29,7 +29,8 @@ class CustomeNetworkImage extends StatelessWidget {
                   width: 15,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    backgroundColor: kAppPurple,
+                    color: kAppPurple,
+                    backgroundColor: Colors.transparent,
                   )),
             ),
           );

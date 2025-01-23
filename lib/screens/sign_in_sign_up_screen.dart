@@ -1,7 +1,8 @@
 import 'dart:async';
 
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 
@@ -28,6 +29,9 @@ class _SignInSignUpScreenState extends State<SignInSignUpScreen> {
   void initState() {
     super.initState();
     startTimer();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
   }
 
   @override
@@ -65,9 +69,9 @@ class _SignInSignUpScreenState extends State<SignInSignUpScreen> {
             height: 20,
           ),
           AbsorbPointer(
-            child: CarouselSlider(
+            child: cs.CarouselSlider(
               options:
-                  CarouselOptions(aspectRatio: 0.9, viewportFraction: 0.85),
+                  cs.CarouselOptions(aspectRatio: 0.9, viewportFraction: 0.85),
               items: onboardData.map((item) {
                 return Builder(
                   builder: (BuildContext context) {
@@ -125,6 +129,8 @@ class _SignInSignUpScreenState extends State<SignInSignUpScreen> {
                     child: OutlinedButton(
                       onPressed: () {
                         Navigator.pushNamed(context, '/login');
+                        // Navigator.pushNamed(context, '/personality-flow');
+                        // Navigator.pushNamed(context, '/profile-pic');
                       },
                       child: Text(
                         'Login',

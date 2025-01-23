@@ -1,6 +1,7 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sociord/models/user_model.dart';
 import 'package:sociord/provider/location_provider.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/utils/app_constants.dart';
@@ -24,6 +25,11 @@ class _LocationPageState extends ConsumerState<LocationPage> {
     final locationState = ref.watch(locationNotifierProvider);
     final locationNotifier = ref.read(locationNotifierProvider.notifier);
     final userState = ref.watch(userNotifierProvider);
+    ref.listen<UserModel>(userNotifierProvider, (previous, next) {
+      if (previous?.userId != next.userId) {
+        print('userId has changed: ${previous!.userId} -- ${next.userId}');
+      }
+    });
 
     bool checkLocationData() {
       var location = ref.read(locationNotifierProvider).location;
@@ -63,11 +69,12 @@ class _LocationPageState extends ConsumerState<LocationPage> {
                       });
                       print(userState.userId);
                       var result =
-                          await locationNotifier.addLocation(userState.userId);
+                          await locationNotifier.addLocation(userState.userId!);
                       setState(() {
                         isLoading = false;
                       });
                       if (result != null) {
+                        // Add your logic here (e.g., trigger navigation,
                         widget.pageController.nextPage(
                           duration: Duration(milliseconds: 300),
                           curve: Curves.easeIn,
@@ -98,7 +105,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
                 child: isLoading
                     ? kLoadingIndicator
                     : Text(
-                        'Allow access to you location',
+                        'Allow access to your location',
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
               ),
@@ -147,7 +154,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
                       try {
                         print(userState.userId);
                         var result = await locationNotifier
-                            .addLocation(userState.userId);
+                            .addLocation(userState.userId!);
                         if (result != null) {
                           widget.pageController.nextPage(
                             duration: Duration(milliseconds: 300),

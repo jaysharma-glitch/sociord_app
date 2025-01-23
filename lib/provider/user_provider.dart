@@ -10,7 +10,6 @@ part 'user_provider.g.dart';
 class UserNotifier extends _$UserNotifier {
   @override
   UserModel build() {
-    final locationProvider = ref.watch(locationNotifierProvider);
     return UserModel(
       userId: '',
       profileType: '',
@@ -18,7 +17,7 @@ class UserNotifier extends _$UserNotifier {
       lastName: '',
       countryCode: '91',
       phoneNumber: '',
-      location: locationProvider.location,
+      location: null,
       userName: null,
       gender: null,
       otherIdenty: null,
@@ -30,6 +29,10 @@ class UserNotifier extends _$UserNotifier {
 
   void setUserId(String userId) {
     state = state.copyWith(userId: userId);
+  }
+
+  void setLocationData(LocationModel location) {
+    state = state.copyWith(location: location);
   }
 
   void setProfileType(String profileType) {
@@ -82,6 +85,7 @@ class UserNotifier extends _$UserNotifier {
 
   Future<UserModel?> getUser() async {
     var userService = UserService();
+    print('userId in get userapi ${state.userId}');
     var result = await userService.getUser(userId: state.userId);
     if (result != null) {
       // Update the entire state with the returned UserModel
@@ -100,8 +104,8 @@ class UserNotifier extends _$UserNotifier {
         countryCode: state.countryCode,
         phoneNumber: state.phoneNumber);
     print('in provider $res');
-    state = state.copyWith(userId: res);
     if (res != null) {
+      setUserId(res);
       return true;
     } else {
       return false;
@@ -114,6 +118,7 @@ class UserNotifier extends _$UserNotifier {
         countryCode: state.countryCode,
         phoneNumber: state.phoneNumber,
         otp: otp);
+    print('${state.userId}');
     print('in provider $res');
     return res;
   }
@@ -143,6 +148,8 @@ class UserNotifier extends _$UserNotifier {
 
   Future<Map?> completeOnboarding() async {
     var userService = UserService();
+    print(state.userId);
+    print(state.userName);
     var res = await userService.completeOnboarding(
         userId: state.userId,
         userName: state.userName,

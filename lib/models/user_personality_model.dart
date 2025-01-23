@@ -6,11 +6,11 @@ part 'user_personality_model.g.dart';
 @JsonSerializable()
 class UserPersonalityModel {
   final String userId;
-  final List<PersonalityTraitModel> soundTrackOption;
-  final List<PersonalityTraitModel> weekendOption;
-  final List<PersonalityTraitModel> connectOption;
-  final List<PersonalityTraitModel> bingeWatchOption;
-  final PersonalityTraitModel? petOption;
+  final List<dynamic> soundTrackOption;
+  final List<dynamic> weekendOption;
+  final List<dynamic> connectOption;
+  final List<dynamic> bingeWatchOption;
+  final List<dynamic> petOption;
 
   UserPersonalityModel({
     required this.userId,
@@ -18,7 +18,7 @@ class UserPersonalityModel {
     required this.weekendOption,
     required this.connectOption,
     required this.bingeWatchOption,
-    this.petOption,
+    required this.petOption,
   });
 
   factory UserPersonalityModel.fromJson(Map<String, dynamic> json) =>
@@ -27,11 +27,11 @@ class UserPersonalityModel {
 
   UserPersonalityModel copyWith({
     String? userId,
-    List<PersonalityTraitModel>? soundTrackOption,
-    List<PersonalityTraitModel>? weekendOption,
-    List<PersonalityTraitModel>? connectOption,
-    List<PersonalityTraitModel>? bingeWatchOption,
-    PersonalityTraitModel? petOption,
+    List<dynamic>? soundTrackOption,
+    List<dynamic>? weekendOption,
+    List<dynamic>? connectOption,
+    List<dynamic>? bingeWatchOption,
+    List<dynamic>? petOption,
   }) {
     return UserPersonalityModel(
       userId: userId ?? this.userId,

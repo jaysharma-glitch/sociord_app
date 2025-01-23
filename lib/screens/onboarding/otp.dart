@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/utils/app_constants.dart';
@@ -40,6 +41,9 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
     listenForCode();
     unregisterListener();
     startTimer();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
   }
 
   @override
@@ -138,70 +142,75 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
             height: 50,
             child: ElevatedButton(
               onPressed: () async {
+                ///Comment the code from here to remove otp checking
                 // Handle the OTP submission
-                try {
-                  setState(() {
-                    isLoading = true;
-                    wrongOtp = false;
-                  });
+                // try {
+                //   setState(() {
+                //     isLoading = true;
+                //     wrongOtp = false;
+                //   });
 
-                  var result =
-                      await userNotifier.confirmOtp(_otpController.text);
-
-                  setState(() {
-                    isLoading = false;
-                  });
-                  if (result) {
-                    if (widget.isLogin) {
-                      try {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        var result = await userNotifier.getUser();
-                        setState(() {
-                          isLoading = false;
-                        });
-                        if (result != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Login Successful')),
-                          );
-                        }
-                      } catch (e) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                        if (e.toString().contains('Connection refused')) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(CustomSnackBar().build(context));
-                        } else {
-                          print(e.toString());
-                          setState(() {
-                            wrongOtp = true;
-                          });
-                        }
-                      }
-                    } else {
-                      widget.pageController.nextPage(
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeIn,
+                //   var result =
+                //       await userNotifier.confirmOtp(_otpController.text);
+                //   setState(() {
+                //     isLoading = false;
+                //   });
+                //   if (result) {
+                ///Comment the code till here to remove otp checking
+                if (widget.isLogin) {
+                  try {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    var result = await userNotifier.getUser();
+                    setState(() {
+                      isLoading = false;
+                    });
+                    if (result != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Login Successful')),
                       );
                     }
-                  }
-                } catch (e) {
-                  setState(() {
-                    isLoading = false;
-                    wrongOtp = false;
-                  });
-                  if (e.toString().contains('Connection refused')) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(CustomSnackBar().build(context));
-                  } else {
-                    print(e.toString());
+                  } catch (e) {
                     setState(() {
-                      wrongOtp = true;
+                      isLoading = false;
                     });
+                    if (e.toString().contains('Connection refused')) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(CustomSnackBar().build(context));
+                    } else {
+                      print(e.toString());
+                      setState(() {
+                        wrongOtp = true;
+                      });
+                    }
                   }
+                } else {
+                  widget.pageController.nextPage(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeIn,
+                  );
                 }
+
+                ///Comment the code from here to remove otp checking
+                //   }
+                // } catch (e) {
+                //   setState(() {
+                //     isLoading = false;
+                //     wrongOtp = false;
+                //   });
+                //   if (e.toString().contains('Connection refused')) {
+                //     ScaffoldMessenger.of(context)
+                //         .showSnackBar(CustomSnackBar().build(context));
+                //   } else {
+                //     print(e.toString());
+                //     setState(() {
+                //       wrongOtp = true;
+                //     });
+                //   }
+                // }
+
+                ///Comment the code till here to remove otp checking
 
                 // widget.pageController.nextPage(
                 //   duration: Duration(milliseconds: 300),
@@ -209,7 +218,7 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
                 // );
               },
               child: isLoading
-                  ? kLoadingIndicator
+                  ? kSmallLoadingIndicator
                   : Text('Continue',
                       style: Theme.of(context).textTheme.headlineSmall),
             ),

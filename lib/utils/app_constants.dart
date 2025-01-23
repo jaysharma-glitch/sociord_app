@@ -18,6 +18,14 @@ const kLoadingIndicator = SizedBox(
     strokeWidth: 2,
   ),
 );
+const kSmallLoadingIndicator = SizedBox(
+  height: 15,
+  width: 15,
+  child: CircularProgressIndicator(
+    backgroundColor: Colors.white,
+    strokeWidth: 2,
+  ),
+);
 
 const kAppPurple = Color(0xFF822FAF);
 const kAppGreen = Color(0xFF9FC7AA);

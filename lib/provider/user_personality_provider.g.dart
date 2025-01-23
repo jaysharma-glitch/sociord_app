@@ -7,7 +7,7 @@ part of 'user_personality_provider.dart';
 // **************************************************************************
 
 String _$userPersonalityNotifierHash() =>
-    r'59e09ded1f5a84e6782c29d86b10f9892d7bb6b6';
+    r'e6ea5d808faddd43018ac180bffa9551de9b8939';
 
 /// See also [UserPersonalityNotifier].
 @ProviderFor(UserPersonalityNotifier)

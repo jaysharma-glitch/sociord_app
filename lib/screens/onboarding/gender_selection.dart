@@ -100,7 +100,7 @@ class _GenderSelectionState extends ConsumerState<GenderSelection> {
                   }
                 },
                 child: Text(
-                  'Contnue',
+                  'Continue',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ),

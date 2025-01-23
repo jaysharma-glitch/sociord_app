@@ -9,8 +9,10 @@ import 'package:sociord/widgets/skeleton/skeleton_loader_personality.dart';
 
 class SoundtrackSelectionScreen extends ConsumerStatefulWidget {
   final PageController pageController;
+  final List selectedOptions;
 
-  SoundtrackSelectionScreen({super.key, required this.pageController});
+  SoundtrackSelectionScreen(
+      {super.key, required this.pageController, required this.selectedOptions});
 
   @override
   _SoundtrackSelectionScreenState createState() =>
@@ -19,8 +21,6 @@ class SoundtrackSelectionScreen extends ConsumerStatefulWidget {
 
 class _SoundtrackSelectionScreenState
     extends ConsumerState<SoundtrackSelectionScreen> {
-  final List<bool> selectedOptions = List.generate(11, (index) => false);
-
   Future<List<dynamic>> fetchSoundtrackOptions() async {
     var userPersonalityNotifier =
         ref.read(userPersonalityNotifierProvider.notifier);
@@ -61,55 +61,7 @@ class _SoundtrackSelectionScreenState
           return GridSelector(
             isFirst: true,
             list: soundtrackOptions, // Use the API data here
-            selectedList: selectedOptions,
-            pageController: widget.pageController,
-            isLoading: isLoading,
-            onNext: () async {
-              List<String> selectedIds = [];
-              for (int i = 0; i < selectedOptions.length; i++) {
-                if (selectedOptions[i]) {
-                  // Assuming `id` is an integer, modify if it's another type (e.g. String)
-                  selectedIds.add(soundtrackOptions[i]!.id);
-                }
-              }
-
-              try {
-                setState(() {
-                  isLoading = true;
-                });
-
-                // var result =
-                //     await userPersonalityNotifier.addUserSoundtrackSelection(
-                //         userNotifier.userId, selectedIds);
-                var result = await userPersonalityNotifier
-                    .addUserSoundtrackSelection(userState.userId, selectedIds);
-
-                setState(() {
-                  isLoading = false;
-                });
-                if (result != null) {
-                  widget.pageController.nextPage(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeIn,
-                  );
-                }
-              } catch (e) {
-                setState(() {
-                  isLoading = false;
-                });
-                if (e.toString().contains('Connection refused')) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(CustomSnackBar().build(context));
-                } else {
-                  print(e.toString());
-                }
-              }
-
-              // widget.pageController.nextPage(
-              //   duration: Duration(milliseconds: 300),
-              //   curve: Curves.easeIn,
-              // );
-            },
+            selectedList: widget.selectedOptions,
           );
         } else {
           return Center(child: Text('No soundtracks available'));

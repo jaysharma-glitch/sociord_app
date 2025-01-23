@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/screens/onboarding/birthday_picker.dart';
@@ -141,6 +142,7 @@ class _SignUpFlowState extends ConsumerState<SignUpFlow> {
                 GestureDetector(
                   onTap: () {
                     // Handle Sign Up navigation
+                    ref.read(userNotifierProvider.notifier).setCountryCode('');
                     Navigator.pushNamed(context, '/login');
                   },
                   child: Text('Login',
@@ -184,6 +186,7 @@ class OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25.0),
         child: Column(

@@ -92,27 +92,6 @@ class _SetUsernameWidgetState extends ConsumerState<SetUsernameWidget> {
               onChanged: (value) async {
                 // userNotifier.setUserName(value);
                 if (value.length > 2) {
-                  // setState(() {
-                  //   isLoading = true;
-                  //   var future = new Future.delayed(
-                  //       const Duration(milliseconds: 1000), () {
-                  //     setState(() {
-                  //       isLoading = false;
-                  //     });
-                  //   });
-
-                  //   userNameAccepted = true;
-                  //   // suggestions = generator.generateList(value,
-                  //   //     adjectives: [
-                  //   //       generator.generateRandom().split('_')[0],
-                  //   //       generator.generateRandom().split('_')[1],
-                  //   //       generator.generateRandom().split('_')[0],
-                  //   //       generator.generateRandom().split('_')[1],
-                  //   //       generator.generateRandom().split('_')[0]
-                  //   //     ],
-                  //   //     length: 5);
-                  //   isButtoVisible = true;
-                  // });
                   try {
                     setState(() {
                       isLoading = false;
@@ -309,7 +288,7 @@ class _SetUsernameWidgetState extends ConsumerState<SetUsernameWidget> {
                     }
                   },
                   child: Text(
-                    'Contnue',
+                    'Continue',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),

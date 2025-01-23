@@ -88,6 +88,10 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                 }
                 return null;
               },
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                    RegExp(r'[a-zA-Z ]')), // Allow only letters and spaces
+              ],
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(
@@ -118,6 +122,10 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                 }
                 return null;
               },
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                    RegExp(r'[a-zA-Z ]')), // Allow only letters and spaces
+              ],
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(
@@ -156,6 +164,7 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                   Expanded(
                     child: CountryCodePicker(
                       onChanged: (value) {
+                        print(value);
                         userNotifier.setCountryCode(
                             value.toString().split('+')[1] ?? '');
                       },
@@ -187,9 +196,6 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                 labelStyle: Theme.of(context).textTheme.bodyLarge,
                 border: kTextFormFieldBorderStyles,
                 enabledBorder: kTextFormFieldBorderStyles,
-                prefixText: userState.countryCode!.isNotEmpty
-                    ? userState.countryCode
-                    : '',
                 prefixStyle: TextStyle(fontSize: 18),
                 suffixIcon: userState.phoneNumber!.length == 10
                     ? const Icon(
@@ -303,7 +309,6 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                       tAndCErr = true;
                       sameNumberErr = false;
                     });
-                    // Show a message or handle the case where conditions aren't met
                   }
                   // widget.pageController!.nextPage(
                   //   duration: Duration(milliseconds: 300),

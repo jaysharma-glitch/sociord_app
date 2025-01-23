@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:flutter/material.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
@@ -60,9 +60,9 @@ class _FinalOnboardingScreenState extends State<FinalOnboardingScreen> {
               height: 20,
             ),
             AbsorbPointer(
-              child: CarouselSlider(
-                options:
-                    CarouselOptions(aspectRatio: 1.5, viewportFraction: 0.48),
+              child: cs.CarouselSlider(
+                options: cs.CarouselOptions(
+                    aspectRatio: 1.5, viewportFraction: 0.48),
                 items: onboardData.map((item) {
                   return Builder(
                     builder: (BuildContext context) {

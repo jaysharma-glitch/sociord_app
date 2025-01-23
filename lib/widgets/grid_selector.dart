@@ -7,22 +7,16 @@ class GridSelector extends StatefulWidget {
   final bool isFirst;
   final List<dynamic> list;
   final List selectedList;
-  final PageController? pageController;
   final double aspectRatio;
   final int crossAxisCount;
   final bool canSelectOnlyOne;
-  final bool isLoading;
-  final onNext;
 
   const GridSelector({
     super.key,
     this.isFirst = false,
     required this.list,
     required this.selectedList,
-    required this.pageController,
-    required this.onNext,
-    this.isLoading = false,
-    this.aspectRatio = 0.54,
+    this.aspectRatio = 0.61,
     this.crossAxisCount = 3,
     this.canSelectOnlyOne = false,
   });
@@ -35,7 +29,7 @@ class _GridSelectorState extends State<GridSelector> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
+      padding: const EdgeInsets.only(top: 00.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
@@ -44,8 +38,8 @@ class _GridSelectorState extends State<GridSelector> {
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: SizedBox(
               height: widget.isFirst
-                  ? MediaQuery.of(context).size.height * 0.63
-                  : MediaQuery.of(context).size.height * 0.51,
+                  ? MediaQuery.of(context).size.height * 0.69
+                  : MediaQuery.of(context).size.height * 0.57,
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: widget.crossAxisCount,
@@ -114,7 +108,7 @@ class _GridSelectorState extends State<GridSelector> {
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
-                                    .copyWith(fontSize: 9),
+                                    .copyWith(fontSize: 10, height: 1.1),
                               ),
                             ],
                           )
@@ -174,24 +168,6 @@ class _GridSelectorState extends State<GridSelector> {
               ),
             ),
           ),
-          if (widget.selectedList.contains(true))
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0.0),
-                  ),
-                ),
-                onPressed: widget.onNext,
-                child: widget.isLoading
-                    ? kLoadingIndicator
-                    : Text(
-                        'Continues',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-              ),
-            ),
         ],
       ),
     );

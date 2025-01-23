@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -28,12 +29,30 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
 
   final ImagePicker _picker = ImagePicker();
 
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+  }
+
   Future<void> _pickImage(ImageSource source) async {
     setState(() {
       isImageLoading = true;
     });
     try {
-      final pickedFile = await _picker.pickImage(source: source);
+      final pickedFile;
+      if (source == ImageSource.camera) {
+        print('in ifff');
+        pickedFile = await _picker.pickImage(
+            source: source,
+            preferredCameraDevice: CameraDevice.front,
+            imageQuality: 90);
+      } else {
+        pickedFile = await _picker.pickImage(source: source);
+      }
+
       if (pickedFile != null) {
         await _cropImage(pickedFile.path);
         if (_croppedFile != null) {
@@ -43,8 +62,17 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
             isImageLoading = false;
           });
         }
+      } else {
+        setState(() {
+          isImageLoading = false;
+          _image = null;
+          _croppedFile = null;
+        });
       }
     } catch (e) {
+      setState(() {
+        isImageLoading = false;
+      });
       print("Error picking image: $e");
     }
   }
@@ -54,29 +82,22 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
       sourcePath: path,
       compressFormat: ImageCompressFormat.jpg,
       compressQuality: 90,
+      aspectRatio: CropAspectRatio(ratioX: 2, ratioY: 3),
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Profile Pic',
           toolbarColor: kAppPurple,
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.square,
-          lockAspectRatio: false,
-          cropStyle: CropStyle.circle,
-          aspectRatioPresets: [
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.square,
-            CropAspectRatioPreset.ratio4x3,
-          ],
+          lockAspectRatio: true,
+          hideBottomControls: true,
+          aspectRatioPresets: [CropAspectRatioPreset.ratio3x2],
         ),
         IOSUiSettings(
-          cropStyle: CropStyle.circle,
           title: 'Profile Pic',
-          aspectRatioPresets: [
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.square,
-            CropAspectRatioPreset.ratio4x3,
-            CropAspectRatioPreset.ratio4x3
-          ],
+          aspectRatioLockEnabled: true,
+          rotateButtonsHidden: true,
+          aspectRatioPresets: [CropAspectRatioPreset.ratio3x2],
         ),
       ],
     );
@@ -206,7 +227,7 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
                       children: [
                         Center(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
+                            borderRadius: BorderRadius.circular(5),
                             child: isImageLoading
                                 ? Container(
                                     height: 200,
@@ -215,7 +236,8 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
                                   )
                                 : Image.file(
                                     File(_croppedFile!.path),
-                                    width: 200,
+                                    width:
+                                        MediaQuery.sizeOf(context).width * 0.4,
                                   ),
                           ),
                         ),

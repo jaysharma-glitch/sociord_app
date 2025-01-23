@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'dart:convert';
 
 import 'package:sociord/models/location_model.dart';
+import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/services/location_service.dart';
 
 part 'location_provider.g.dart'; // Add this part directive
@@ -144,6 +145,7 @@ class LocationNotifier extends _$LocationNotifier {
       );
 
       state = state.copyWith(location: location);
+      ref.read(userNotifierProvider.notifier).setLocation(location);
     } else {
       throw Exception('Failed to load place details');
     }

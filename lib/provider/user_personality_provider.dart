@@ -15,7 +15,7 @@ class UserPersonalityNotifier extends _$UserPersonalityNotifier {
       weekendOption: [],
       connectOption: [],
       bingeWatchOption: [],
-      petOption: null,
+      petOption: [],
     );
   }
 
@@ -23,53 +23,58 @@ class UserPersonalityNotifier extends _$UserPersonalityNotifier {
     state = state.copyWith(userId: userId);
   }
 
-  void setSoundTrackOption(List<PersonalityTraitModel> soundTrackOption) {
+  void setSoundTrackOption(List<dynamic> soundTrackOption) {
     state = state.copyWith(soundTrackOption: soundTrackOption);
   }
 
-  void setWeekendOption(List<PersonalityTraitModel> weekendOption) {
+  void setWeekendOption(List<dynamic> weekendOption) {
     state = state.copyWith(weekendOption: weekendOption);
   }
 
-  void setConnectOption(List<PersonalityTraitModel> connectOption) {
+  void setConnectOption(List<dynamic> connectOption) {
     state = state.copyWith(connectOption: connectOption);
   }
 
-  void setBingeWatchOption(List<PersonalityTraitModel> bingeWatchOption) {
+  void setBingeWatchOption(List<dynamic> bingeWatchOption) {
     state = state.copyWith(bingeWatchOption: bingeWatchOption);
   }
 
-  void setPetOption(PersonalityTraitModel petOption) {
+  void setPetOption(petOption) {
     state = state.copyWith(petOption: petOption);
   }
 
   Future<List<dynamic>> getSoundtrackOptions() async {
     var userPersonalityService = UserPersonalityService();
     var result = await userPersonalityService.getSoundtrackOptions();
+    setSoundTrackOption(result);
     return result;
   }
 
   Future<List<dynamic>> getWeekendOption() async {
     var userPersonalityService = UserPersonalityService();
     var result = await userPersonalityService.getWeekendOption();
+    setWeekendOption(result);
     return result;
   }
 
   Future<List<dynamic>> getConnectOption() async {
     var userPersonalityService = UserPersonalityService();
     var result = await userPersonalityService.getConnectOption();
+    setConnectOption(result);
     return result;
   }
 
   Future<List<dynamic>> getBingeWatchOption() async {
     var userPersonalityService = UserPersonalityService();
     var result = await userPersonalityService.getBingeWatchOption();
+    setBingeWatchOption(result);
     return result;
   }
 
   Future<List<dynamic>> getPetOption() async {
     var userPersonalityService = UserPersonalityService();
     var result = await userPersonalityService.getPetOption();
+    setPetOption(result);
     return result;
   }
 
