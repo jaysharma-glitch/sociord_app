@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/screens/onboarding/otp.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/widgets/go_back_btn.dart';
 
 class LogInOtpScreen extends ConsumerWidget {
-  static var routeName = '/login-otp';
   LogInOtpScreen({super.key});
 
   @override
@@ -22,7 +22,7 @@ class LogInOtpScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             GoBackButton(
               onPressedFunction: () {
-                Navigator.pop(context);
+                context.pop();
               },
             ),
             const SizedBox(height: 20),

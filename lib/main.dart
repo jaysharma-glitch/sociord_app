@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sms_autofill/sms_autofill.dart';
-import 'package:sociord/screens/log_in_otp_screen.dart';
-import 'package:sociord/screens/login_in_screen.dart';
-import 'package:sociord/screens/onboarding/final_onboarding_screen.dart';
-import 'package:sociord/screens/onboarding/location_search.dart';
-import 'package:sociord/screens/onboarding/other_gender.dart';
-import 'package:sociord/screens/sign_in_sign_up_screen.dart';
-import 'package:sociord/screens/onboarding/sign_up_flow.dart';
-import 'package:sociord/screens/personality/personality_flow.dart';
-import 'package:sociord/screens/profile_pic.dart';
-import 'package:sociord/utils/app_constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// Utils
+import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/utils/routes.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,11 +18,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // System UI Styling
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent, // Status bar color
-        statusBarIconBrightness: Brightness.dark));
-    return MaterialApp(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ));
+
+    // ✅ MaterialApp.router for go_router
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
+      routerConfig: router, // 👈 Using routerConfig instead of routes
       theme: ThemeData().copyWith(
         colorScheme: kColorScheme,
         scaffoldBackgroundColor: Colors.white,
@@ -72,35 +71,18 @@ class MyApp extends StatelessWidget {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: kAppPurple,
-            padding: const EdgeInsets.symmetric(
-              vertical: 15,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 15),
           ),
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(
-              vertical: 15,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: 15),
             side: const BorderSide(color: kAppPurple, width: 1),
           ),
         ),
       ),
       darkTheme: ThemeData.dark().copyWith(colorScheme: kDarkColorScheme),
       themeMode: ThemeMode.light,
-      initialRoute: SignInSignUpScreen.routeName,
-      routes: {
-        SignInSignUpScreen.routeName: (context) => const SignInSignUpScreen(),
-        SignUpFlow.routeName: (context) => const SignUpFlow(),
-        LocationSearch.routeName: (context) => const LocationSearch(),
-        FinalOnboardingScreen.routName: (context) =>
-            const FinalOnboardingScreen(),
-        PersonalityFlow.routeName: (context) => const PersonalityFlow(),
-        ProfilePicScreen.routeName: (context) => const ProfilePicScreen(),
-        OtherGenderDes.routeName: (context) => const OtherGenderDes(),
-        LoginScreen.routeName: (context) => LoginScreen(),
-        LogInOtpScreen.routeName: (context) => LogInOtpScreen(),
-      },
     );
   }
 }

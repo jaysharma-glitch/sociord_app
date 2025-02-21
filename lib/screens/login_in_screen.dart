@@ -2,15 +2,16 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
+import 'package:sociord/utils/routes.dart';
 import 'package:sociord/widgets/bottom_sheet_signUp.dart';
 import 'package:sociord/widgets/move_with_keyboard_elevated_btn.dart';
 import 'package:sociord/widgets/custom_snack_bar.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  static const routeName = '/login';
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -143,7 +144,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     GestureDetector(
                       onTap: () {
                         // Handle Sign Up navigation
-                        Navigator.pushNamed(context, '/signUpFlow');
+                        // Navigator.pushNamed(context, '/signUpFlow');
+                        context.push(signUpFlowRoute);
                       },
                       child: Text('Sign up',
                           style: Theme.of(context)
@@ -283,51 +285,56 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
           MoveWithKeyboardElevatedBtn(
             spaceFromBottom: MediaQuery.of(context).size.height * 0.3,
-            onPressed: () async {
-              // Navigator.pushNamed(context, '/login-otp');
-              if (_formKey.currentState?.validate() == true) {
-                setState(() {
-                  userNotFound = false;
-                });
-                // Process data!
-                try {
-                  setState(() {
-                    isLoading = true;
-                  });
-                  var result = await userNotifier.userLogin();
-                  setState(() {
-                    isLoading = false;
-                  });
-                  if (result != null) {
-                    Navigator.pushNamed(context, '/login-otp');
-                  } else {
-                    setState(() {
-                      userNotFound = true;
-                    });
-                  }
-                } catch (e) {
-                  setState(() {
-                    isLoading = false;
-                  });
-                  if (e.toString().contains('Connection refused')) {
-                    setState(() {
-                      userNotFound = false;
-                    });
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(CustomSnackBar().build(context));
-                  } else {
-                    setState(() {
-                      userNotFound = true;
-                    });
-                    print(e.toString().contains('Phone number not registered'));
-                  }
-                }
-              } else {
-                setState(() {
-                  userNotFound = false;
-                });
-                // Show a message or handle the case where conditions aren't met
-              }
+            // onPressed: () async {
+            //   // Navigator.pushNamed(context, '/login-otp');
+            //   if (_formKey.currentState?.validate() == true) {
+            //     setState(() {
+            //       userNotFound = false;
+            //     });
+            //     // Process data!
+            //     try {
+            //       setState(() {
+            //         isLoading = true;
+            //       });
+            //       var result = await userNotifier.userLogin();
+            //       setState(() {
+            //         isLoading = false;
+            //       });
+            //       if (result != null) {
+            //         // Navigator.pushNamed(context, '/login-otp');
+            //         // ignore: use_build_context_synchronously
+            //         context.push(loginOtpRoute);
+            //       } else {
+            //         setState(() {
+            //           userNotFound = true;
+            //         });
+            //       }
+            //     } catch (e) {
+            //       setState(() {
+            //         isLoading = false;
+            //       });
+            //       if (e.toString().contains('Connection refused')) {
+            //         setState(() {
+            //           userNotFound = false;
+            //         });
+            //         ScaffoldMessenger.of(context)
+            //             .showSnackBar(CustomSnackBar().build(context));
+            //       } else {
+            //         setState(() {
+            //           userNotFound = true;
+            //         });
+            //         print(e.toString().contains('Phone number not registered'));
+            //       }
+            //     }
+            //   } else {
+            //     setState(() {
+            //       userNotFound = false;
+            //     });
+            //     // Show a message or handle the case where conditions aren't met
+            //   }
+            // },
+            onPressed: () {
+              context.go(profileRoute);
             },
             child: isLoading
                 ? kLoadingIndicator

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/screens/onboarding/birthday_picker.dart';
 import 'package:sociord/screens/onboarding/gender_selection.dart';
@@ -8,14 +9,15 @@ import 'package:sociord/screens/onboarding/location_page.dart';
 import 'package:sociord/screens/onboarding/other_gender.dart';
 import 'package:sociord/screens/onboarding/user_name.dart';
 import 'package:sociord/screens/onboarding/user_type.dart';
+import 'package:sociord/screens/sign_in_sign_up_screen.dart';
 import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/utils/routes.dart';
 import 'package:sociord/widgets/go_back_btn.dart';
 import 'package:sociord/screens/onboarding/otp.dart';
 import 'package:sociord/screens/onboarding/registration_page.dart';
 import 'package:sociord/widgets/selection_widget.dart';
 
 class SignUpFlow extends ConsumerStatefulWidget {
-  static const routeName = '/signUpFlow';
   const SignUpFlow({super.key});
 
   @override
@@ -123,7 +125,7 @@ class _SignUpFlowState extends ConsumerState<SignUpFlow> {
             child: GoBackButton(
               onPressedFunction: () {
                 if (_currentPage == 0) {
-                  Navigator.pop(context);
+                  context.pop();
                 } else {
                   _pageController.previousPage(
                     duration: const Duration(milliseconds: 300),
@@ -143,7 +145,8 @@ class _SignUpFlowState extends ConsumerState<SignUpFlow> {
                   onTap: () {
                     // Handle Sign Up navigation
                     ref.read(userNotifierProvider.notifier).setCountryCode('');
-                    Navigator.pushNamed(context, '/login');
+                    // Navigator.pushNamed(context, '/login');
+                    context.push(loginRoute);
                   },
                   child: Text('Login',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(

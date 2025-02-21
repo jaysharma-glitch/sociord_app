@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sociord/provider/user_provider.dart';
@@ -13,7 +14,6 @@ import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/widgets/custom_snack_bar.dart';
 
 class ProfilePicScreen extends ConsumerStatefulWidget {
-  static const routeName = '/profile-pic';
   const ProfilePicScreen({super.key});
 
   @override
@@ -413,8 +413,7 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
                                                             _pickImage(
                                                                 ImageSource
                                                                     .gallery);
-                                                            Navigator.pop(
-                                                                context);
+                                                            context.pop();
                                                           },
                                                           style: ElevatedButton
                                                               .styleFrom(
@@ -441,8 +440,7 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
                                                             _pickImage(
                                                                 ImageSource
                                                                     .camera);
-                                                            Navigator.pop(
-                                                                context);
+                                                            context.pop();
                                                           },
                                                           style: OutlinedButton
                                                               .styleFrom(

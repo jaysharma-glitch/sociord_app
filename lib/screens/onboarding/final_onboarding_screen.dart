@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sociord/screens/sign_in_sign_up_screen.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
+import 'package:sociord/utils/routes.dart';
 
 class FinalOnboardingScreen extends StatefulWidget {
-  static var routName = '/final-onboarding';
   const FinalOnboardingScreen({super.key});
 
   @override
@@ -116,7 +118,8 @@ class _FinalOnboardingScreenState extends State<FinalOnboardingScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/personality-flow');
+                          // Navigator.pushNamed(context, '/personality-flow');
+                          context.push(personalityFlowRoute);
                         },
                         child: Text(
                           'Continue',

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/utils/app_constants.dart';
 
 class OtherGenderDes extends ConsumerStatefulWidget {
-  static const routeName = '/otherGender';
   final PageController? pageController;
   const OtherGenderDes({super.key, this.pageController});
 
@@ -140,7 +140,8 @@ class _OtherGenderDesState extends ConsumerState<OtherGenderDes> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState?.validate() ?? false) {
-                      Navigator.pop(context, userState.otherIdenty);
+                      // Navigator.pop(context, userState.otherIdenty);
+                      context.pop(userState.otherIdenty);
                     }
                   },
                   child: Text(

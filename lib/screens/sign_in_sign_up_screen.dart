@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
+import 'package:sociord/utils/routes.dart';
 
 class SignInSignUpScreen extends StatefulWidget {
-  static const routeName = '/signInSignUp';
-
   const SignInSignUpScreen({super.key});
 
   @override
@@ -111,7 +111,7 @@ class _SignInSignUpScreenState extends State<SignInSignUpScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/signUpFlow');
+                        context.push(signUpFlowRoute);
                       },
                       child: Text(
                         'Create an account',
@@ -128,7 +128,7 @@ class _SignInSignUpScreenState extends State<SignInSignUpScreen> {
                     width: double.infinity,
                     child: OutlinedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/login');
+                        context.push(loginRoute);
                         // Navigator.pushNamed(context, '/personality-flow');
                         // Navigator.pushNamed(context, '/profile-pic');
                       },

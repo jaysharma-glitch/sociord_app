@@ -292,6 +292,17 @@ const kPetOptions = [
   },
 ];
 
-//icons
+//profile page icons
+const kLogoText = 'assets/images/logo.png';
+const kCoins = 'assets/images/coins.png';
 const kDropDown = 'assets/images/circle-chevron-down.png';
 const kGlobe = 'assets/images/globe.png';
+const kHome = 'assets/images/icons/home.png';
+const kHomeSelect = 'assets/images/icons/home-select.png';
+const kAdd = 'assets/images/icons/add.png';
+const kExplore = 'assets/images/icons/explore.png';
+const kExploreSelect = 'assets/images/icons/explore-select.png';
+const kMessage = 'assets/images/icons/message.png';
+const kNotification = 'assets/images/icons/notification.png';
+const kRightArrow = 'assets/images/icons/circle-arrow-right.png';
+const kChevronDown = 'assets/images/icons/chevron-down.png';

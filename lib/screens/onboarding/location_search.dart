@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sociord/provider/location_provider.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 
 class LocationSearch extends ConsumerStatefulWidget {
-  static const routeName = '/locationSearch';
   final pageController;
   const LocationSearch({super.key, this.pageController});
 
@@ -97,7 +97,7 @@ class _LocationSearchState extends ConsumerState<LocationSearch> {
                               locationState.suggestions![index]['place_id']);
 
                       // ignore: use_build_context_synchronously
-                      Navigator.pop(context,
+                      context.pop(
                           ref.watch(locationNotifierProvider).location?.city);
                     },
                   );
