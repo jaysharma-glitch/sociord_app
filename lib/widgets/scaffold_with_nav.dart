@@ -62,7 +62,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                 icon: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
                   child: Image.asset(
-                    'assets/images/profileImage.png',
+                    kProfilePic,
                     height: 33,
                     width: 33,
                   ),
@@ -78,7 +78,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(100),
                     child: Image.asset(
-                      'assets/images/profileImage.png',
+                      kProfilePic,
                       height: 28,
                       width: 28,
                     ),

@@ -306,3 +306,4 @@ const kMessage = 'assets/images/icons/message.png';
 const kNotification = 'assets/images/icons/notification.png';
 const kRightArrow = 'assets/images/icons/circle-arrow-right.png';
 const kChevronDown = 'assets/images/icons/chevron-down.png';
+const kProfilePic = 'assets/images/profileImage.png';

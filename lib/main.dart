@@ -62,11 +62,11 @@ class MyApp extends StatelessWidget {
                 color: kAppBlack,
               ),
               bodySmall: const TextStyle(
-                fontFamily: 'Lato',
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: kAppBlack,
-              ),
+                  fontFamily: 'Lato',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: kAppBlack,
+                  letterSpacing: 0.1),
             ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(

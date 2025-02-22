@@ -154,56 +154,201 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Profile Picture & Info
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                    'https://via.placeholder.com/150'), // Replace with actual image
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Arjun Sethi',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const Text('Male, Millenial • Mumbai, India',
-                  style: TextStyle(color: Colors.grey)),
-              const SizedBox(height: 8),
-
-              // Sync Contacts
-              ElevatedButton(
-                onPressed: () {},
-                style:
-                    ElevatedButton.styleFrom(backgroundColor: Colors.grey[300]),
-                child: const Text('Sync Contacts',
-                    style: TextStyle(color: Colors.black)),
-              ),
-              const SizedBox(height: 16),
-
-              // Stats
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: Image.asset(kProfilePic)),
+                  const SizedBox(width: 10),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('0', style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('Buddies')
+                      Text(
+                        'Arjun Sethi',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(color: kAppBlack),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.person_rounded,
+                            color: kAppPurple,
+                            size: 18,
+                          ),
+                          Text(
+                            'Male, Millenial',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          )
+                        ],
+                      ),
+
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_pin,
+                            color: kAppPurple,
+                            size: 18,
+                          ),
+                          Text(
+                            'Mumbai, India',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      // Sync Contacts
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            color: kBorderGreay,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Want to see who's on Sociord?",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(fontSize: 9),
+                            ),
+                            GestureDetector(
+                                onTap: () {},
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text("Sync Contacts",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .copyWith(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w600,
+                                                color: kAppPurple)),
+                                    const SizedBox(width: 2),
+                                    Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 2,
+                                        ),
+                                        Image.asset(
+                                          kRightArrow,
+                                          height: 10,
+                                          width: 10,
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ))
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+
+                      // Stats
+                      Center(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Column(
+                              children: [
+                                Text('0',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall!
+                                        .copyWith(
+                                            fontSize: 15, color: kAppBlack)),
+                                Text('Buddies',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .copyWith())
+                              ],
+                            ),
+                            const SizedBox(width: 5),
+                            Column(
+                              children: [
+                                Text('0',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall!
+                                        .copyWith(
+                                            fontSize: 15, color: kAppBlack)),
+                                Text('Subscriptions',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .copyWith())
+                              ],
+                            ),
+                            const SizedBox(width: 5),
+                            Column(
+                              children: [
+                                Text('0',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall!
+                                        .copyWith(
+                                            fontSize: 15, color: kAppBlack)),
+                                Text('Following',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .copyWith())
+                              ],
+                            ),
+                            const SizedBox(width: 5),
+                          ],
+                        ),
+                      ),
                     ],
+                  )
+                ],
+              ),
+
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Text(
+                    '@arjun.sethi',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(fontFamily: "Gibson"),
                   ),
-                  Column(
-                    children: [
-                      Text('0', style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('Subscriptions')
-                    ],
+                  const SizedBox(
+                    width: 10,
                   ),
-                  Column(
-                    children: [
-                      Text('0', style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('Following')
-                    ],
+                  Icon(
+                    Icons.open_in_new,
+                    size: 15,
+                    color: kAppPurple,
+                  )
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  Text(
+                    'Personal Profile',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(fontFamily: "Gibson"),
+                  ),
+                  const SizedBox(
+                    width: 10,
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-
               // Buttons: Edit Profile & Become a Creator
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
