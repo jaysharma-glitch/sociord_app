@@ -334,7 +334,7 @@ class ProfileScreen extends StatelessWidget {
                   )
                 ],
               ),
-              const SizedBox(height: 5),
+              const SizedBox(height: 2),
               Row(
                 children: [
                   Text(
@@ -342,77 +342,169 @@ class ProfileScreen extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall!
-                        .copyWith(fontFamily: "Gibson"),
+                        .copyWith(fontFamily: "Gibson", fontSize: 10),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
                 ],
               ),
+              const SizedBox(
+                height: 8,
+              ),
               // Buttons: Edit Profile & Become a Creator
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   ElevatedButton(
                     onPressed: () {},
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                    child: const Text('Edit Profile'),
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      backgroundColor: kAppBlack,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text('Edit Profile',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(fontSize: 12)),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 5),
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple),
-                    child: const Text('Become a Creator'),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      backgroundColor: kAppPurple,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text('Become a Creator',
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(fontSize: 12)),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
               // Highlights
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text('Arjun’s Highlights',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Row(
+                children: [
+                  Text(
+                    'Arjun’s Highlights',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall!
+                        .copyWith(fontSize: 15, color: kAppPurple),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Image.asset(kChevronDownPurple),
+                ],
+              ),
+              Text(
+                'Capture your life’s highlights and relive your best moments.',
+                style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
 
               Container(
                 width: 80,
-                height: 80,
+                height: 100,
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.add, size: 40),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.add,
+                      size: 35,
+                      color: kAppPurple,
+                    ),
+                    Center(
+                      child: Text('Got Married? \nShare the memory',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontSize: 9, color: kAppPurple)),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 8),
-              const Text('Got Married? Share the memory',
-                  style: TextStyle(color: Colors.purple)),
-
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
 
               // Upload Tabs
               DefaultTabController(
                 length: 2,
                 child: Column(
                   children: [
-                    const TabBar(
-                      labelColor: Colors.purple,
-                      unselectedLabelColor: Colors.grey,
-                      tabs: [
-                        Tab(text: 'Uploads'),
-                        Tab(text: 'Tagged'),
+                    Stack(
+                      children: [
+                        Positioned(
+                          bottom: 0,
+                          child: Container(
+                            height: 4,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                color: kBorderGreay,
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                        ),
+                        TabBar(
+                          dividerHeight: 0,
+                          labelColor: kAppBlack,
+                          unselectedLabelColor: kAppBlack,
+                          labelStyle: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .copyWith(
+                                fontSize: 12,
+                              ),
+                          indicator: UnderlineTabIndicator(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              width: 4,
+                              color: kAppPurple,
+                            ),
+                            insets: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.29),
+                          ),
+                          tabs: const [
+                            Tab(text: 'Uploads'),
+                            Tab(text: 'Tagged'),
+                          ],
+                        ),
                       ],
                     ),
                     Container(
-                      height: 200,
-                      child: const TabBarView(
+                      height: 50,
+                      child: TabBarView(
                         children: [
-                          Center(child: Text('No uploads yet')),
-                          Center(child: Text('No tagged photos yet')),
+                          Center(
+                            child: Text(
+                                'Your story starts here—upload your first post and share it with friends and family',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith()),
+                          ),
+                          Center(
+                              child: Text(
+                            'Your story starts here—upload your first post and share it with friends and family',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(),
+                          )),
                         ],
                       ),
                     ),
@@ -428,14 +520,40 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   OutlinedButton.icon(
                     onPressed: () {},
-                    icon: const Icon(Icons.image),
-                    label: const Text('Upload an image'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    icon: const Icon(
+                      Icons.image,
+                      size: 20,
+                      color: kAppBlack,
+                    ),
+                    label: Text(
+                      'Upload an image',
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(),
+                    ),
                   ),
                   const SizedBox(width: 16),
                   OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
                     onPressed: () {},
-                    icon: const Icon(Icons.videocam),
-                    label: const Text('Upload a video'),
+                    icon: const Icon(
+                      Icons.videocam,
+                      size: 20,
+                      color: kAppBlack,
+                    ),
+                    label: Text(
+                      'Upload a video',
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(),
+                    ),
                   ),
                 ],
               ),
