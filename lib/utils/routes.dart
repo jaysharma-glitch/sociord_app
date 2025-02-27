@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sociord/screens/add/add_screen.dart';
 import 'package:sociord/screens/explore/explore_screen.dart';
@@ -7,6 +8,7 @@ import 'package:sociord/screens/login_in_screen.dart';
 import 'package:sociord/screens/onboarding/final_onboarding_screen.dart';
 import 'package:sociord/screens/onboarding/location_search.dart';
 import 'package:sociord/screens/onboarding/other_gender.dart';
+import 'package:sociord/screens/profile/become_a_creator.dart';
 import 'package:sociord/screens/profile/profile_scree.dart';
 import 'package:sociord/screens/sign_in_sign_up_screen.dart';
 import 'package:sociord/screens/onboarding/sign_up_flow.dart';
@@ -29,10 +31,13 @@ const String homeRoute = '/home';
 const String addRoute = '/add';
 const String exploreRoute = '/explore';
 const String profileRoute = '/profile';
+const String becomeACreator = '/profile/becomeACreator';
 
 // ✅ Configure GoRouter with centralized route names
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 final GoRouter router = GoRouter(
   initialLocation: signInSignUpRoute,
+  navigatorKey: rootNavigatorKey,
   routes: [
     GoRoute(
       path: signInSignUpRoute,
@@ -98,10 +103,11 @@ final GoRouter router = GoRouter(
             path: profileRoute,
             builder: (context, state) => const ProfileScreen(),
             routes: [
-              // GoRoute(
-              //   path: 'edit', // Nested route
-              //   builder: (context, state) => const EditProfileScreen(),
-              // ),
+              GoRoute(
+                path: 'becomeACreator', // Nested route
+                parentNavigatorKey: rootNavigatorKey,
+                builder: (context, state) => const BecomeACreator(),
+              ),
             ],
           ),
         ]),

@@ -2,7 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
-import 'package:sociord/widgets/gradient_text.dart';
+import 'package:sociord/widgets/profile/profile_banner.dart';
+import 'package:sociord/widgets/profile/profile_hero.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -57,340 +58,29 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(
                 height: 8,
               ),
-              Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [kAppPurple, kAppOrange],
-                      begin: Alignment.topLeft, // Gradient starts from top-left
-                      end: Alignment
-                          .bottomRight, // Gradient ends at bottom-right
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Text('The Spotlight Awaits',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall!
-                                    .copyWith(fontSize: 12)),
-                            const SizedBox(
-                              height: 2,
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.7,
-                              child: Text(
-                                'Complete a few final details to unlock your creator account and begin earning for your creativity',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(fontSize: 10, color: kAppWhite),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                minimumSize: Size.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                backgroundColor: kAppWhite,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 10),
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(5),
-                                    topRight: Radius.circular(5),
-                                    bottomLeft: Radius.zero,
-                                    bottomRight: Radius.zero,
-                                  ),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  GradientText(
-                                    text: 'Complete now',
-                                    gradient: const LinearGradient(
-                                      colors: [kAppPurple, kAppOrange],
-                                      begin: Alignment
-                                          .topLeft, // Gradient starts from top-left
-                                      end: Alignment
-                                          .bottomRight, // Gradient ends at bottom-right
-                                    ),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .copyWith(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w700),
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Image.asset(kRightArrow)
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                          top: -20, right: -8, child: Image.asset(kCoins)),
-                    ],
-                  )),
+              ProfileBanner(
+                title: 'The Spotlight Awaits',
+                desc:
+                    'Complete a few final details to unlock your creator account and begin earning for your creativity',
+                image: kCoins,
+                cta: 'Complete now',
+                ctaLink: () {},
+              ),
               const SizedBox(height: 16),
 
               // Profile Picture & Info
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: Image.asset(kProfilePic)),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Arjun Sethi',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall!
-                            .copyWith(color: kAppBlack),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.person_rounded,
-                            color: kAppPurple,
-                            size: 18,
-                          ),
-                          Text(
-                            'Male, Millenial',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          )
-                        ],
-                      ),
-
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.location_pin,
-                            color: kAppPurple,
-                            size: 18,
-                          ),
-                          Text(
-                            'Mumbai, India',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-                      // Sync Contacts
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: kBorderGreay,
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Want to see who's on Sociord?",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(fontSize: 9),
-                            ),
-                            GestureDetector(
-                                onTap: () {},
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text("Sync Contacts",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .copyWith(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w600,
-                                                color: kAppPurple)),
-                                    const SizedBox(width: 2),
-                                    Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 2,
-                                        ),
-                                        Image.asset(
-                                          kRightArrow,
-                                          height: 10,
-                                          width: 10,
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ))
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-
-                      // Stats
-                      Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Column(
-                              children: [
-                                Text('0',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .copyWith(
-                                            fontSize: 15, color: kAppBlack)),
-                                Text('Buddies',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .copyWith())
-                              ],
-                            ),
-                            const SizedBox(width: 5),
-                            Column(
-                              children: [
-                                Text('0',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .copyWith(
-                                            fontSize: 15, color: kAppBlack)),
-                                Text('Subscriptions',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .copyWith())
-                              ],
-                            ),
-                            const SizedBox(width: 5),
-                            Column(
-                              children: [
-                                Text('0',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .copyWith(
-                                            fontSize: 15, color: kAppBlack)),
-                                Text('Following',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .copyWith())
-                              ],
-                            ),
-                            const SizedBox(width: 5),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                ],
+              const ProfileHero(
+                imageUrl: kProfilePic,
+                name: 'Arjun Sethi',
+                gender: 'Male',
+                age: "Milenial",
+                location: 'Mumbai, India',
+                buddies: 0,
+                subscriptions: 0,
+                following: 0,
+                handle: '@arjun.sethi',
+                profileType: 'Personal',
               ),
-
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Text(
-                    '@arjun.sethi',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(fontFamily: "Gibson"),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Icon(
-                    Icons.open_in_new,
-                    size: 15,
-                    color: kAppPurple,
-                  )
-                ],
-              ),
-              const SizedBox(height: 2),
-              Row(
-                children: [
-                  Text(
-                    'Personal Profile',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(fontFamily: "Gibson", fontSize: 10),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              // Buttons: Edit Profile & Become a Creator
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      backgroundColor: kAppBlack,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text('Edit Profile',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall!
-                            .copyWith(fontSize: 12)),
-                  ),
-                  const SizedBox(width: 5),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      backgroundColor: kAppPurple,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text('Become a Creator',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall!
-                            .copyWith(fontSize: 12)),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
               // Highlights
               Row(
                 children: [
