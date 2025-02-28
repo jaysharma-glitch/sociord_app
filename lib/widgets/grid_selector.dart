@@ -10,6 +10,7 @@ class GridSelector extends StatefulWidget {
   final double aspectRatio;
   final int crossAxisCount;
   final bool canSelectOnlyOne;
+  final paddingFromAround;
 
   const GridSelector({
     super.key,
@@ -19,6 +20,7 @@ class GridSelector extends StatefulWidget {
     this.aspectRatio = 0.61,
     this.crossAxisCount = 3,
     this.canSelectOnlyOne = false,
+    this.paddingFromAround = 20.0,
   });
 
   @override
@@ -35,7 +37,7 @@ class _GridSelectorState extends State<GridSelector> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: EdgeInsets.symmetric(horizontal: widget.paddingFromAround),
             child: SizedBox(
               height: widget.isFirst
                   ? MediaQuery.of(context).size.height * 0.69
@@ -103,13 +105,15 @@ class _GridSelectorState extends State<GridSelector> {
                                           fontSize: 12,
                                           fontWeight: FontWeight.w400,
                                           color: kAppBlack)),
-                              Text(
-                                option.description,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(fontSize: 10, height: 1.1),
-                              ),
+                              option.description == null
+                                  ? const SizedBox()
+                                  : Text(
+                                      option.description,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall!
+                                          .copyWith(fontSize: 10, height: 1.1),
+                                    ),
                             ],
                           )
                         : Row(
@@ -149,12 +153,15 @@ class _GridSelectorState extends State<GridSelector> {
                                             .textTheme
                                             .headlineMedium!
                                             .copyWith(color: kAppBlack)),
-                                    Text(
-                                      option.description,
-                                      softWrap: true,
-                                      style:
-                                          Theme.of(context).textTheme.bodySmall,
-                                    ),
+                                    option.description == null
+                                        ? const SizedBox()
+                                        : Text(
+                                            option.description,
+                                            softWrap: true,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
                                   ],
                                 ),
                               ),

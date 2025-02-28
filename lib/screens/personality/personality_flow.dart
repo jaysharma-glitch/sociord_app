@@ -298,26 +298,36 @@ class PersonalityPage extends StatelessWidget {
   final String title;
   final String? subtitle;
   final Widget content;
+  final bool largeText;
 
   const PersonalityPage(
-      {super.key, required this.title, this.subtitle, required this.content});
+      {super.key,
+      required this.title,
+      this.subtitle,
+      required this.content,
+      this.largeText = true});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(
-          height: 50,
+        SizedBox(
+          height: largeText ? 50 : 40,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Text(
             title,
-            style: Theme.of(context).textTheme.headlineLarge,
+            style: largeText
+                ? Theme.of(context).textTheme.headlineLarge
+                : Theme.of(context)
+                    .textTheme
+                    .headlineLarge!
+                    .copyWith(fontSize: 18),
           ),
         ),
-        const SizedBox(height: 5),
+        SizedBox(height: largeText ? 5 : 3),
         subtitle != null
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -325,7 +335,7 @@ class PersonalityPage extends StatelessWidget {
                   subtitle!,
                   style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                         color: kAppPurple,
-                        fontSize: 15,
+                        fontSize: largeText ? 15 : 12,
                       ),
                 ),
               )

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sociord/screens/personality/personality_flow.dart';
+import 'package:sociord/screens/profile/pick_category.dart';
 import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/dashed_progress_indicator.dart';
 import 'package:sociord/widgets/go_back_btn.dart';
 
@@ -16,6 +18,8 @@ class _BecomeACreatorState extends State<BecomeACreator> {
   late PageController _pageController;
   int _currentPage = 0;
   bool isLoading = false;
+  final List<bool> categorySelectedOptions =
+      List.generate(12, (index) => false);
 
   @override
   void initState() {
@@ -36,10 +40,12 @@ class _BecomeACreatorState extends State<BecomeACreator> {
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
       PersonalityPage(
-          title: "What's your soundtrack?",
-          subtitle: "Pick atleast 1 option that defines your vibe",
-          content: SizedBox()),
-      PersonalityPage(
+          largeText: false,
+          title: "Pick Your category",
+          subtitle: "Choose the category that fits your content.",
+          content: PickCategory(selectedOptions: categorySelectedOptions)),
+      const PersonalityPage(
+          largeText: false,
           title: "What's your ideal weekend?",
           subtitle:
               "Select at least one way you prefer to spend your free time",
@@ -51,27 +57,38 @@ class _BecomeACreatorState extends State<BecomeACreator> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(
-            height: 50,
+            height: 70,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: _currentPage == 0
-                ? const SizedBox()
-                : GoBackButton(
-                    onPressedFunction: () {
-                      if (_currentPage == 0) {
-                        Navigator.pop(context);
-                      } else {
-                        _pageController.previousPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeIn,
-                        );
-                      }
-                    },
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0, top: 5),
+                    child: GoBackButton(
+                      title: _currentPage == 0 ? "Cancel" : "Go back",
+                      onPressedFunction: () {
+                        if (_currentPage == 0) {
+                          Navigator.pop(context);
+                        } else {
+                          _pageController.previousPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeIn,
+                          );
+                        }
+                      },
+                    ),
                   ),
+                ),
+              ),
+              Image.asset(kLogoText),
+              Expanded(child: SizedBox()),
+            ],
           ),
           const SizedBox(
-            height: 25,
+            height: 30,
           ),
           Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -103,7 +120,14 @@ class _BecomeACreatorState extends State<BecomeACreator> {
                   borderRadius: BorderRadius.circular(0.0),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                if (_currentPage == 0) {
+                  _pageController.nextPage(
+                    duration: Duration(milliseconds: 100),
+                    curve: Curves.easeIn,
+                  );
+                }
+              },
               child: isLoading
                   ? kLoadingIndicator
                   : Text(

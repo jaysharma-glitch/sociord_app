@@ -292,6 +292,83 @@ const kPetOptions = [
   },
 ];
 
+//category options
+const kCategory1 = 'assets/images/categories/1.png';
+const kCategory2 = 'assets/images/categories/2.png';
+const kCategory3 = 'assets/images/categories/3.png';
+const kCategory4 = 'assets/images/categories/4.png';
+const kCategory5 = 'assets/images/categories/5.png';
+const kCategory6 = 'assets/images/categories/6.png';
+const kCategory7 = 'assets/images/categories/7.png';
+const kCategory8 = 'assets/images/categories/8.png';
+const kCategory9 = 'assets/images/categories/9.png';
+const kCategory10 = 'assets/images/categories/10.png';
+const kCategory11 = 'assets/images/categories/11.png';
+const kCategory12 = 'assets/images/categories/12.png';
+
+const kCategoryOptions = [
+  {
+    'image': kCategory1,
+    'title': 'Health, Fitness & Wellness',
+    'desc': 'A playful loving puppy with wings, ready to soar through the skies'
+  },
+  {
+    'image': kCategory2,
+    'title': 'Lifeestyle & Daily Living',
+    'desc': 'A strong ripped serpent with arms, both powerful and charming'
+  },
+  {
+    'image': kCategory3,
+    'title': 'Fashion, Beauty & Style',
+    'desc': 'A beautiful horse that can, swim and gallop with ease'
+  },
+  {
+    'image': kCategory4,
+    'title': 'Travel & Adventure',
+    'desc': 'An intelligent mix of guinea pig and rabbit, with captivating eyes'
+  },
+  {
+    'image': kCategory5,
+    'title': 'Food, Cooking & Beverages',
+    'desc': 'A macaw made of fire that spits flames and radiates heat'
+  },
+  {
+    'image': kCategory6,
+    'title': 'Entertainment & Pop Culture',
+    'desc': 'A macaw made of fire that spits flames and radiates heat'
+  },
+  {
+    'image': kCategory7,
+    'title': 'Business, Finance & Career',
+    'desc': 'A macaw made of fire that spits flames and radiates heat'
+  },
+  {
+    'image': kCategory8,
+    'title': 'Co-working & Collaboration',
+    'desc': 'A macaw made of fire that spits flames and radiates heat'
+  },
+  {
+    'image': kCategory9,
+    'title': 'Technology & Innovation',
+    'desc': 'A macaw made of fire that spits flames and radiates heat'
+  },
+  {
+    'image': kCategory10,
+    'title': 'Art Design & Creativity',
+    'desc': 'A macaw made of fire that spits flames and radiates heat'
+  },
+  {
+    'image': kCategory11,
+    'title': 'Humor and Comedy',
+    'desc': 'A macaw made of fire that spits flames and radiates heat'
+  },
+  {
+    'image': kCategory12,
+    'title': 'Musc',
+    'desc': 'A macaw made of fire that spits flames and radiates heat'
+  },
+];
+
 //profile page icons
 const kLogoText = 'assets/images/logo.png';
 const kCoins = 'assets/images/coins.png';
