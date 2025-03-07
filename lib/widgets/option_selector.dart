@@ -5,12 +5,14 @@ class OptionSelector extends StatelessWidget {
   final String title;
   final bool isSelected;
   final onTap;
+  final isSizeLarge;
 
   const OptionSelector({
     super.key,
     required this.title,
     required this.isSelected,
     required this.onTap,
+    this.isSizeLarge = true,
   });
 
   @override
@@ -18,7 +20,9 @@ class OptionSelector extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: isSizeLarge
+            ? const EdgeInsets.all(16)
+            : const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         decoration: BoxDecoration(
           color: kAppLightGreay,
           borderRadius: BorderRadius.circular(16),
@@ -43,23 +47,44 @@ class OptionSelector extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  isSizeLarge
+                      ? const SizedBox(
+                          height: 10,
+                        )
+                      : const SizedBox(
+                          height: 5,
+                        ),
                   Text(title,
                       style: Theme.of(context)
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                              color: kAppBlack, fontWeight: FontWeight.w600)),
+                              fontSize: isSizeLarge ? 18 : 12,
+                              color: kAppBlack,
+                              fontWeight: isSizeLarge
+                                  ? FontWeight.w600
+                                  : FontWeight.w400)),
                   const SizedBox(height: 4),
                 ],
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle_rounded, color: Colors.purple)
+              Icon(
+                Icons.check_circle_rounded,
+                color: Colors.purple,
+                size: isSizeLarge ? 24 : 16,
+              )
             else
-              Icon(Icons.radio_button_unchecked, color: Colors.grey.shade300),
+              Icon(
+                Icons.radio_button_unchecked,
+                color: Colors.grey.shade300,
+                size: isSizeLarge ? 24 : 15,
+              ),
+            isSizeLarge
+                ? const SizedBox()
+                : const SizedBox(
+                    width: 15,
+                  )
           ],
         ),
       ),

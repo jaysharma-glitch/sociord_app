@@ -295,14 +295,14 @@ class _PersonalityFlowState extends ConsumerState<PersonalityFlow> {
 }
 
 class PersonalityPage extends StatelessWidget {
-  final String title;
+  final String? title;
   final String? subtitle;
   final Widget content;
   final bool largeText;
 
   const PersonalityPage(
       {super.key,
-      required this.title,
+      this.title,
       this.subtitle,
       required this.content,
       this.largeText = true});
@@ -315,18 +315,20 @@ class PersonalityPage extends StatelessWidget {
         SizedBox(
           height: largeText ? 50 : 40,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Text(
-            title,
-            style: largeText
-                ? Theme.of(context).textTheme.headlineLarge
-                : Theme.of(context)
-                    .textTheme
-                    .headlineLarge!
-                    .copyWith(fontSize: 18),
-          ),
-        ),
+        title != null
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Text(
+                  title!,
+                  style: largeText
+                      ? Theme.of(context).textTheme.headlineLarge
+                      : Theme.of(context)
+                          .textTheme
+                          .headlineLarge!
+                          .copyWith(fontSize: 18),
+                ),
+              )
+            : const SizedBox(),
         SizedBox(height: largeText ? 5 : 3),
         subtitle != null
             ? Padding(

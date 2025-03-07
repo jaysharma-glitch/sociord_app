@@ -101,7 +101,7 @@ final GoRouter router = GoRouter(
         StatefulShellBranch(routes: [
           GoRoute(
             path: profileRoute,
-            builder: (context, state) => const ProfileScreen(),
+            builder: (context, state) => ProfileScreen(),
             routes: [
               GoRoute(
                 path: 'becomeACreator', // Nested route

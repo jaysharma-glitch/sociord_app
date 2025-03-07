@@ -16,6 +16,7 @@ class ProfileHero extends StatelessWidget {
   final int following;
   final String handle;
   final String profileType;
+  final switchProfileType;
 
   final String creatorCategory;
   const ProfileHero(
@@ -31,7 +32,8 @@ class ProfileHero extends StatelessWidget {
       required this.following,
       required this.handle,
       required this.profileType,
-      this.creatorCategory = ''});
+      this.creatorCategory = '',
+      required this.switchProfileType});
 
   @override
   Widget build(BuildContext context) {
@@ -227,8 +229,35 @@ class ProfileHero extends StatelessWidget {
                   .copyWith(fontFamily: "Gibson", fontSize: 10),
             ),
             const SizedBox(
-              width: 10,
+              width: 7,
             ),
+            GestureDetector(
+              onTap: creatorCategory == ''
+                  ? () {
+                      print("yoy are a creator");
+                      context.go(becomeACreator);
+                    }
+                  : switchProfileType,
+              child: Row(
+                children: [
+                  Text(
+                    'Switch',
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontFamily: "Gibson",
+                        fontSize: 10,
+                        decoration: TextDecoration.underline,
+                        decorationThickness: 3),
+                  ),
+                  const SizedBox(
+                    width: 2,
+                  ),
+                  Image.asset(
+                    kChevronDown,
+                    height: 8,
+                  )
+                ],
+              ),
+            )
           ],
         ),
         const SizedBox(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sociord/screens/personality/personality_flow.dart';
+import 'package:sociord/screens/profile/apply_final.dart';
+import 'package:sociord/screens/profile/payment_preference.dart';
 import 'package:sociord/screens/profile/pick_category.dart';
+import 'package:sociord/screens/profile/price_selection.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/dashed_progress_indicator.dart';
@@ -18,6 +21,7 @@ class _BecomeACreatorState extends State<BecomeACreator> {
   late PageController _pageController;
   int _currentPage = 0;
   bool isLoading = false;
+  bool categoryNotFound = false;
   final List<bool> categorySelectedOptions =
       List.generate(12, (index) => false);
 
@@ -43,13 +47,23 @@ class _BecomeACreatorState extends State<BecomeACreator> {
           largeText: false,
           title: "Pick Your category",
           subtitle: "Choose the category that fits your content.",
-          content: PickCategory(selectedOptions: categorySelectedOptions)),
-      const PersonalityPage(
+          content: PickCategory(
+              selectedOptions: categorySelectedOptions,
+              categoryNotFound: categoryNotFound,
+              pageController: _pageController)),
+      PersonalityPage(
           largeText: false,
-          title: "What's your ideal weekend?",
-          subtitle:
-              "Select at least one way you prefer to spend your free time",
-          content: SizedBox()),
+          title: "Pick your payment preference",
+          subtitle: "How do we pay you?",
+          content: PaymentPreference(pageController: _pageController)),
+      PersonalityPage(
+          largeText: false,
+          title: "Set your pricing",
+          subtitle: "How much should subscribers pay ?",
+          content: PriceSelection(pageController: _pageController)),
+      PersonalityPage(
+          largeText: false,
+          content: ApplyFinal(pageController: _pageController))
     ];
 
     return Scaffold(
@@ -111,31 +125,33 @@ class _BecomeACreatorState extends State<BecomeACreator> {
               },
             ),
           ),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.only(bottom: 20, top: 20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0.0),
-                ),
-              ),
-              onPressed: () {
-                if (_currentPage == 0) {
-                  _pageController.nextPage(
-                    duration: Duration(milliseconds: 100),
-                    curve: Curves.easeIn,
-                  );
-                }
-              },
-              child: isLoading
-                  ? kLoadingIndicator
-                  : Text(
-                      'Continue',
-                      style: Theme.of(context).textTheme.headlineSmall,
+          _currentPage == 0 && !categoryNotFound
+              ? SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.only(bottom: 20, top: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0.0),
+                      ),
                     ),
-            ),
-          ),
+                    onPressed: () {
+                      if (_currentPage == 0) {
+                        _pageController.nextPage(
+                          duration: Duration(milliseconds: 100),
+                          curve: Curves.easeIn,
+                        );
+                      }
+                    },
+                    child: isLoading
+                        ? kLoadingIndicator
+                        : Text(
+                            'Continue',
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                  ),
+                )
+              : SizedBox()
         ],
       ),
     );

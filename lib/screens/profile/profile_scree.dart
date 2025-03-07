@@ -5,8 +5,27 @@ import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/profile/profile_banner.dart';
 import 'package:sociord/widgets/profile/profile_hero.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  var profileType = 'Personal';
+
+  var category = '';
+
+  switchProfile() {
+    setState(() {
+      if (profileType == 'Personal') {
+        profileType = 'Creator';
+      } else {
+        profileType = 'Personal';
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Profile Picture & Info
-              const ProfileHero(
+              ProfileHero(
                 imageUrl: kProfilePic,
                 name: 'Arjun Sethi',
                 gender: 'Male',
@@ -79,7 +98,9 @@ class ProfileScreen extends StatelessWidget {
                 subscriptions: 0,
                 following: 0,
                 handle: '@arjun.sethi',
-                profileType: 'Personal',
+                profileType: profileType,
+                creatorCategory: category,
+                switchProfileType: switchProfile(),
               ),
               // Highlights
               Row(

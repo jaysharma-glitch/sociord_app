@@ -385,3 +385,5 @@ const kRightArrow = 'assets/images/icons/circle-arrow-right.png';
 const kChevronDown = 'assets/images/icons/chevron-down.png';
 const kChevronDownPurple = 'assets/images/icons/chevron-down-purple.png';
 const kProfilePic = 'assets/images/profileImage.png';
+const kQuestionMark = 'assets/images/icons/question-mark.png';
+const kRocket = 'assets/images/rocket.png';
