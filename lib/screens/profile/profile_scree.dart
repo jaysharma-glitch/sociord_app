@@ -4,6 +4,8 @@ import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/profile/profile_banner.dart';
 import 'package:sociord/widgets/profile/profile_hero.dart';
+import 'package:sociord/widgets/profile/profile_highlight.dart';
+import 'package:sociord/widgets/profile/profile_posts.dart';
 
 class ProfileScreen extends StatefulWidget {
   ProfileScreen({super.key});
@@ -13,9 +15,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  var profileType = 'Personal';
+  var profileType = 'Creator';
 
-  var category = '';
+  var category = 'Travel & Adventure';
+
+  bool isHighlightExpanded = true;
 
   switchProfile() {
     setState(() {
@@ -23,7 +27,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         profileType = 'Creator';
       } else {
         profileType = 'Personal';
+        category = '';
       }
+    });
+  }
+
+  dropDownClick() {
+    setState(() {
+      isHighlightExpanded = !isHighlightExpanded;
     });
   }
 
@@ -74,17 +85,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Profile Banner
-              const SizedBox(
-                height: 8,
+              SizedBox(
+                height: profileType == 'Creator' ? 0 : 8,
               ),
-              ProfileBanner(
-                title: 'The Spotlight Awaits',
-                desc:
-                    'Complete a few final details to unlock your creator account and begin earning for your creativity',
-                image: kCoins,
-                cta: 'Complete now',
-                ctaLink: () {},
-              ),
+              profileType == 'Creator'
+                  ? ProfileBanner(
+                      title: 'Congratulations, Arjun!',
+                      desc: 'Your Creator Profile is live.',
+                      image: kChanpagne,
+                      cta: 'Upload your first post',
+                      ctaLink: () {},
+                    )
+                  : ProfileBanner(
+                      title: 'The Spotlight Awaits',
+                      desc:
+                          'Complete a few final details to unlock your creator account and begin earning for your creativity',
+                      image: kCoins,
+                      cta: 'Complete now',
+                      ctaLink: () {},
+                    ),
               const SizedBox(height: 16),
 
               // Profile Picture & Info
@@ -100,174 +119,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 handle: '@arjun.sethi',
                 profileType: profileType,
                 creatorCategory: category,
-                switchProfileType: switchProfile(),
+                switchProfileType: switchProfile,
               ),
               // Highlights
-              Row(
-                children: [
-                  Text(
-                    'Arjun’s Highlights',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall!
-                        .copyWith(fontSize: 15, color: kAppPurple),
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Image.asset(kChevronDownPurple),
-                ],
-              ),
-              Text(
-                'Capture your life’s highlights and relive your best moments.',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(height: 8),
-
-              Container(
-                width: 80,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.add,
-                      size: 35,
-                      color: kAppPurple,
-                    ),
-                    Center(
-                      child: Text('Got Married? \nShare the memory',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(fontSize: 9, color: kAppPurple)),
-                    ),
-                  ],
-                ),
-              ),
+              ProfileHighlight(
+                  isHighlightExpanded: isHighlightExpanded,
+                  profileType: profileType,
+                  dropDownClick: dropDownClick),
               const SizedBox(height: 10),
 
               // Upload Tabs
-              DefaultTabController(
-                length: 2,
-                child: Column(
-                  children: [
-                    Stack(
-                      children: [
-                        Positioned(
-                          bottom: 0,
-                          child: Container(
-                            height: 4,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                                color: kBorderGreay,
-                                borderRadius: BorderRadius.circular(10)),
-                          ),
-                        ),
-                        TabBar(
-                          dividerHeight: 0,
-                          labelColor: kAppBlack,
-                          unselectedLabelColor: kAppBlack,
-                          labelStyle: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(
-                                fontSize: 12,
-                              ),
-                          indicator: UnderlineTabIndicator(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              width: 4,
-                              color: kAppPurple,
-                            ),
-                            insets: EdgeInsets.symmetric(
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.29),
-                          ),
-                          tabs: const [
-                            Tab(text: 'Uploads'),
-                            Tab(text: 'Tagged'),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Container(
-                      height: 50,
-                      child: TabBarView(
-                        children: [
-                          Center(
-                            child: Text(
-                                'Your story starts here—upload your first post and share it with friends and family',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith()),
-                          ),
-                          Center(
-                              child: Text(
-                            'Your story starts here—upload your first post and share it with friends and family',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(),
-                          )),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Upload Buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  OutlinedButton.icon(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    icon: const Icon(
-                      Icons.image,
-                      size: 20,
-                      color: kAppBlack,
-                    ),
-                    label: Text(
-                      'Upload an image',
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.videocam,
-                      size: 20,
-                      color: kAppBlack,
-                    ),
-                    label: Text(
-                      'Upload a video',
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(),
-                    ),
-                  ),
-                ],
-              ),
+              ProfilePosts(profileType: profileType)
             ],
           ),
         ),

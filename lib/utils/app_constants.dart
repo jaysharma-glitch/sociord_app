@@ -40,3 +40,4 @@ const kAppRed = Color(0xFF8E0000);
 const kAppLightPurple = Color(0xFFF3EAF7);
 const kAppOrange = Color(0xFFFF8200);
 const kDarkGreay = Color(0xFF7F8385);
+const kAppYellow = Color(0xFFFFBE0B);

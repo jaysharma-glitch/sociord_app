@@ -4,7 +4,7 @@ import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/utils/routes.dart';
 
-class ProfileHero extends StatelessWidget {
+class ProfileHero extends StatefulWidget {
   final String imageUrl;
   final String name;
   final String gender;
@@ -36,6 +36,11 @@ class ProfileHero extends StatelessWidget {
       required this.switchProfileType});
 
   @override
+  State<ProfileHero> createState() => _ProfileHeroState();
+}
+
+class _ProfileHeroState extends State<ProfileHero> {
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -44,19 +49,48 @@ class ProfileHero extends StatelessWidget {
           children: [
             ClipRRect(
                 borderRadius: BorderRadius.circular(5),
-                child: Image.asset(imageUrl)),
+                child: Image.asset(widget.imageUrl)),
             const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  widget.name,
                   style: Theme.of(context)
                       .textTheme
                       .headlineSmall!
                       .copyWith(color: kAppBlack),
                 ),
                 const SizedBox(height: 4),
+                widget.creatorCategory != '' && widget.profileType == 'Creator'
+                    ? Container(
+                        padding: const EdgeInsets.only(
+                            left: 2, right: 4, top: 2, bottom: 3),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: kAppYellow),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.airplanemode_active,
+                                color: kAppBlack, size: 12),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              widget.creatorCategory,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall!
+                                  .copyWith(
+                                      fontSize: 12,
+                                      color: kAppBlack,
+                                      fontWeight: FontWeight.w400),
+                            ),
+                          ],
+                        ),
+                      )
+                    : const SizedBox(),
                 Row(
                   children: [
                     const Icon(
@@ -65,7 +99,7 @@ class ProfileHero extends StatelessWidget {
                       size: 18,
                     ),
                     Text(
-                      '$gender, $age',
+                      '${widget.gender}, ${widget.age}',
                       style: Theme.of(context).textTheme.bodySmall,
                     )
                   ],
@@ -80,14 +114,14 @@ class ProfileHero extends StatelessWidget {
                       size: 18,
                     ),
                     Text(
-                      location,
+                      widget.location,
                       style: Theme.of(context).textTheme.bodySmall,
                     )
                   ],
                 ),
                 const SizedBox(height: 5),
                 // Sync Contacts
-                syncContactOption
+                widget.syncContactOption
                     ? Container(
                         padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
@@ -147,7 +181,7 @@ class ProfileHero extends StatelessWidget {
                       ),
                       Column(
                         children: [
-                          Text(buddies.toString(),
+                          Text(widget.buddies.toString(),
                               style: Theme.of(context)
                                   .textTheme
                                   .headlineSmall!
@@ -162,7 +196,7 @@ class ProfileHero extends StatelessWidget {
                       const SizedBox(width: 5),
                       Column(
                         children: [
-                          Text(subscriptions.toString(),
+                          Text(widget.subscriptions.toString(),
                               style: Theme.of(context)
                                   .textTheme
                                   .headlineSmall!
@@ -177,7 +211,7 @@ class ProfileHero extends StatelessWidget {
                       const SizedBox(width: 5),
                       Column(
                         children: [
-                          Text(following.toString(),
+                          Text(widget.following.toString(),
                               style: Theme.of(context)
                                   .textTheme
                                   .headlineSmall!
@@ -198,7 +232,7 @@ class ProfileHero extends StatelessWidget {
           ],
         ),
 
-        const SizedBox(height: 16),
+        SizedBox(height: widget.profileType == 'Creator' ? 10 : 16),
         Row(
           children: [
             Text(
@@ -222,7 +256,9 @@ class ProfileHero extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Personal Profile',
+              widget.profileType == 'Creator'
+                  ? 'Creator Profile'
+                  : 'Personal Profile',
               style: Theme.of(context)
                   .textTheme
                   .bodySmall!
@@ -232,12 +268,14 @@ class ProfileHero extends StatelessWidget {
               width: 7,
             ),
             GestureDetector(
-              onTap: creatorCategory == ''
+              onTap: widget.creatorCategory == ''
                   ? () {
                       print("yoy are a creator");
                       context.go(becomeACreator);
                     }
-                  : switchProfileType,
+                  : () {
+                      widget.switchProfileType();
+                    },
               child: Row(
                 children: [
                   Text(
@@ -292,7 +330,10 @@ class ProfileHero extends StatelessWidget {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: Text('Become a Creator',
+              child: Text(
+                  widget.profileType == 'Creator'
+                      ? 'View Creator Dashboard'
+                      : 'Become a Creator',
                   style: Theme.of(context)
                       .textTheme
                       .headlineSmall!
