@@ -390,6 +390,8 @@ const kRocket = 'assets/images/rocket.png';
 const kChanpagne = 'assets/images/champagne.png';
 
 //home page
+const kUtensils = 'assets/images/icons/utensils.png';
+
 const kBuddy1 = 'assets/images/buddies/1.jpeg';
 const kBuddy2 = 'assets/images/buddies/2.jpeg';
 const kBuddy3 = 'assets/images/buddies/3.jpeg';
@@ -398,19 +400,19 @@ const kBuddy5 = 'assets/images/buddies/5.jpeg';
 const kBuddy6 = 'assets/images/buddies/6.jpeg';
 
 const kPost1 = 'assets/images/posts/1.jpeg';
-const kPost2 = 'assets/images/posts/2.jpeg';
-const kPost3 = 'assets/images/posts/3.jpeg';
-const kPost4 = 'assets/images/posts/4.jpeg';
-const kPost5 = 'assets/images/posts/5.jpeg';
+const kPost2 = 'assets/images/posts/2.png';
+const kPost3 = 'assets/images/posts/3.png';
+const kPost4 = 'assets/images/posts/4.png';
+const kPost5 = 'assets/images/posts/5.png';
 
 const kCreator1 = 'assets/images/creator/1.jpeg';
-const kCreator2 = 'assets/images/creator/2.jpeg';
-const kCreator3 = 'assets/images/creator/3.jpeg';
-const kCreator4 = 'assets/images/creator/4.jpeg';
-const kCreator5 = 'assets/images/creator/5.jpeg';
-const kCreator6 = 'assets/images/creator/6.jpeg';
-const kCreator7 = 'assets/images/creator/7.jpeg';
-const kCreator8 = 'assets/images/creator/8.jpeg';
+const kCreator2 = 'assets/images/creator/2.png';
+const kCreator3 = 'assets/images/creator/3.png';
+const kCreator4 = 'assets/images/creator/4.png';
+const kCreator5 = 'assets/images/creator/5.png';
+const kCreator6 = 'assets/images/creator/6.png';
+const kCreator7 = 'assets/images/creator/7.png';
+const kCreator8 = 'assets/images/creator/8.png';
 
 const kQuicky1 = 'assets/images/quickies/1.jpeg';
 const kQuicky2 = 'assets/images/quickies/2.jpeg';

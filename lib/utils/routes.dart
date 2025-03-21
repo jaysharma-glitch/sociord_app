@@ -83,7 +83,8 @@ final GoRouter router = GoRouter(
         StatefulShellBranch(routes: [
           GoRoute(
             path: homeRoute,
-            builder: (context, state) => const HomeScreen(),
+            builder: (context, state) =>
+                HomeScreen(key: ScaffoldWithNavBar.homeScreenKey),
           ),
         ]),
         StatefulShellBranch(routes: [

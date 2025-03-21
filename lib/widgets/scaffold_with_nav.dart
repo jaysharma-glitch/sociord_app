@@ -1,12 +1,15 @@
 // lib/widgets/scaffold_with_nav.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sociord/screens/home/home_screen.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import '../utils/routes.dart';
 
 class ScaffoldWithNavBar extends StatelessWidget {
   final Widget child;
+  static final GlobalKey<HomeScreenState> homeScreenKey = GlobalKey(); // ✅
+
   const ScaffoldWithNavBar({super.key, required this.child});
 
   @override
@@ -24,19 +27,25 @@ class ScaffoldWithNavBar extends StatelessWidget {
         child: BottomNavigationBar(
           currentIndex: _getCurrentIndex(location),
           onTap: (index) {
-            switch (index) {
-              case 0:
-                context.go(homeRoute);
-                break;
-              case 1:
-                context.go(addRoute);
-                break;
-              case 2:
-                context.go(exploreRoute);
-                break;
-              case 3:
-                context.go(profileRoute);
-                break;
+            final currentIndex = _getCurrentIndex(location);
+            if (index == 0 && currentIndex == 0) {
+              // We're already on Home, so scroll to top
+              ScaffoldWithNavBar.homeScreenKey.currentState?.scrollToTop();
+            } else {
+              switch (index) {
+                case 0:
+                  context.go(homeRoute);
+                  break;
+                case 1:
+                  context.go(addRoute);
+                  break;
+                case 2:
+                  context.go(exploreRoute);
+                  break;
+                case 3:
+                  context.go(profileRoute);
+                  break;
+              }
             }
           },
           backgroundColor: kAppWhite,

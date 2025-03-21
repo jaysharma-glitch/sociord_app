@@ -50,7 +50,7 @@ class _FeedSliderState extends State<FeedSlider> {
 
         // Horizontal Scrolling List
         SizedBox(
-          height: 150,
+          height: 155,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: buddies.length,
@@ -67,8 +67,8 @@ class _FeedSliderState extends State<FeedSlider> {
   Widget _buildBuddyItem(String imagePath, String name, int index) {
     return Padding(
       padding: index == 0
-          ? const EdgeInsets.only(left: 12.0, right: 5)
-          : const EdgeInsets.symmetric(horizontal: 5.0),
+          ? const EdgeInsets.only(left: 12.0, right: 3)
+          : const EdgeInsets.symmetric(horizontal: 2.0),
       child: Column(
         children: [
           // Stack for Layering Gradient Border & Image
@@ -77,8 +77,8 @@ class _FeedSliderState extends State<FeedSlider> {
             children: [
               // Gradient Border Layer
               Container(
-                width: 93, // Slightly larger than image for border effect
-                height: 118,
+                width: 113, // Slightly larger than image for border effect
+                height: 133,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Colors.deepPurple, Colors.orange],
@@ -97,8 +97,8 @@ class _FeedSliderState extends State<FeedSlider> {
                   borderRadius: BorderRadius.circular(8),
                   child: Image.asset(
                     imagePath,
-                    width: 90,
-                    height: 115,
+                    width: 110,
+                    height: 130,
                     fit: BoxFit.cover,
                   ),
                 ),
