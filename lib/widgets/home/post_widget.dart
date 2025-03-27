@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/utils/app_constants.dart';
 import 'package:sociord/widgets/gradient_text.dart';
+import 'package:sociord/widgets/home/comments_bottom_sheet.dart';
 
 class PostWidget extends StatefulWidget {
   final String profileImage;
@@ -212,8 +213,26 @@ class _PostComponentState extends State<PostWidget> {
                 const SizedBox(width: 20),
                 Row(
                   children: [
-                    const Icon(Icons.chat_bubble,
-                        color: Colors.black54, size: 18),
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          useRootNavigator: true,
+                          isScrollControlled:
+                              true, // ✅ Makes the bottom sheet take full height
+
+                          backgroundColor: Colors
+                              .transparent, // ✅ Ensures it overlays the bottom nav bar
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
+                          ),
+                          builder: (context) => CommentsBottomSheet(),
+                        );
+                      },
+                      child: const Icon(Icons.chat_bubble,
+                          color: Colors.black54, size: 18),
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       "${widget.comments}",
