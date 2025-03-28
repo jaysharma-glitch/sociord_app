@@ -1,6 +1,6 @@
 // lib/screens/profile/profile_screen.dart
 import 'package:flutter/material.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/profile/profile_banner.dart';
 import 'package:sociord/widgets/profile/profile_hero.dart';

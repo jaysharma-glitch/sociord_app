@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/utils/routes.dart';
 

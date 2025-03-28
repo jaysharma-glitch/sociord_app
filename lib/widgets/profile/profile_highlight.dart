@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 
 class ProfileHighlight extends StatefulWidget {

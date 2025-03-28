@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sociord/provider/user_provider.dart';
-import 'package:sociord/utils/app_constants.dart';
+
 import 'package:sociord/widgets/custom_snack_bar.dart';
 import 'package:sociord/widgets/option_selector.dart';
+import 'package:sociord/constants/ui.dart';
 
 class UserType extends ConsumerStatefulWidget {
   final PageController? pageController;

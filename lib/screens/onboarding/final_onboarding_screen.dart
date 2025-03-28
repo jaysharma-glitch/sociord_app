@@ -4,7 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sociord/screens/sign_in_sign_up_screen.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/utils/routes.dart';
 

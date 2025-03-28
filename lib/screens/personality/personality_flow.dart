@@ -9,10 +9,11 @@ import 'package:sociord/screens/personality/movie_selection.dart';
 import 'package:sociord/screens/personality/pet_selection.dart';
 import 'package:sociord/screens/personality/soundtrack_selection_screen.dart';
 import 'package:sociord/screens/personality/weekend_selection_screen.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/widgets/custom_snack_bar.dart';
 import 'package:sociord/widgets/dashed_progress_indicator.dart';
 import 'package:sociord/widgets/go_back_btn.dart';
+import 'package:sociord/constants/ui.dart';
 
 class PersonalityFlow extends ConsumerStatefulWidget {
   static const routeName = '/personality-flow';

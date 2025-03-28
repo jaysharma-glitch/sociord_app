@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 
 class BottomSheetContent extends StatelessWidget {
   const BottomSheetContent({super.key});

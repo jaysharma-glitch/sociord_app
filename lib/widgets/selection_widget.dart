@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sociord/provider/user_provider.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 
 class SelectionWidget extends ConsumerStatefulWidget {
   const SelectionWidget({super.key});

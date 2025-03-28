@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/models/personality_trait_model.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/widgets/network_image.dart';
 
 class GridSelector extends StatefulWidget {

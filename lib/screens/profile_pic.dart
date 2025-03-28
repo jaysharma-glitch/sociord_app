@@ -10,8 +10,9 @@ import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sociord/provider/user_provider.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/widgets/custom_snack_bar.dart';
+import 'package:sociord/constants/ui.dart';
 
 class ProfilePicScreen extends ConsumerStatefulWidget {
   const ProfilePicScreen({super.key});

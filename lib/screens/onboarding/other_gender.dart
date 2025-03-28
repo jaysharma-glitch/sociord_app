@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sociord/provider/user_provider.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/ui.dart';
+import 'package:sociord/constants/color.dart';
 
 class OtherGenderDes extends ConsumerStatefulWidget {
   final PageController? pageController;

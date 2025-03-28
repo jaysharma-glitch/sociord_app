@@ -5,7 +5,8 @@ import 'package:sociord/screens/profile/apply_final.dart';
 import 'package:sociord/screens/profile/payment_preference.dart';
 import 'package:sociord/screens/profile/pick_category.dart';
 import 'package:sociord/screens/profile/price_selection.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/ui.dart';
+
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/dashed_progress_indicator.dart';
 import 'package:sociord/widgets/go_back_btn.dart';

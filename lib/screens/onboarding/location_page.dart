@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sociord/models/user_model.dart';
 import 'package:sociord/provider/location_provider.dart';
 import 'package:sociord/provider/user_provider.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/custom_snack_bar.dart';
+import 'package:sociord/constants/ui.dart';
 
 class LocationPage extends ConsumerStatefulWidget {
   // ignore: prefer_typing_uninitialized_variables

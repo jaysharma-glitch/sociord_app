@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/gradient_text.dart';
 import 'package:sociord/widgets/grid_selector.dart';
 import 'package:sociord/widgets/textfield_with_sumbit.dart';
+import 'package:sociord/constants/ui.dart';
 
 class PickCategory extends StatefulWidget {
   final selectedOptions;

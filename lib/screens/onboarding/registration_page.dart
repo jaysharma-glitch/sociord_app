@@ -3,10 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:sociord/provider/user_provider.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/bottom_sheet_signUp.dart';
 import '../../widgets/custom_snack_bar.dart';
+import 'package:sociord/constants/ui.dart';
 
 class RegisterWidget extends ConsumerStatefulWidget {
   final PageController pageController;

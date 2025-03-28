@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/screens/onboarding/otp.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/widgets/go_back_btn.dart';
 
 class LogInOtpScreen extends ConsumerWidget {

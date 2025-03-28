@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 
 class DashedProgressIndicator extends StatelessWidget {
   final int totalSteps;

@@ -10,7 +10,7 @@ import 'package:sociord/screens/onboarding/other_gender.dart';
 import 'package:sociord/screens/onboarding/user_name.dart';
 import 'package:sociord/screens/onboarding/user_type.dart';
 import 'package:sociord/screens/sign_in_sign_up_screen.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/routes.dart';
 import 'package:sociord/widgets/go_back_btn.dart';
 import 'package:sociord/screens/onboarding/otp.dart';

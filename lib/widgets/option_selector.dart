@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sociord/utils/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 
 class OptionSelector extends StatelessWidget {
   final String title;
