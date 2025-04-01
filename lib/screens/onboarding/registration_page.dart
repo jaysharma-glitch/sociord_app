@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/constants/color.dart';
+import 'package:sociord/screens/onboarding/widget/tandc_checkbox.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/bottom_sheet_signUp.dart';
 import '../../widgets/custom_snack_bar.dart';
@@ -247,7 +248,10 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
             const SizedBox(
               height: 15,
             ),
-            TandCCheckBox(isChecked: _tAndCAgreed, clickFunc: checkClick),
+            TandCCheckBox(
+              isChecked: _tAndCAgreed,
+              onChanged: (value) => setState(() => _tAndCAgreed = value!),
+            ),
             Visibility(
               visible: tAndCErr,
               child: Center(
@@ -267,108 +271,69 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  if (_formKey.currentState?.validate() == true &&
-                      _tAndCAgreed) {
-                    setState(() {
-                      tAndCErr = false;
-                      sameNumberErr = false;
-                    });
-                    // Process data!
-                    try {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      var result = await userNotifier.createUser();
-                      setState(() {
-                        isLoading = false;
-                      });
-                      if (result == true) {
-                        widget.pageController.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeIn,
-                        );
-                      }
-                    } catch (e) {
-                      setState(() {
-                        isLoading = false;
-                      });
-                      if (e.toString().contains('Connection refused')) {
-                        setState(() {
-                          sameNumberErr = false;
-                        });
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(CustomSnackBar().build(context));
-                      } else {
-                        setState(() {
-                          sameNumberErr = true;
-                        });
-                        print(e);
-                      }
-                    }
-                  } else {
-                    setState(() {
-                      tAndCErr = true;
-                      sameNumberErr = false;
-                    });
-                  }
-                  // widget.pageController!.nextPage(
-                  //   duration: Duration(milliseconds: 300),
-                  //   curve: Curves.easeIn,
-                  // );
+                  // if (_formKey.currentState?.validate() == true &&
+                  //     _tAndCAgreed) {
+                  //   setState(() {
+                  //     tAndCErr = false;
+                  //     sameNumberErr = false;
+                  //   });
+                  //   // Process data!
+                  //   try {
+                  //     setState(() {
+                  //       isLoading = true;
+                  //     });
+                  //     var result = await userNotifier.createUser();
+                  //     setState(() {
+                  //       isLoading = false;
+                  //     });
+                  //     if (result == true) {
+                  //       widget.pageController.nextPage(
+                  //         duration: Duration(milliseconds: 300),
+                  //         curve: Curves.easeIn,
+                  //       );
+                  //     }
+                  //   } catch (e) {
+                  //     setState(() {
+                  //       isLoading = false;
+                  //     });
+                  //     if (e.toString().contains('Connection refused')) {
+                  //       setState(() {
+                  //         sameNumberErr = false;
+                  //       });
+                  //       ScaffoldMessenger.of(context)
+                  //           .showSnackBar(CustomSnackBar().build(context));
+                  //     } else {
+                  //       setState(() {
+                  //         sameNumberErr = true;
+                  //       });
+                  //       print(e);
+                  //     }
+                  //   }
+                  // } else {
+                  //   setState(() {
+                  //     tAndCErr = true;
+                  //     sameNumberErr = false;
+                  //   });
+                  // }
+                  widget.pageController!.nextPage(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeIn,
+                  );
                 },
                 child: isLoading
                     ? kLoadingIndicator
                     : Text(
                         'Create your account',
-                        style: Theme.of(context).textTheme.headlineSmall,
+                        style:
+                            Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  color: Colors.white,
+                                ),
                       ),
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class TandCCheckBox extends StatefulWidget {
-  final bool isChecked;
-  final clickFunc;
-  const TandCCheckBox(
-      {super.key, required this.isChecked, required this.clickFunc});
-
-  @override
-  State<TandCCheckBox> createState() => _TandCCheckBoxState();
-}
-
-class _TandCCheckBoxState extends State<TandCCheckBox> {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Checkbox(
-          value: widget.isChecked,
-          onChanged: (value) {
-            widget.clickFunc(value);
-          },
-        ),
-        Text(
-          'I agree to Sociord\'s ',
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        GestureDetector(
-          onTap: () {
-            // Open terms and conditions
-          },
-          child: Text(
-            'Terms and Conditions',
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                decoration: TextDecoration.underline,
-                fontWeight: FontWeight.w700),
-          ),
-        ),
-      ],
     );
   }
 }

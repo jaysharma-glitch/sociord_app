@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sociord/constants/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 
 const kTextFormFieldBorderStyles = OutlineInputBorder(
     borderSide: BorderSide(color: kBorderGreay),

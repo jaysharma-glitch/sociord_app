@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sociord/constants/app_constants.dart';
+import 'package:sociord/constants/color.dart';
 
 TextStyle gibsonTextStyle({
   required double fontSize,

@@ -1,28 +1,30 @@
-import 'package:country_code_picker/country_code_picker.dart';
+// lib/screens/login/login_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sociord/provider/user_provider.dart';
+import 'package:country_code_picker/country_code_picker.dart';
+
 import 'package:sociord/constants/color.dart';
+import 'package:sociord/constants/ui.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/utils/routes.dart';
+import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/widgets/bottom_sheet_signUp.dart';
 import 'package:sociord/widgets/move_with_keyboard_elevated_btn.dart';
 
-import 'package:sociord/constants/ui.dart';
-
 class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key});
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  var loginUser = 'personal';
   bool userNotFound = false;
   bool isLoading = false;
-
+  var loginUser = 'personal';
   late TextEditingController _phoneNumberController;
 
   @override
@@ -30,10 +32,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.initState();
     final userState = ref.read(userNotifierProvider);
     _phoneNumberController = TextEditingController(text: userState.phoneNumber);
-
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
   @override
@@ -46,7 +45,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final userState = ref.watch(userNotifierProvider);
     final userNotifier = ref.read(userNotifierProvider.notifier);
-    var height = MediaQuery.of(context).viewPadding.top;
+    final height = MediaQuery.of(context).viewPadding.top;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -56,170 +56,60 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: height,
-                ),
-                const SizedBox(height: 20),
-                // Toggle between Personal and Business
-                Container(
-                  decoration: BoxDecoration(
-                    color: kAppLightPurple,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            // Handle Personal tab click
-                            setState(() {
-                              loginUser = 'personal';
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: loginUser == 'personal'
-                                    ? kAppPurple
-                                    : kAppLightPurple),
-                            child: Center(
-                              child: Text(
-                                'Personal',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .copyWith(
-                                        color: loginUser == 'personal'
-                                            ? kAppWhite
-                                            : kAppBlack),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            // Handle Business tab click
-                            setState(() {
-                              loginUser = 'business';
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: loginUser == 'business'
-                                  ? kAppPurple
-                                  : kAppLightPurple,
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Business',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .copyWith(
-                                        color: loginUser == 'business'
-                                            ? kAppWhite
-                                            : kAppBlack),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                SizedBox(height: height + 20),
+
+                /// Toggle Switch
+                _LoginToggle(
+                  loginUser: loginUser,
+                  onChanged: (value) => setState(() => loginUser = value),
                 ),
                 const SizedBox(height: 30),
-                // Sign Up text
 
+                /// Sign Up Prompt
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text("Don't have an account? ",
-                        style:
-                            Theme.of(context).textTheme.bodyMedium!.copyWith()),
+                        style: Theme.of(context).textTheme.bodyMedium),
                     GestureDetector(
-                      onTap: () {
-                        // Handle Sign Up navigation
-                        // Navigator.pushNamed(context, '/signUpFlow');
-                        context.push(signUpFlowRoute);
-                      },
+                      onTap: () => context.push(signUpFlowRoute),
                       child: Text('Sign up',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(
-                                  color: kAppPurple,
-                                  fontWeight: FontWeight.w800)),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: kAppPurple,
+                                    fontWeight: FontWeight.w800,
+                                  )),
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 30),
-                // Login header
 
-                Text(
-                  'Login to your account',
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
+                /// Headers
+                Text('Login to your account',
+                    style: Theme.of(context).textTheme.headlineLarge),
                 const SizedBox(height: 5),
-                Text(
-                  'Crea8. Apprecia8. Celebr8',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall!
-                      .copyWith(color: kAppPurple, fontSize: 15),
-                ),
+                Text('Crea8. Apprecia8. Celebr8',
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          color: kAppPurple,
+                          fontSize: 15,
+                        )),
                 const SizedBox(height: 30),
+
+                /// Login Form
                 Form(
                   key: _formKey,
                   child: Column(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: kBorderGreay, // Border color
-                            width: 1.0, // Border width
-                          ),
-                          borderRadius: BorderRadius.circular(
-                              10.0), // Border radius (optional)
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: CountryCodePicker(
-                                onChanged: (value) {
-                                  userNotifier.setCountryCode(
-                                      value.toString().split('+')[1] ?? '');
-                                },
-                                showFlag: false,
-                                initialSelection: 'IN',
-                                favorite: ['+91', 'IN'],
-                                showCountryOnly: true,
-                                showOnlyCountryWhenClosed: false,
-                                alignLeft: true,
-                                textStyle:
-                                    Theme.of(context).textTheme.bodyLarge,
-                                searchStyle:
-                                    Theme.of(context).textTheme.bodyLarge,
-                                dialogTextStyle:
-                                    Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                            Image.asset(kDropDown),
-                            SizedBox(
-                              width: 15,
-                            )
-                          ],
-                        ),
+                      /// Country Picker
+                      _CountryCodeRow(
+                        onChanged: (val) {
+                          userNotifier.setCountryCode(
+                              val.toString().split('+')[1] ?? '');
+                        },
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
+
+                      /// Phone Input
                       TextFormField(
                         controller: _phoneNumberController,
                         decoration: InputDecoration(
@@ -227,34 +117,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           labelStyle: Theme.of(context).textTheme.bodyLarge,
                           border: kTextFormFieldBorderStyles,
                           enabledBorder: kTextFormFieldBorderStyles,
-                          prefixStyle: TextStyle(fontSize: 18),
+                          prefixStyle: const TextStyle(fontSize: 18),
                           suffixIcon: userState.phoneNumber!.length == 10
-                              ? const Icon(
-                                  Icons.check_circle_rounded,
-                                  color: kAppDarkGreen,
-                                  size: 20,
-                                )
+                              ? const Icon(Icons.check_circle_rounded,
+                                  color: kAppDarkGreen, size: 20)
                               : GestureDetector(
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (context) {
-                                          return BottomSheetContent();
-                                        });
-                                  },
-                                  child: const Icon(
-                                    Icons.help_outline,
-                                    size: 20,
+                                  onTap: () => showModalBottomSheet(
+                                    context: context,
+                                    builder: (_) => const BottomSheetContent(),
                                   ),
+                                  child:
+                                      const Icon(Icons.help_outline, size: 20),
                                 ),
                         ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
+                          FilteringTextInputFormatter.digitsOnly
                         ],
                         keyboardType: TextInputType.phone,
-                        onChanged: (value) {
-                          userNotifier.setPhoneNumber(value);
-                        },
+                        onChanged: (value) =>
+                            userNotifier.setPhoneNumber(value),
                         validator: (value) {
                           if (value == null ||
                               value.isEmpty ||
@@ -264,9 +145,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           return null;
                         },
                       ),
+
                       if (userNotFound)
                         Padding(
-                          padding: EdgeInsets.only(top: 15),
+                          padding: const EdgeInsets.only(top: 15),
                           child: Text(
                             'Phone number is not registered',
                             style: Theme.of(context)
@@ -275,63 +157,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 .copyWith(color: kAppRed),
                           ),
                         ),
-                      const SizedBox(
-                        height: 50,
-                      ),
+                      const SizedBox(height: 50),
                     ],
                   ),
                 ),
               ],
             ),
           ),
+
+          /// Bottom CTA
           MoveWithKeyboardElevatedBtn(
             spaceFromBottom: MediaQuery.of(context).size.height * 0.3,
+
             // onPressed: () async {
-            //   // Navigator.pushNamed(context, '/login-otp');
             //   if (_formKey.currentState?.validate() == true) {
-            //     setState(() {
-            //       userNotFound = false;
-            //     });
-            //     // Process data!
+            //     setState(() => userNotFound = false);
             //     try {
-            //       setState(() {
-            //         isLoading = true;
-            //       });
+            //       setState(() => isLoading = true);
             //       var result = await userNotifier.userLogin();
-            //       setState(() {
-            //         isLoading = false;
-            //       });
+            //       setState(() => isLoading = false);
             //       if (result != null) {
-            //         // Navigator.pushNamed(context, '/login-otp');
-            //         // ignore: use_build_context_synchronously
             //         context.push(loginOtpRoute);
             //       } else {
-            //         setState(() {
-            //           userNotFound = true;
-            //         });
+            //         setState(() => userNotFound = true);
             //       }
             //     } catch (e) {
-            //       setState(() {
-            //         isLoading = false;
-            //       });
+            //       setState(() => isLoading = false);
             //       if (e.toString().contains('Connection refused')) {
-            //         setState(() {
-            //           userNotFound = false;
-            //         });
-            //         ScaffoldMessenger.of(context)
-            //             .showSnackBar(CustomSnackBar().build(context));
+            //         setState(() => userNotFound = false);
+            //         ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar().build(context));
             //       } else {
-            //         setState(() {
-            //           userNotFound = true;
-            //         });
-            //         print(e.toString().contains('Phone number not registered'));
+            //         setState(() => userNotFound = true);
             //       }
             //     }
             //   } else {
-            //     setState(() {
-            //       userNotFound = false;
-            //     });
-            //     // Show a message or handle the case where conditions aren't met
+            //     setState(() => userNotFound = false);
             //   }
             // },
             onPressed: () {
@@ -339,11 +199,91 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             },
             child: isLoading
                 ? kLoadingIndicator
-                : Text(
-                    'Login',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
+                : Text('Login',
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          color: kAppWhite,
+                        )),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+// === ✅ LoginToggle ===
+class _LoginToggle extends StatelessWidget {
+  final String loginUser;
+  final Function(String) onChanged;
+
+  const _LoginToggle({required this.loginUser, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: kAppLightPurple,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: ['personal', 'business'].map((type) {
+          final isActive = loginUser == type;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onChanged(type),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: isActive ? kAppPurple : kAppLightPurple,
+                ),
+                child: Center(
+                  child: Text(
+                    type[0].toUpperCase() + type.substring(1),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: isActive ? kAppWhite : kAppBlack,
+                        ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// === ✅ CountryCodeRow ===
+class _CountryCodeRow extends StatelessWidget {
+  final void Function(CountryCode) onChanged;
+
+  const _CountryCodeRow({required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: kBorderGreay, width: 1.0),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: CountryCodePicker(
+              onChanged: onChanged,
+              showFlag: false,
+              initialSelection: 'IN',
+              favorite: ['+91', 'IN'],
+              showCountryOnly: true,
+              showOnlyCountryWhenClosed: false,
+              alignLeft: true,
+              textStyle: Theme.of(context).textTheme.bodyLarge,
+              searchStyle: Theme.of(context).textTheme.bodyLarge,
+              dialogTextStyle: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+          const ImageIcon(AssetImage(kDropDown), size: 16),
+          const SizedBox(width: 15),
         ],
       ),
     );

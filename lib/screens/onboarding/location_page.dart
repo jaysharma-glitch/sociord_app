@@ -1,191 +1,125 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sociord/models/user_model.dart';
 import 'package:sociord/provider/location_provider.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/constants/color.dart';
+import 'package:sociord/constants/ui.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/custom_snack_bar.dart';
-import 'package:sociord/constants/ui.dart';
 
 class LocationPage extends ConsumerStatefulWidget {
-  // ignore: prefer_typing_uninitialized_variables
-  final pageController;
-  const LocationPage({super.key, this.pageController});
+  final PageController pageController;
+
+  const LocationPage({super.key, required this.pageController});
+
   @override
-  _LocationPageState createState() => _LocationPageState();
+  ConsumerState<LocationPage> createState() => _LocationPageState();
 }
 
 class _LocationPageState extends ConsumerState<LocationPage> {
-  bool permisionDenied = false;
+  bool permissionDenied = false;
   bool isLoading = false;
+
+  bool get hasValidLocation =>
+      ref.read(locationNotifierProvider).location != null;
+
+  Future<void> _handleAutoLocation() async {
+    setState(() => permissionDenied = false);
+    final locationNotifier = ref.read(locationNotifierProvider.notifier);
+    await locationNotifier.getCurrentPosition();
+
+    if (hasValidLocation) {
+      await _submitLocation();
+    } else {
+      final granted = await locationNotifier.handleLocationPermission();
+      if (!granted) setState(() => permissionDenied = true);
+    }
+  }
+
+  Future<void> _submitLocation() async {
+    final userId = ref.read(userNotifierProvider).userId;
+    final notifier = ref.read(locationNotifierProvider.notifier);
+
+    try {
+      setState(() => isLoading = true);
+      final success = await notifier.addLocation(userId!);
+      setState(() => isLoading = false);
+
+      if (success != null) {
+        widget.pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+      final isConnectionError = e.toString().contains('Connection refused');
+      ScaffoldMessenger.of(context).showSnackBar(
+        isConnectionError
+            ? CustomSnackBar().build(context)
+            : SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
+
+  Future<void> _handleManualLocation() async {
+    final result = await context.push('/locationSearch');
+
+    if (result != null && hasValidLocation) {
+      await _submitLocation();
+    } else {
+      final granted = await ref
+          .read(locationNotifierProvider.notifier)
+          .handleLocationPermission();
+      if (!granted) setState(() => permissionDenied = true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final locationState = ref.watch(locationNotifierProvider);
-    final locationNotifier = ref.read(locationNotifierProvider.notifier);
     final userState = ref.watch(userNotifierProvider);
+    final locationNotifier = ref.watch(locationNotifierProvider);
+
     ref.listen<UserModel>(userNotifierProvider, (previous, next) {
       if (previous?.userId != next.userId) {
-        print('userId has changed: ${previous!.userId} -- ${next.userId}');
+        print('userId changed: ${previous!.userId} -> ${next.userId}');
       }
     });
-
-    bool checkLocationData() {
-      var location = ref.read(locationNotifierProvider).location;
-      return location != null ? true : false;
-    }
 
     return Padding(
       padding: const EdgeInsets.only(top: 40),
       child: Column(
         children: [
-          Center(
-            child: Image.asset(
-              kGlobe,
-            ),
-          ), // Add your image asset here
+          Center(child: Image.asset(kGlobe)),
           const SizedBox(height: 50),
-          Center(
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  // widget.pageController.nextPage(
-                  //   duration: Duration(milliseconds: 300),
-                  //   curve: Curves.easeIn,
-                  // );
-                  setState(() {
-                    permisionDenied = false;
-                  });
-                  await ref
-                      .read(locationNotifierProvider.notifier)
-                      .getCurrentPosition();
-
-                  if (checkLocationData()) {
-                    try {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      print(userState.userId);
-                      var result =
-                          await locationNotifier.addLocation(userState.userId!);
-                      setState(() {
-                        isLoading = false;
-                      });
-                      if (result != null) {
-                        // Add your logic here (e.g., trigger navigation,
-                        widget.pageController.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeIn,
-                        );
-                      }
-                    } catch (e) {
-                      setState(() {
-                        isLoading = false;
-                      });
-                      if (e.toString().contains('Connection refused')) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(CustomSnackBar().build(context));
-                      } else {
-                        print(e.toString());
-                      }
-                    }
-                  } else {
-                    var permision = await ref
-                        .read(locationNotifierProvider.notifier)
-                        .handleLocationPermission();
-                    if (!permision) {
-                      setState(() {
-                        permisionDenied = true;
-                      });
-                    }
-                  }
-                },
-                child: isLoading
-                    ? kLoadingIndicator
-                    : Text(
-                        'Allow access to your location',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-              ),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _handleAutoLocation,
+              child: isLoading
+                  ? kLoadingIndicator
+                  : Text(
+                      'Allow access to your location',
+                      style:
+                          Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                color: Colors.white,
+                              ),
+                    ),
             ),
           ),
-
-          if (permisionDenied)
-            Padding(
-              padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Location permession has been denied',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: kAppRed),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      AppSettings.openAppSettings(
-                          type: AppSettingsType.location);
-                    },
-                    child: Text(
-                      'Setings',
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color: kAppBlack,
-                          fontWeight: FontWeight.w800,
-                          decoration: TextDecoration.underline),
-                    ),
-                  )
-                ],
-              ),
-            ),
+          if (permissionDenied) _buildPermissionError(context),
           const SizedBox(height: 20),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/locationSearch')
-                    .then((value) async {
-                  print(value);
-                  if (value != null) {
-                    if (checkLocationData()) {
-                      try {
-                        print(userState.userId);
-                        var result = await locationNotifier
-                            .addLocation(userState.userId!);
-                        if (result != null) {
-                          widget.pageController.nextPage(
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.easeIn,
-                          );
-                        }
-                      } catch (e) {
-                        if (e.toString().contains('Connection refused')) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(CustomSnackBar().build(context));
-                        } else {
-                          print(e.toString());
-                        }
-                      }
-                    } else {
-                      var permision = await ref
-                          .read(locationNotifierProvider.notifier)
-                          .handleLocationPermission();
-                      if (!permision) {
-                        setState(() {
-                          permisionDenied = true;
-                        });
-                      }
-                    }
-                    // widget.pageController.nextPage(
-                    //   duration: Duration(milliseconds: 300),
-                    //   curve: Curves.easeIn,
-                    // );
-                  }
-                });
+                widget.pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeIn,
+                );
               },
               child: Text(
                 'Enter location manually',
@@ -195,7 +129,36 @@ class _LocationPageState extends ConsumerState<LocationPage> {
                     ?.copyWith(color: kAppPurple),
               ),
             ),
-          )
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPermissionError(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Location permission has been denied',
+            style:
+                Theme.of(context).textTheme.bodySmall!.copyWith(color: kAppRed),
+          ),
+          GestureDetector(
+            onTap: () => AppSettings.openAppSettings(
+              type: AppSettingsType.location,
+            ),
+            child: Text(
+              'Settings',
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: kAppBlack,
+                    fontWeight: FontWeight.w800,
+                    decoration: TextDecoration.underline,
+                  ),
+            ),
+          ),
         ],
       ),
     );

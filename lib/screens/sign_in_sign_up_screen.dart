@@ -50,7 +50,10 @@ class _SignInSignUpScreenState extends State<SignInSignUpScreen> {
                       },
                       child: Text(
                         'Create an account',
-                        style: Theme.of(context).textTheme.headlineSmall,
+                        style:
+                            Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  color: Colors.white,
+                                ),
                       ),
                     ),
                   ),

@@ -1,111 +1,112 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sociord/provider/location_provider.dart';
 import 'package:sociord/constants/color.dart';
-import 'package:uuid/uuid.dart';
-import 'package:http/http.dart' as http;
 import 'package:sociord/constants/ui.dart';
+import 'package:sociord/provider/location_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class LocationSearch extends ConsumerStatefulWidget {
-  final pageController;
+  final PageController? pageController;
   const LocationSearch({super.key, this.pageController});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _LocationSearchState();
+  ConsumerState<LocationSearch> createState() => _LocationSearchState();
 }
 
 class _LocationSearchState extends ConsumerState<LocationSearch> {
-  final _controller = TextEditingController();
-  var uuid = const Uuid();
-  String _sessionToken = '1234567890';
-  List<dynamic> _placeList = [];
-  String street = '';
-  String city = '';
-  String state = '';
-  String zipCode = '';
+  final TextEditingController _controller = TextEditingController();
+  final _uuid = const Uuid();
+  String _sessionToken = '123456';
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
-    _controller.addListener(() {
-      _onChanged();
-    });
+    _sessionToken = _uuid.v4();
+    _controller.addListener(_onSearchChanged);
   }
 
-  _onChanged() {
-    if (_sessionToken == null) {
-      setState(() {
-        _sessionToken = uuid.v4();
-      });
-    }
-    if (_controller.text.length > 2) {
+  @override
+  void dispose() {
+    _controller.removeListener(_onSearchChanged);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    print('hi');
+    final input = _controller.text.trim();
+    if (input.length > 2 && _sessionToken.isNotEmpty) {
       ref
           .read(locationNotifierProvider.notifier)
-          .getSuggestion(_controller.text, _sessionToken);
+          .getSuggestion(input, _sessionToken);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final locationState = ref.watch(locationNotifierProvider);
-    print(locationState.suggestions);
-    var height = MediaQuery.of(context).viewPadding.top;
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SizedBox(
-              height: height,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: "Search your location",
-                hintText: "Enter your location",
-                hintStyle: Theme.of(context).textTheme.bodyLarge,
-                labelStyle: Theme.of(context).textTheme.bodyLarge,
-                border: kTextFormFieldBorderStyles,
-                enabledBorder: kTextFormFieldBorderStyles,
-                suffixIcon: Icon(Icons.search),
-              ),
-              onChanged: (value) {},
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: locationState.suggestions != null
-                    ? locationState.suggestions!.length
-                    : 0,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Icon(Icons.location_on),
-                    title: Text(
-                      locationState.suggestions![index]['description'],
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    onTap: () async {
-                      // Handle the location selection here
-                      await ref
-                          .read(locationNotifierProvider.notifier)
-                          .fetchPlaceDetails(
-                              locationState.suggestions![index]['place_id']);
+    final suggestions = locationState.suggestions ?? [];
 
-                      // ignore: use_build_context_synchronously
-                      context.pop(
-                          ref.watch(locationNotifierProvider).location?.city);
-                    },
-                  );
-                },
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+          child: Column(
+            children: [
+              TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  labelText: "Search your location",
+                  hintText: "Enter your location",
+                  hintStyle: Theme.of(context).textTheme.bodyLarge,
+                  labelStyle: Theme.of(context).textTheme.bodyLarge,
+                  border: kTextFormFieldBorderStyles,
+                  enabledBorder: kTextFormFieldBorderStyles,
+                  suffixIcon: const Icon(Icons.search),
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              Expanded(
+                child: suggestions.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No suggestions yet',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: suggestions.length,
+                        itemBuilder: (context, index) {
+                          final suggestion = suggestions[index];
+                          return ListTile(
+                            leading: const Icon(Icons.location_on),
+                            title: Text(
+                              suggestion['description'],
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            onTap: () async {
+                              final placeId = suggestion['place_id'];
+                              await ref
+                                  .read(locationNotifierProvider.notifier)
+                                  .fetchPlaceDetails(placeId);
+
+                              final selectedCity = ref
+                                  .read(locationNotifierProvider)
+                                  .location
+                                  ?.city;
+
+                              if (context.canPop()) {
+                                context.pop(selectedCity);
+                              }
+                            },
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
