@@ -8,6 +8,8 @@ import 'package:country_code_picker/country_code_picker.dart';
 
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/constants/ui.dart';
+import 'package:sociord/provider/auth_notifier.dart';
+import 'package:sociord/provider/onboarding_provider.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/utils/routes.dart';
 import 'package:sociord/provider/user_provider.dart';
@@ -194,8 +196,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             //     setState(() => userNotFound = false);
             //   }
             // },
-            onPressed: () {
-              context.go(profileRoute);
+            onPressed: () async {
+              // ✅ Wait to update onboarding + auth states FIRST
+              final onboarding = ref.read(onboardingProvider.notifier);
+              final auth = ref.read(authProvider.notifier);
+
+              onboarding.setDone(true);
+              await auth.login(token: 'fake_token');
+
+              // ✅ Wait until both states are visible to router
+              await Future.delayed(Duration(milliseconds: 100));
+
+              // ✅ Now navigate
+              if (context.mounted) context.go(profileRoute);
             },
             child: isLoading
                 ? kLoadingIndicator

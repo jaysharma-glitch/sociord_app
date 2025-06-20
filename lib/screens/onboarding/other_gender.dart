@@ -1,57 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sociord/provider/user_provider.dart';
-import 'package:sociord/constants/ui.dart';
 import 'package:sociord/constants/color.dart';
+import 'package:sociord/constants/ui.dart';
+import 'package:sociord/provider/user_provider.dart';
 
 class OtherGenderDes extends ConsumerStatefulWidget {
   final PageController? pageController;
   const OtherGenderDes({super.key, this.pageController});
 
   @override
-  _OtherGenderDesState createState() => _OtherGenderDesState();
+  ConsumerState<OtherGenderDes> createState() => _OtherGenderDesState();
 }
 
 class _OtherGenderDesState extends ConsumerState<OtherGenderDes> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _identity = TextEditingController();
-  late TextEditingController _pronouns = TextEditingController();
+  late final TextEditingController _identityController;
+  late final TextEditingController _pronounsController;
 
   @override
   void initState() {
     super.initState();
-    final userState = ref.read(userNotifierProvider);
-    _identity = TextEditingController(
-        text: userState.gender == 'Others' ? '' : userState.gender);
-    _pronouns = TextEditingController(text: userState.otherIdenty);
+    final user = ref.read(userNotifierProvider);
+    _identityController = TextEditingController(
+      text: user.gender == 'Others' ? '' : user.gender,
+    );
+    _pronounsController = TextEditingController(text: user.otherIdenty);
   }
 
   @override
   void dispose() {
-    _identity.dispose();
-    _pronouns.dispose();
+    _identityController.dispose();
+    _pronounsController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final userNotifier = ref.read(userNotifierProvider.notifier);
-    final userState = ref.watch(userNotifierProvider);
+    final user = ref.watch(userNotifierProvider);
 
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 100),
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'How do you identify?',
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
+              Text('How do you identify?',
+                  style: Theme.of(context).textTheme.headlineLarge),
               const SizedBox(height: 5),
               Text(
                 'We want to express yourself freely',
@@ -60,94 +59,74 @@ class _OtherGenderDesState extends ConsumerState<OtherGenderDes> {
                       fontSize: 15,
                     ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                'Type in how you identify',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 30),
+              Text('Type in how you identify',
+                  style: Theme.of(context).textTheme.bodyMedium),
+              const SizedBox(height: 10),
               TextFormField(
-                controller: _identity,
+                controller: _identityController,
                 decoration: InputDecoration(
                   labelText: 'Trans Man',
                   labelStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: kAppLightBlack, fontWeight: FontWeight.w300),
+                        color: kAppLightBlack,
+                        fontWeight: FontWeight.w300,
+                      ),
                   border: kTextFormFieldBorderStyles,
                   enabledBorder: kTextFormFieldBorderStyles,
-                  suffixIcon: _identity.text.isNotEmpty
-                      ? const Icon(
-                          Icons.check_circle_rounded,
-                          color: kAppDarkGreen,
-                          size: 20,
-                        )
+                  suffixIcon: _identityController.text.isNotEmpty
+                      ? const Icon(Icons.check_circle_rounded,
+                          color: kAppDarkGreen, size: 20)
                       : null,
                 ),
-                onChanged: (value) {
-                  userNotifier.setGender(value);
-                },
+                onChanged: userNotifier.setGender,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your first name';
+                    return 'Please enter your identity';
                   }
                   return null;
                 },
-                style: TextStyle(color: Colors.black),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                'What are you pronouns?',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 25),
+              Text('What are your pronouns?',
+                  style: Theme.of(context).textTheme.bodyMedium),
+              const SizedBox(height: 10),
               TextFormField(
-                controller: _pronouns,
+                controller: _pronounsController,
                 decoration: InputDecoration(
                   labelText: 'She/Her',
                   labelStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: kAppLightBlack, fontWeight: FontWeight.w300),
+                        color: kAppLightBlack,
+                        fontWeight: FontWeight.w300,
+                      ),
                   border: kTextFormFieldBorderStyles,
                   enabledBorder: kTextFormFieldBorderStyles,
-                  suffixIcon: _pronouns.text.isNotEmpty
-                      ? const Icon(
-                          Icons.check_circle_rounded,
-                          color: kAppDarkGreen,
-                          size: 20,
-                        )
+                  suffixIcon: _pronounsController.text.isNotEmpty
+                      ? const Icon(Icons.check_circle_rounded,
+                          color: kAppDarkGreen, size: 20)
                       : null,
                 ),
-                onChanged: (value) {
-                  userNotifier.setOtherIdenty(value);
-                },
+                onChanged: userNotifier.setOtherIdenty,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your last name';
+                    return 'Please enter your pronouns';
                   }
                   return null;
                 },
               ),
-              const SizedBox(
-                height: 40,
-              ),
+              const SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () async {
+                  onPressed: () {
                     if (_formKey.currentState?.validate() ?? false) {
-                      // Navigator.pop(context, userState.otherIdenty);
-                      context.pop(userState.otherIdenty);
+                      context.pop(user.otherIdenty);
                     }
                   },
                   child: Text(
                     'Continue',
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          color: Colors.white,
+                        ),
                   ),
                 ),
               ),

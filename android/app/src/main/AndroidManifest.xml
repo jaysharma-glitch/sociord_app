@@ -2,6 +2,7 @@
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
   <uses-permission android:name="android.permission.RECEIVE_SMS"/>
     <application
+        android:usesCleartextTraffic="true"
         android:label="sociord"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

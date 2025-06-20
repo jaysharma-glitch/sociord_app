@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sociord/provider/user_provider.dart';
+import 'package:sociord/utils/routes.dart';
 
 import 'package:sociord/widgets/custom_snack_bar.dart';
 import 'package:sociord/widgets/option_selector.dart';
@@ -61,36 +63,40 @@ class _GenderSelectionState extends ConsumerState<UserType> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  try {
-                    setState(() {
-                      isLoading = true;
-                    });
+                  // try {
+                  //   setState(() {
+                  //     isLoading = true;
+                  //   });
 
-                    var result = await userNotifier.completeOnboarding();
+                  //   var result = await userNotifier.completeOnboarding();
 
-                    setState(() {
-                      isLoading = false;
-                    });
-                    if (result != null) {
-                      Navigator.pushNamed(context, '/final-onboarding');
-                    }
-                  } catch (e) {
-                    setState(() {
-                      isLoading = false;
-                    });
-                    if (e.toString().contains('Connection refused')) {
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(CustomSnackBar().build(context));
-                    } else {
-                      print(e.toString());
-                    }
-                  }
+                  //   setState(() {
+                  //     isLoading = false;
+                  //   });
+                  //   if (result != null) {
+                  //     context.go(finalOnboardingRoute);
+                  //   }
+                  // } catch (e) {
+                  //   setState(() {
+                  //     isLoading = false;
+                  //   });
+                  //   if (e.toString().contains('Connection refused')) {
+                  //     ScaffoldMessenger.of(context)
+                  //         .showSnackBar(CustomSnackBar().build(context));
+                  //   } else {
+                  //     print(e.toString());
+                  //   }
+                  // }
+                  context.go(finalOnboardingRoute);
                 },
                 child: isLoading
                     ? kLoadingIndicator
                     : Text(
                         'Contnue',
-                        style: Theme.of(context).textTheme.headlineSmall,
+                        style:
+                            Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  color: Colors.white,
+                                ),
                       ),
               ),
             ),

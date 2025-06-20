@@ -2,67 +2,56 @@ import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 
-class ProfileHighlight extends StatefulWidget {
-  final isHighlightExpanded;
-  final profileType;
-  final dropDownClick;
-  const ProfileHighlight(
-      {super.key,
-      required this.isHighlightExpanded,
-      required this.profileType,
-      required this.dropDownClick});
+class ProfileHighlight extends StatelessWidget {
+  final bool isExpanded;
+  final String profileType;
+  final VoidCallback onToggle;
 
-  @override
-  State<ProfileHighlight> createState() => _ProfileHighlightState();
-}
+  const ProfileHighlight({
+    super.key,
+    required this.isExpanded,
+    required this.profileType,
+    required this.onToggle,
+  });
 
-class _ProfileHighlightState extends State<ProfileHighlight> {
   @override
   Widget build(BuildContext context) {
+    final isCreator = profileType == 'Creator';
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: () {
-            setState(() {
-              widget.dropDownClick();
-            });
-          },
+          onTap: onToggle,
           child: Row(
             children: [
               Text(
-                widget.profileType == 'Creator'
-                    ? 'Arjun’s Showcase'
-                    : 'Arjun’s Highlights',
+                isCreator ? 'Arjun’s Showcase' : 'Arjun’s Highlights',
                 style: Theme.of(context)
                     .textTheme
                     .headlineSmall!
                     .copyWith(fontSize: 15, color: kAppPurple),
               ),
-              const SizedBox(
-                width: 5,
-              ),
+              const SizedBox(width: 5),
               AnimatedRotation(
-                duration:
-                    Duration(milliseconds: 100), // Smooth rotation animation
-                turns: widget.isHighlightExpanded
-                    ? 0.5
-                    : 0, // 0.5 means 180-degree rotation
+                duration: const Duration(milliseconds: 100),
+                turns: isExpanded ? 0.5 : 0,
                 child: Image.asset(kChevronDownPurple),
               ),
             ],
           ),
         ),
         AnimatedContainer(
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          height: widget.isHighlightExpanded ? null : 0,
+          height: isExpanded ? null : 0,
           child: Visibility(
-            visible: widget.isHighlightExpanded,
+            visible: isExpanded,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.profileType == 'Creator'
+                  isCreator
                       ? 'Highlight your key projects and brand collaborations right here'
                       : 'Capture your life’s highlights and relive your best moments.',
                   style: Theme.of(context).textTheme.bodySmall,
@@ -78,21 +67,18 @@ class _ProfileHighlightState extends State<ProfileHighlight> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.add,
-                        size: 35,
-                        color: kAppPurple,
-                      ),
+                      const Icon(Icons.add, size: 35, color: kAppPurple),
                       Center(
                         child: Text(
-                            widget.profileType == 'Creator'
-                                ? 'Promoted a Brand? Share it here'
-                                : 'Got Married? \nShare the memory',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(fontSize: 9, color: kAppPurple)),
+                          isCreator
+                              ? 'Promoted a Brand? Share it here'
+                              : 'Got Married? \nShare the memory',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontSize: 9, color: kAppPurple),
+                        ),
                       ),
                     ],
                   ),

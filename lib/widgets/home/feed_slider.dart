@@ -25,7 +25,6 @@ class _FeedSliderState extends State<FeedSlider> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Title with Collapse Icon
         Row(
           children: [
             Padding(
@@ -34,8 +33,8 @@ class _FeedSliderState extends State<FeedSlider> {
                   text: 'Buddy feed',
                   gradient: const LinearGradient(
                     colors: [kAppPurple, kAppOrange],
-                    begin: Alignment.topLeft, // Gradient starts from top-left
-                    end: Alignment.bottomRight, // Gradient ends at bottom-right
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                   style: Theme.of(context)
                       .textTheme
@@ -43,12 +42,10 @@ class _FeedSliderState extends State<FeedSlider> {
                       .copyWith(fontSize: 15, fontWeight: FontWeight.w600)),
             ),
             const SizedBox(width: 5),
-            Icon(Icons.expand_less, color: Colors.deepPurple, size: 18),
+            const Icon(Icons.expand_less, color: Colors.deepPurple, size: 18),
           ],
         ),
         const SizedBox(height: 5),
-
-        // Horizontal Scrolling List
         SizedBox(
           height: 155,
           child: ListView.builder(
@@ -71,13 +68,11 @@ class _FeedSliderState extends State<FeedSlider> {
           : const EdgeInsets.symmetric(horizontal: 2.0),
       child: Column(
         children: [
-          // Stack for Layering Gradient Border & Image
           Stack(
             alignment: Alignment.center,
             children: [
-              // Gradient Border Layer
               Container(
-                width: 113, // Slightly larger than image for border effect
+                width: 113,
                 height: 133,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
@@ -88,11 +83,8 @@ class _FeedSliderState extends State<FeedSlider> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-
-              // Image Layer with White Background Border
               Container(
-                padding: const EdgeInsets.all(2.5), // Thickness of border
-
+                padding: const EdgeInsets.all(2.5),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.asset(
@@ -105,10 +97,7 @@ class _FeedSliderState extends State<FeedSlider> {
               ),
             ],
           ),
-
           const SizedBox(height: 0),
-
-          // Username
           Text(
             name,
             style: Theme.of(context).textTheme.bodySmall!.copyWith(

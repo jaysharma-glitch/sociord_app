@@ -19,7 +19,7 @@ class _SetUsernameWidgetState extends ConsumerState<SetUsernameWidget> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
 
-  bool isButtonVisible = false;
+  bool isButtonVisible = true;
   bool isLoading = false;
   bool userNameExists = false;
   bool userNameAccepted = false;
@@ -61,7 +61,7 @@ class _SetUsernameWidgetState extends ConsumerState<SetUsernameWidget> {
       final isAvailable = await userNotifier.checkUserName(value);
       final regex = RegExp(r'^[a-zA-Z0-9_.]+$');
 
-      if (!isAvailable) {
+      if (!isAvailable!) {
         setState(() {
           userNameExists = true;
           userNameAccepted = false;
@@ -251,7 +251,10 @@ class _SetUsernameWidgetState extends ConsumerState<SetUsernameWidget> {
                     }
                   },
                   child: Text('Continue',
-                      style: Theme.of(context).textTheme.headlineSmall),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                color: Colors.white,
+                              )),
                 ),
               ),
           ],

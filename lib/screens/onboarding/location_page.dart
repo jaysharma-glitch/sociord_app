@@ -27,6 +27,10 @@ class _LocationPageState extends ConsumerState<LocationPage> {
       ref.read(locationNotifierProvider).location != null;
 
   Future<void> _handleAutoLocation() async {
+    widget.pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
     setState(() => permissionDenied = false);
     final locationNotifier = ref.read(locationNotifierProvider.notifier);
     await locationNotifier.getCurrentPosition();

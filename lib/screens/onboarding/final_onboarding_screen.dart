@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sociord/screens/sign_in_sign_up_screen.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/utils/routes.dart';
@@ -27,7 +26,13 @@ class _FinalOnboardingScreenState extends State<FinalOnboardingScreen> {
   @override
   void initState() {
     super.initState();
-    startTimer();
+    timer = Timer.periodic(const Duration(seconds: 2), (_) {
+      if (mounted) {
+        setState(() {
+          onboardData.add(onboardData.removeAt(0));
+        });
+      }
+    });
   }
 
   @override
@@ -36,50 +41,27 @@ class _FinalOnboardingScreenState extends State<FinalOnboardingScreen> {
     super.dispose();
   }
 
-  void startTimer() {
-    timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
-      setState(() {
-        var firstElement = onboardData.first;
-
-        // Add it to the end
-        onboardData.add(firstElement);
-
-        // Remove the first element
-        onboardData.removeAt(0);
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             AbsorbPointer(
               child: cs.CarouselSlider(
                 options: cs.CarouselOptions(
-                    aspectRatio: 1.5, viewportFraction: 0.48),
+                  aspectRatio: 1.5,
+                  viewportFraction: 0.48,
+                ),
                 items: onboardData.map((item) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                              20.0), // Adjust the radius as needed
-                          child: Image.asset(
-                            item['image']!,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      );
-                    },
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(item['image']!, fit: BoxFit.fill),
+                    ),
                   );
                 }).toList(),
               ),
@@ -94,43 +76,38 @@ class _FinalOnboardingScreenState extends State<FinalOnboardingScreen> {
                     'Wow! Your profile looks awesome.',
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
-                  const SizedBox(
-                    height: 25,
-                  ),
+                  const SizedBox(height: 25),
                   Text(
                     'As we add our finishing touches, we’d love to get to know you better. \nWe\'ve got 5 personality-based questions lined up for you.',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(fontWeight: FontWeight.w400),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.w400,
+                        ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Text(
                     'This is our way of making sure your experience here is nothing short of fantastic',
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.w800, color: kAppPurple),
+                          fontWeight: FontWeight.w800,
+                          color: kAppPurple,
+                        ),
                   ),
                   const SizedBox(height: 40),
-                  Center(
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Navigator.pushNamed(context, '/personality-flow');
-                          context.push(personalityFlowRoute);
-                        },
-                        child: Text(
-                          'Continue',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.push(personalityFlowRoute);
+                      },
+                      child: Text(
+                        'Continue',
+                        style:
+                            Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  color: Colors.white,
+                                ),
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),

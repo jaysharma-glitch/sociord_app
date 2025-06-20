@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+// screens
 import 'package:sociord/screens/add/add_screen.dart';
 import 'package:sociord/screens/explore/explore_screen.dart';
 import 'package:sociord/screens/home/home_screen.dart';
@@ -14,9 +16,11 @@ import 'package:sociord/screens/sign_in_sign_up_screen.dart';
 import 'package:sociord/screens/onboarding/sign_up_flow.dart';
 import 'package:sociord/screens/personality/personality_flow.dart';
 import 'package:sociord/screens/profile_pic.dart';
+
+// shell
 import 'package:sociord/widgets/scaffold_with_nav.dart';
 
-// ✅ Define route names as constants
+/// ---------- Path constants ----------
 const String signInSignUpRoute = '/signInSignup';
 const String signUpFlowRoute = '/signUp';
 const String locationSearchRoute = '/locationSearch';
@@ -31,88 +35,94 @@ const String homeRoute = '/home';
 const String addRoute = '/add';
 const String exploreRoute = '/explore';
 const String profileRoute = '/profile';
-const String becomeACreator = '/profile/becomeACreator';
 
-// ✅ Configure GoRouter with centralized route names
+/// Root navigator key (needed for full-screen dialogs, etc.)
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
-final GoRouter router = GoRouter(
-  initialLocation: signInSignUpRoute,
-  navigatorKey: rootNavigatorKey,
-  routes: [
-    GoRoute(
-      path: signInSignUpRoute,
-      builder: (context, state) => const SignInSignUpScreen(),
-    ),
-    GoRoute(
-      path: signUpFlowRoute,
-      builder: (context, state) => const SignUpFlow(),
-    ),
-    GoRoute(
-      path: locationSearchRoute,
-      builder: (context, state) => const LocationSearch(),
-    ),
-    GoRoute(
-      path: finalOnboardingRoute,
-      builder: (context, state) => const FinalOnboardingScreen(),
-    ),
-    GoRoute(
-      path: personalityFlowRoute,
-      builder: (context, state) => const PersonalityFlow(),
-    ),
-    GoRoute(
-      path: profilePicRoute,
-      builder: (context, state) => const ProfilePicScreen(),
-    ),
-    GoRoute(
-      path: otherGenderRoute,
-      builder: (context, state) => const OtherGenderDes(),
-    ),
-    GoRoute(
-      path: loginRoute,
-      builder: (context, state) => LoginScreen(),
-    ),
-    GoRoute(
-      path: loginOtpRoute,
-      builder: (context, state) => LogInOtpScreen(),
-    ),
-    StatefulShellRoute.indexedStack(
-      builder: (context, state, child) {
-        return ScaffoldWithNavBar(child: child);
-      },
-      branches: [
-        StatefulShellBranch(routes: [
-          GoRoute(
-            path: homeRoute,
-            builder: (context, state) =>
-                HomeScreen(key: ScaffoldWithNavBar.homeScreenKey),
-          ),
-        ]),
-        StatefulShellBranch(routes: [
-          GoRoute(
-            path: addRoute,
-            builder: (context, state) => const AddScreen(),
-          ),
-        ]),
-        StatefulShellBranch(routes: [
-          GoRoute(
-            path: exploreRoute,
-            builder: (context, state) => const ExploreScreen(),
-          ),
-        ]),
-        StatefulShellBranch(routes: [
-          GoRoute(
-            path: profileRoute,
-            builder: (context, state) => ProfileScreen(),
-            routes: [
-              GoRoute(
-                path: 'becomeACreator', // Nested route
-                parentNavigatorKey: rootNavigatorKey,
-                builder: (context, state) => const BecomeACreator(),
-              ),
-            ],
-          ),
-        ]),
-      ],
-    ),
-  ],
-);
+
+/// ---------- All application routes (consumed by goRouterProvider) ----------
+final List<RouteBase> appRoutes = [
+  /// ---- Auth / onboarding ----
+  GoRoute(
+    path: signInSignUpRoute,
+    builder: (_, __) => const SignInSignUpScreen(),
+  ),
+  GoRoute(
+    path: signUpFlowRoute,
+    builder: (_, __) => const SignUpFlow(),
+  ),
+  GoRoute(
+    path: locationSearchRoute,
+    builder: (_, __) => const LocationSearch(),
+  ),
+  GoRoute(
+    path: finalOnboardingRoute,
+    builder: (_, __) => const FinalOnboardingScreen(),
+  ),
+  GoRoute(
+    path: personalityFlowRoute,
+    builder: (_, __) => const PersonalityFlow(),
+  ),
+  GoRoute(
+    path: profilePicRoute,
+    builder: (_, __) => const ProfilePicScreen(),
+  ),
+  GoRoute(
+    path: otherGenderRoute,
+    builder: (_, __) => const OtherGenderDes(),
+  ),
+  GoRoute(
+    path: loginRoute,
+    builder: (_, __) => LoginScreen(),
+  ),
+  GoRoute(
+    path: loginOtpRoute,
+    builder: (_, __) => LogInOtpScreen(),
+  ),
+
+  /// ---- Bottom-nav shell with four branches ----
+  StatefulShellRoute.indexedStack(
+    parentNavigatorKey: rootNavigatorKey,
+    builder: (_, __, navigationShell) =>
+        ScaffoldWithNavBar(navigationShell: navigationShell),
+    branches: [
+      /// Home
+      StatefulShellBranch(routes: [
+        GoRoute(
+          path: homeRoute,
+          builder: (_, __) => HomeScreen(key: ScaffoldWithNavBar.homeScreenKey),
+        ),
+      ]),
+
+      /// Add
+      StatefulShellBranch(routes: [
+        GoRoute(
+          path: addRoute,
+          builder: (_, __) => const AddScreen(),
+        ),
+      ]),
+
+      /// Explore
+      StatefulShellBranch(routes: [
+        GoRoute(
+          path: exploreRoute,
+          builder: (_, __) => const ExploreScreen(),
+        ),
+      ]),
+
+      /// Profile + nested “Become a Creator”
+      StatefulShellBranch(routes: [
+        GoRoute(
+          path: profileRoute,
+          builder: (_, __) => ProfileScreen(),
+          routes: [
+            GoRoute(
+              path: 'becomeACreator',
+              parentNavigatorKey: rootNavigatorKey,
+              builder: (_, __) => const BecomeACreator(),
+            ),
+          ],
+        ),
+      ]),
+    ],
+  ),
+];

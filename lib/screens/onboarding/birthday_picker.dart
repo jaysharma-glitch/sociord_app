@@ -99,7 +99,9 @@ class _BirthdayPickerState extends ConsumerState<BirthdayPicker> {
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
                     'Done',
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          color: Colors.white,
+                        ),
                   ),
                 ),
               ),
@@ -170,7 +172,9 @@ class _BirthdayPickerState extends ConsumerState<BirthdayPicker> {
                 },
                 child: Text(
                   'Continue',
-                  style: Theme.of(context).textTheme.headlineSmall,
+                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                        color: Colors.white,
+                      ),
                 ),
               ),
             ),

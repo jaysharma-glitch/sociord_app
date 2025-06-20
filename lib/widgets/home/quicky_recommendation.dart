@@ -22,126 +22,99 @@ class HomePageRecommendation extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Row: Title + Dismiss Button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: type == "Quickies"
-                ? Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween, // ✅ Better alignment
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          text: "Thought you'd like these quickies, ",
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: kAppPurple,
-                              ),
-                          children: [
-                            TextSpan(
-                              text: userName,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .copyWith(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    color: kAppPurple,
-                                  ),
-                            )
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: onDismiss,
-                        child: Text("Dismiss",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(
-                                    fontSize: 12,
-                                    color: kAppBlack,
-                                    fontWeight: FontWeight.w400,
-                                    decoration: TextDecoration.underline,
-                                    decorationThickness: 1)),
-                      ),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Some Creators you might like",
-                        style:
-                            Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: kAppPurple,
-                                ),
-                      ),
-                      GestureDetector(
-                        onTap: onDismiss,
-                        child: Text("Dismiss",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(
-                                    fontSize: 12,
-                                    color: kAppBlack,
-                                    fontWeight: FontWeight.w400,
-                                    decoration: TextDecoration.underline,
-                                    decorationThickness: 1)),
-                      ),
-                    ],
-                  ),
-          ),
-
+          _buildHeader(context),
           const SizedBox(height: 10),
+          _buildRecommendationList(context),
+        ],
+      ),
+    );
+  }
 
-          // Recommendation Cards
-          SizedBox(
-            height: 160,
-            child: recommendations.length <= 3
-                ? Center(
-                    // ✅ Center if items ≤ 3
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: recommendations
-                          .map((item) => _buildRecommendationCard(
-                                item["image"]!,
-                                item["title"]!,
-                                context,
-                              ))
-                          .toList(),
-                    ),
-                  )
-                : ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemCount: recommendations.length,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    itemBuilder: (context, index) {
-                      return _buildRecommendationCard(
-                          recommendations[index]["image"]!,
-                          recommendations[index]["title"]!,
-                          context);
-                    },
+  Widget _buildHeader(BuildContext context) {
+    final title = type == "Quickies"
+        ? RichText(
+            text: TextSpan(
+              text: "Thought you'd like these quickies, ",
+              style: _headerTextStyle(context),
+              children: [
+                TextSpan(
+                  text: userName,
+                  style: _headerTextStyle(context),
+                ),
+              ],
+            ),
+          )
+        : Text(
+            "Some Creators you might like",
+            style: _headerTextStyle(context),
+          );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          title,
+          GestureDetector(
+            onTap: onDismiss,
+            child: Text(
+              "Dismiss",
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    fontSize: 12,
+                    color: kAppBlack,
+                    fontWeight: FontWeight.w400,
+                    decoration: TextDecoration.underline,
+                    decorationThickness: 1,
                   ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  // Helper method to build each recommendation card
-  Widget _buildRecommendationCard(String imagePath, String title, context) {
+  Widget _buildRecommendationList(BuildContext context) {
+    final isShort = recommendations.length <= 3;
+
+    return SizedBox(
+      height: 160,
+      child: isShort
+          ? Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: recommendations
+                    .map((item) => _buildCard(
+                          imagePath: item["image"]!,
+                          title: item["title"]!,
+                          context: context,
+                        ))
+                    .toList(),
+              ),
+            )
+          : ListView.builder(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: recommendations.length,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              itemBuilder: (context, index) {
+                final item = recommendations[index];
+                return _buildCard(
+                  imagePath: item["image"]!,
+                  title: item["title"]!,
+                  context: context,
+                );
+              },
+            ),
+    );
+  }
+
+  Widget _buildCard({
+    required String imagePath,
+    required String title,
+    required BuildContext context,
+  }) {
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 6.0), // ✅ Balanced spacing
+      padding: const EdgeInsets.symmetric(horizontal: 6.0),
       child: Column(
         children: [
           ClipRRect(
@@ -156,17 +129,27 @@ class HomePageRecommendation extends StatelessWidget {
           const SizedBox(height: 2),
           SizedBox(
             width: 110,
-            child: Text(title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                    )),
+            child: Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+            ),
           ),
         ],
       ),
     );
+  }
+
+  TextStyle _headerTextStyle(BuildContext context) {
+    return Theme.of(context).textTheme.headlineSmall!.copyWith(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          color: kAppPurple,
+        );
   }
 }

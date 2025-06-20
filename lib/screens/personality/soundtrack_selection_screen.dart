@@ -1,70 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sociord/models/personality_trait_model.dart';
 import 'package:sociord/provider/user_personality_provider.dart';
-import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/widgets/custom_snack_bar.dart';
 import 'package:sociord/widgets/grid_selector.dart';
 import 'package:sociord/widgets/skeleton/skeleton_loader_personality.dart';
 
 class SoundtrackSelectionScreen extends ConsumerStatefulWidget {
   final PageController pageController;
-  final List selectedOptions;
+  final List<bool> selectedOptions;
 
-  SoundtrackSelectionScreen(
-      {super.key, required this.pageController, required this.selectedOptions});
+  const SoundtrackSelectionScreen({
+    super.key,
+    required this.pageController,
+    required this.selectedOptions,
+  });
 
   @override
-  _SoundtrackSelectionScreenState createState() =>
+  ConsumerState<SoundtrackSelectionScreen> createState() =>
       _SoundtrackSelectionScreenState();
 }
 
 class _SoundtrackSelectionScreenState
     extends ConsumerState<SoundtrackSelectionScreen> {
-  Future<List<dynamic>> fetchSoundtrackOptions() async {
-    var userPersonalityNotifier =
-        ref.read(userPersonalityNotifierProvider.notifier);
-    try {
-      var result = await userPersonalityNotifier.getSoundtrackOptions();
+  late final Future<List<dynamic>> _soundtrackOptionsFuture;
 
-      return result;
-    } catch (e) {
-      if (e.toString().contains('Connection refused')) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(CustomSnackBar().build(context));
-      } else {
-        print(e.toString());
-      }
-      return [];
-    }
+  @override
+  void initState() {
+    super.initState();
+    _soundtrackOptionsFuture = ref
+        .read(userPersonalityNotifierProvider.notifier)
+        .getSoundtrackOptions();
   }
-
-  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    var userPersonalityNotifier =
-        ref.read(userPersonalityNotifierProvider.notifier);
-    var userState = ref.watch(userNotifierProvider);
     return FutureBuilder<List<dynamic>>(
-      future: fetchSoundtrackOptions(), // Fetch data from API
+      future: _soundtrackOptionsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-              child: SkeletonLoaderPersonality()); // Show loader while waiting
+          return Center(child: SkeletonLoaderPersonality());
         } else if (snapshot.hasError) {
           return Center(
-              child: Text('Error loading soundtracks')); // Handle errors
+              child: Text(
+            'Failed to load options',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ));
         } else if (snapshot.hasData) {
-          // Replace kSoundtrackOptions with the API data
-          List<dynamic> soundtrackOptions = snapshot.data!;
+          final options = snapshot.data!;
           return GridSelector(
             isFirst: true,
-            list: soundtrackOptions, // Use the API data here
+            list: options,
             selectedList: widget.selectedOptions,
           );
         } else {
-          return Center(child: Text('No soundtracks available'));
+          return const Center(child: Text('No options available'));
         }
       },
     );
