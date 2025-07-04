@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
 
 const kTextFormFieldBorderStyles = OutlineInputBorder(
-    borderSide: BorderSide(color: kBorderGreay),
-    borderRadius: BorderRadius.all(Radius.circular(10.0)));
+  borderSide: BorderSide(color: kBorderGreay),
+  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+);
 
 const kLoadingIndicator = SizedBox(
   height: 25,

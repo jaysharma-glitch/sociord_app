@@ -13,6 +13,7 @@ class CommentItem extends StatelessWidget {
   final VoidCallback? onToggleReplies;
   final bool showReplies;
   final bool isReply;
+  final VoidCallback? onLike;
 
   const CommentItem({
     super.key,
@@ -21,79 +22,88 @@ class CommentItem extends StatelessWidget {
     this.onToggleReplies,
     this.showReplies = false,
     this.isReply = false,
+    this.onLike,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: isReply
-          ? const EdgeInsets.only(left: 65, right: 15, top: 8, bottom: 8)
-          : const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Column(
+      padding:
+          isReply
+              ? const EdgeInsets.only(left: 65, right: 15, top: 8, bottom: 8)
+              : const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              _buildProfileImage(),
-              const SizedBox(width: 10),
-              Expanded(child: _buildCommentContent(context)),
-              const SizedBox(width: 10),
-              _buildLikes(context),
-            ],
+          // Avatar (left)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Image.asset(
+              comment.profile,
+              height: isReply ? 40 : 50,
+              width: isReply ? 30 : 40,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 10),
+          // Right: Column with header, text, actions
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Username/timestamp/like/heart row
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      comment.username,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      comment.timeAgo,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Colors.grey,
+                        fontSize: 10,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${comment.likes}',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall!.copyWith(fontSize: 12),
+                    ),
+                    const SizedBox(width: 3),
+                    GestureDetector(
+                      onTap: () {
+                        if (onLike != null) onLike!();
+                      },
+                      child: Icon(
+                        comment.likedByMe
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: comment.likedByMe ? kAppPurple : Colors.grey,
+                        size: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                if (comment.type == CommentType.text && comment.text != null)
+                  _buildRichCommentText(context, comment.text!)
+                else if (comment.type == CommentType.gif &&
+                    comment.gifUrl != null)
+                  Image.network(comment.gifUrl!, height: 150),
+                SizedBox(height: isReply ? 5 : 10),
+                _buildActions(context),
+              ],
+            ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildProfileImage() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(5),
-      child: Image.asset(
-        comment.profile,
-        height: isReply ? 40 : 50,
-        width: isReply ? 30 : 40,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  Widget _buildCommentContent(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildHeader(context),
-        const SizedBox(height: 2),
-        if (comment.type == CommentType.text && comment.text != null)
-          _buildRichCommentText(context, comment.text!)
-        else if (comment.type == CommentType.gif && comment.gifUrl != null)
-          Image.network(comment.gifUrl!, height: 150),
-        SizedBox(height: isReply ? 5 : 10),
-        _buildActions(context),
-      ],
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          comment.username,
-          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                fontSize: isReply ? 10 : 12,
-                color: kAppBlack,
-              ),
-        ),
-        const SizedBox(width: 15),
-        Text(
-          comment.timeAgo,
-          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: kAppBlack.withOpacity(0.8),
-                fontWeight: FontWeight.w400,
-                fontSize: 9,
-              ),
-        ),
-      ],
     );
   }
 
@@ -105,9 +115,9 @@ class CommentItem extends StatelessWidget {
           child: Text(
             "Respond",
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 10,
-                ),
+              fontWeight: FontWeight.w700,
+              fontSize: 10,
+            ),
           ),
         ),
         const SizedBox(width: 30),
@@ -119,30 +129,14 @@ class CommentItem extends StatelessWidget {
                   ? "Hide replies"
                   : "View ${comment.replies.length} replies",
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: kAppPurple,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 10,
-                    decoration: TextDecoration.underline,
-                    decorationThickness: 1,
-                  ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildLikes(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          comment.likes.toString(),
-          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: kAppPurple,
                 fontWeight: FontWeight.w400,
                 fontSize: 10,
+                decoration: TextDecoration.underline,
+                decorationThickness: 1,
               ),
-        ),
-        const SizedBox(width: 5),
-        const Icon(Icons.favorite, color: kAppPurple, size: 14),
+            ),
+          ),
       ],
     );
   }
@@ -164,20 +158,16 @@ class CommentItem extends StatelessWidget {
           TextSpan(
             text: mention,
             style: _mentionTextStyle(context),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                print("Navigate to \$mention's profile");
-              },
+            recognizer:
+                TapGestureRecognizer()
+                  ..onTap = () {
+                    print("Navigate to \$mention's profile");
+                  },
           ),
         );
       } else if (chunk.startsWith('<<<')) {
         final plain = chunk.replaceAll('<<<', '').replaceAll('>>>', '');
-        spans.add(
-          TextSpan(
-            text: plain,
-            style: _commentTextStyle(context),
-          ),
-        );
+        spans.add(TextSpan(text: plain, style: _commentTextStyle(context)));
       }
     });
 
@@ -186,16 +176,16 @@ class CommentItem extends StatelessWidget {
 
   TextStyle _mentionTextStyle(BuildContext context) {
     return Theme.of(context).textTheme.bodySmall!.copyWith(
-          fontWeight: FontWeight.w700,
-          color: kAppPurple,
-          fontSize: isReply ? 10 : 12,
-        );
+      fontWeight: FontWeight.w700,
+      color: kAppPurple,
+      fontSize: isReply ? 10 : 12,
+    );
   }
 
   TextStyle _commentTextStyle(BuildContext context) {
     return Theme.of(context).textTheme.bodySmall!.copyWith(
-          fontWeight: FontWeight.w400,
-          fontSize: isReply ? 10 : 12,
-        );
+      fontWeight: FontWeight.w400,
+      fontSize: isReply ? 10 : 12,
+    );
   }
 }

@@ -7,6 +7,7 @@ class CommentInputBar extends StatelessWidget {
   final String replyingTo;
   final VoidCallback onSend;
   final VoidCallback onGifTap;
+  final FocusNode focusNode;
 
   const CommentInputBar({
     super.key,
@@ -14,6 +15,7 @@ class CommentInputBar extends StatelessWidget {
     required this.replyingTo,
     required this.onSend,
     required this.onGifTap,
+    required this.focusNode,
   });
 
   @override
@@ -44,20 +46,23 @@ class CommentInputBar extends StatelessWidget {
                   reverse: true,
                   child: TextField(
                     controller: controller,
+                    focusNode: focusNode,
                     decoration: InputDecoration(
-                      hintText: replyingTo.isEmpty
-                          ? 'Your Comment'
-                          : 'Replying to @$replyingTo',
+                      hintText:
+                          replyingTo.isEmpty
+                              ? 'Your Comment'
+                              : 'Replying to @$replyingTo',
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
                     ),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(fontWeight: FontWeight.w400),
-                    maxLines: null,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      fontWeight: FontWeight.w400,
+                    ),
+                    maxLines: 1,
                     minLines: 1,
-                    keyboardType: TextInputType.multiline,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (_) => onSend(),
                   ),
                 ),
               ),
