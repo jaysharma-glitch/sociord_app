@@ -11,8 +11,15 @@ import 'package:sociord/widgets/home/comment_input_bar.dart';
 import 'package:giphy_get/giphy_get.dart';
 import 'package:http/http.dart' as http;
 import 'package:sociord/constants/ui.dart';
+import 'package:sociord/widgets/skeleton/skeleton_loader_comments.dart';
+import 'package:sociord/widgets/sociord_draggable_sheet.dart';
 
 class CommentsBottomSheet extends StatefulWidget {
+  final VoidCallback? onOpen;
+  final VoidCallback? onClose;
+  const CommentsBottomSheet({Key? key, this.onOpen, this.onClose})
+    : super(key: key);
+
   @override
   State<CommentsBottomSheet> createState() => _CommentsBottomSheetState();
 }
@@ -25,6 +32,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   final Map<int, bool> expandedReplies = {};
   final ScrollController _scrollController = ScrollController();
   final Map<int, GlobalKey> _commentKeys = {};
+  final ScrollController _commentsScrollController = ScrollController();
 
   final List<CommentModel> allComments = [
     CommentModel(
@@ -86,18 +94,31 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   static const int repliesBatchSize = 10;
   final Map<int, int> repliesShown = {}; // index -> number of replies shown
   final Map<int, bool> isLoadingReplies = {}; // index -> loading state
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _loadInitialComments();
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && widget.onOpen != null) {
+        debugPrint('CommentsBottomSheet: onOpen called');
+        widget.onOpen!();
+      }
+    });
   }
 
   void _loadInitialComments() {
     setState(() {
-      comments = allComments.take(commentsBatchSize).toList();
-      hasMore = allComments.length > commentsBatchSize;
+      isLoading = true;
+    });
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        comments = allComments.take(commentsBatchSize).toList();
+        hasMore = allComments.length > commentsBatchSize;
+        isLoading = false;
+      });
     });
   }
 
@@ -131,6 +152,10 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
     _commentController.dispose();
     _scrollController.dispose();
     _commentFocusNode.dispose();
+    if (widget.onClose != null) {
+      debugPrint('CommentsBottomSheet: onClose called');
+      widget.onClose!();
+    }
     super.dispose();
   }
 
@@ -142,317 +167,310 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.88,
-      minChildSize: 0.88,
+    return SociordDraggableSheet(
+      minChildSize: 0.6,
       maxChildSize: 0.88,
-      expand: false,
-      builder:
-          (_, controller) => Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              children: [
-                _buildDragHandle(),
-                _buildTitle(context),
-                _buildCommentsList(controller),
-                SafeArea(
-                  top: false,
-                  bottom: false,
-                  minimum: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom - 30,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (replyingTo.isNotEmpty && replyingToIndex != null) ...[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 4,
+      onOpen: widget.onOpen,
+      onClose: widget.onClose,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            _buildDragHandle(),
+            _buildTitle(context),
+            _buildCommentsList(_commentsScrollController),
+            SafeArea(
+              top: false,
+              bottom: false,
+              minimum: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom - 30,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (replyingTo.isNotEmpty && replyingToIndex != null) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 4,
+                      ),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: Image.asset(
+                              comments[replyingToIndex!].profile,
+                              height: 28,
+                              width: 28,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(5),
-                                child: Image.asset(
-                                  comments[replyingToIndex!].profile,
-                                  height: 28,
-                                  width: 28,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Replying to ${comments[replyingToIndex!].username}',
-                                  style: Theme.of(context).textTheme.bodySmall!
-                                      .copyWith(fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.close, size: 18),
-                                onPressed: () {
-                                  setState(() {
-                                    replyingTo = '';
-                                    replyingToIndex = null;
-                                    _commentController.clear();
-                                  });
-                                },
-                              ),
-                            ],
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Replying to ${comments[replyingToIndex!].username}',
+                              style: Theme.of(context).textTheme.bodySmall!
+                                  .copyWith(fontWeight: FontWeight.w500),
+                            ),
                           ),
-                        ),
-                      ],
-                      CommentInputBar(
-                        controller: _commentController,
-                        replyingTo: replyingTo,
-                        onSend: () {
-                          final text = _commentController.text.trim();
-                          if (text.isEmpty) return;
-                          setState(() {
-                            if (replyingToIndex != null) {
-                              final parent = comments[replyingToIndex!];
-                              parent.replies.add(
-                                CommentModel(
-                                  profile: kCreator1,
-                                  username: 'current_user',
-                                  timeAgo: 'now',
-                                  text: text,
-                                  likes: 0,
-                                  likedByMe: false,
-                                  type: CommentType.text,
-                                ),
-                              );
-                              repliesShown[replyingToIndex!] =
-                                  (repliesShown[replyingToIndex!] ??
-                                      repliesBatchSize) +
-                                  1;
-                              replyingTo = '';
-                              replyingToIndex = null;
-                            } else {
-                              comments.insert(
-                                0,
-                                CommentModel(
-                                  profile: kCreator1,
-                                  username: 'current_user',
-                                  timeAgo: 'now',
-                                  text: text,
-                                  likes: 0,
-                                  likedByMe: false,
-                                  type: CommentType.text,
-                                ),
-                              );
+                          IconButton(
+                            icon: Icon(Icons.close, size: 18),
+                            onPressed: () {
+                              setState(() {
+                                replyingTo = '';
+                                replyingToIndex = null;
+                                _commentController.clear();
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  CommentInputBar(
+                    controller: _commentController,
+                    replyingTo: replyingTo,
+                    onSend: () {
+                      final text = _commentController.text.trim();
+                      if (text.isEmpty) return;
+                      setState(() {
+                        if (replyingToIndex != null) {
+                          final parent = comments[replyingToIndex!];
+                          parent.replies.add(
+                            CommentModel(
+                              profile: kCreator1,
+                              username: 'current_user',
+                              timeAgo: 'now',
+                              text: text,
+                              likes: 0,
+                              likedByMe: false,
+                              type: CommentType.text,
+                            ),
+                          );
+                          repliesShown[replyingToIndex!] =
+                              (repliesShown[replyingToIndex!] ??
+                                  repliesBatchSize) +
+                              1;
+                          replyingTo = '';
+                          replyingToIndex = null;
+                        } else {
+                          comments.insert(
+                            0,
+                            CommentModel(
+                              profile: kCreator1,
+                              username: 'current_user',
+                              timeAgo: 'now',
+                              text: text,
+                              likes: 0,
+                              likedByMe: false,
+                              type: CommentType.text,
+                            ),
+                          );
+                        }
+                        _commentController.clear();
+                      });
+                    },
+                    onGifTap: () async {
+                      final gif = await showModalBottomSheet<GiphyGif?>(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) {
+                          final double keyboardHeight =
+                              MediaQuery.of(context).viewInsets.bottom;
+                          TextEditingController searchController =
+                              TextEditingController();
+                          ValueNotifier<List<GiphyGif>> gifsNotifier =
+                              ValueNotifier<List<GiphyGif>>([]);
+                          ValueNotifier<bool> isSearching = ValueNotifier<bool>(
+                            false,
+                          );
+
+                          // Fetch trending GIFs initially
+                          fetchTrendingGifs().then(
+                            (gifs) => gifsNotifier.value = gifs,
+                          );
+
+                          void searchGifs(String query) async {
+                            if (query.isEmpty) {
+                              gifsNotifier.value = await fetchTrendingGifs();
+                              return;
                             }
-                            _commentController.clear();
-                          });
-                        },
-                        onGifTap: () async {
-                          final gif = await showModalBottomSheet<GiphyGif?>(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) {
-                              final double keyboardHeight =
-                                  MediaQuery.of(context).viewInsets.bottom;
-                              TextEditingController searchController =
-                                  TextEditingController();
-                              ValueNotifier<List<GiphyGif>> gifsNotifier =
-                                  ValueNotifier<List<GiphyGif>>([]);
-                              ValueNotifier<bool> isSearching =
-                                  ValueNotifier<bool>(false);
+                            isSearching.value = true;
+                            final client = GiphyClient(
+                              apiKey: kGiphyApiKey,
+                              randomId: 'sociord-user',
+                            );
+                            final search = await client.search(
+                              query,
+                              limit: 30,
+                            );
+                            gifsNotifier.value = search.data;
+                            isSearching.value = false;
+                          }
 
-                              // Fetch trending GIFs initially
-                              fetchTrendingGifs().then(
-                                (gifs) => gifsNotifier.value = gifs,
-                              );
-
-                              void searchGifs(String query) async {
-                                if (query.isEmpty) {
-                                  gifsNotifier.value =
-                                      await fetchTrendingGifs();
-                                  return;
-                                }
-                                isSearching.value = true;
-                                final client = GiphyClient(
-                                  apiKey: kGiphyApiKey,
-                                  randomId: 'sociord-user',
-                                );
-                                final search = await client.search(
-                                  query,
-                                  limit: 30,
-                                );
-                                gifsNotifier.value = search.data;
-                                isSearching.value = false;
-                              }
-
-                              return Container(
-                                height: keyboardHeight + 450,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20),
+                          return Container(
+                            height: keyboardHeight + 450,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 6.0,
+                                    right: 6.0,
+                                    top: 12.0,
                                   ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 6.0,
-                                        right: 6.0,
-                                        top: 12.0,
+                                  child: SizedBox(
+                                    height: 36,
+                                    child: TextField(
+                                      controller: searchController,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium!.copyWith(
+                                        fontSize: 14,
+                                        color: kAppBlack,
                                       ),
-                                      child: SizedBox(
-                                        height: 36,
-                                        child: TextField(
-                                          controller: searchController,
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium!.copyWith(
-                                            fontSize: 14,
-                                            color: kAppBlack,
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                              vertical: 8,
+                                              horizontal: 10,
+                                            ),
+                                        hintText: 'Search GIFs',
+                                        hintStyle: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium!.copyWith(
+                                          fontSize: 12,
+                                          color: kAppBlack,
+                                        ),
+                                        prefixIcon: Icon(
+                                          Icons.search,
+                                          size: 18,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
                                           ),
-                                          decoration: InputDecoration(
-                                            isDense: true,
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                  vertical: 8,
-                                                  horizontal: 10,
-                                                ),
-                                            hintText: 'Search GIFs',
-                                            hintStyle: Theme.of(
-                                              context,
-                                            ).textTheme.bodyMedium!.copyWith(
-                                              fontSize: 12,
-                                              color: kAppBlack,
-                                            ),
-                                            prefixIcon: Icon(
-                                              Icons.search,
-                                              size: 18,
-                                            ),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                          ),
-                                          onChanged:
-                                              (query) => searchGifs(query),
                                         ),
                                       ),
+                                      onChanged: (query) => searchGifs(query),
                                     ),
-                                    Expanded(
-                                      child: ValueListenableBuilder<bool>(
-                                        valueListenable: isSearching,
-                                        builder: (context, searching, _) {
-                                          if (searching) {
-                                            return Center(
-                                              child: kLoadingIndicator,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ValueListenableBuilder<bool>(
+                                    valueListenable: isSearching,
+                                    builder: (context, searching, _) {
+                                      if (searching) {
+                                        return Center(child: kLoadingIndicator);
+                                      }
+                                      return ValueListenableBuilder<
+                                        List<GiphyGif>
+                                      >(
+                                        valueListenable: gifsNotifier,
+                                        builder: (context, gifs, _) {
+                                          if (gifs.isEmpty) {
+                                            return const Center(
+                                              child: Text('No GIFs found'),
                                             );
                                           }
-                                          return ValueListenableBuilder<
-                                            List<GiphyGif>
-                                          >(
-                                            valueListenable: gifsNotifier,
-                                            builder: (context, gifs, _) {
-                                              if (gifs.isEmpty) {
-                                                return const Center(
-                                                  child: Text('No GIFs found'),
-                                                );
-                                              }
-                                              return GridView.builder(
-                                                padding: const EdgeInsets.all(
-                                                  8,
+                                          return GridView.builder(
+                                            padding: const EdgeInsets.all(8),
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 2,
+                                                  crossAxisSpacing: 8,
+                                                  mainAxisSpacing: 8,
+                                                  childAspectRatio: 1,
                                                 ),
-                                                gridDelegate:
-                                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                                      crossAxisCount: 2,
-                                                      crossAxisSpacing: 8,
-                                                      mainAxisSpacing: 8,
-                                                      childAspectRatio: 1,
-                                                    ),
-                                                itemCount: gifs.length,
-                                                itemBuilder: (context, index) {
-                                                  final gif = gifs[index];
-                                                  return GestureDetector(
-                                                    onTap:
-                                                        () => Navigator.of(
-                                                          context,
-                                                        ).pop(gif),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            10,
-                                                          ),
-                                                      child: Image.network(
-                                                        gif
-                                                                .images
-                                                                ?.fixedWidth
-                                                                ?.url ??
-                                                            '',
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
+                                            itemCount: gifs.length,
+                                            itemBuilder: (context, index) {
+                                              final gif = gifs[index];
+                                              return GestureDetector(
+                                                onTap:
+                                                    () => Navigator.of(
+                                                      context,
+                                                    ).pop(gif),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Image.network(
+                                                    gif
+                                                            .images
+                                                            ?.fixedWidth
+                                                            ?.url ??
+                                                        '',
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
                                               );
                                             },
                                           );
                                         },
-                                      ),
-                                    ),
-                                  ],
+                                      );
+                                    },
+                                  ),
                                 ),
-                              );
-                            },
+                              ],
+                            ),
                           );
-                          if (gif != null) {
-                            setState(() {
-                              if (replyingToIndex != null) {
-                                comments[replyingToIndex!].replies.add(
-                                  CommentModel(
-                                    profile: kCreator1,
-                                    username: 'current_user',
-                                    timeAgo: 'now',
-                                    gifUrl: gif.images?.original?.url,
-                                    likes: 0,
-                                    likedByMe: false,
-                                    type: CommentType.gif,
-                                  ),
-                                );
-                                repliesShown[replyingToIndex!] =
-                                    (repliesShown[replyingToIndex!] ??
-                                        repliesBatchSize) +
-                                    1;
-                                replyingTo = '';
-                                replyingToIndex = null;
-                              } else {
-                                comments.insert(
-                                  0,
-                                  CommentModel(
-                                    profile: kCreator1,
-                                    username: 'current_user',
-                                    timeAgo: 'now',
-                                    gifUrl: gif.images?.original?.url,
-                                    likes: 0,
-                                    likedByMe: false,
-                                    type: CommentType.gif,
-                                  ),
-                                );
-                              }
-                              _commentController.clear();
-                            });
-                          }
                         },
-                        focusNode: _commentFocusNode,
-                      ),
-                    ],
+                      );
+                      if (gif != null) {
+                        setState(() {
+                          if (replyingToIndex != null) {
+                            comments[replyingToIndex!].replies.add(
+                              CommentModel(
+                                profile: kCreator1,
+                                username: 'current_user',
+                                timeAgo: 'now',
+                                gifUrl: gif.images?.original?.url,
+                                likes: 0,
+                                likedByMe: false,
+                                type: CommentType.gif,
+                              ),
+                            );
+                            repliesShown[replyingToIndex!] =
+                                (repliesShown[replyingToIndex!] ??
+                                    repliesBatchSize) +
+                                1;
+                            replyingTo = '';
+                            replyingToIndex = null;
+                          } else {
+                            comments.insert(
+                              0,
+                              CommentModel(
+                                profile: kCreator1,
+                                username: 'current_user',
+                                timeAgo: 'now',
+                                gifUrl: gif.images?.original?.url,
+                                likes: 0,
+                                likedByMe: false,
+                                type: CommentType.gif,
+                              ),
+                            );
+                          }
+                          _commentController.clear();
+                        });
+                      }
+                    },
+                    focusNode: _commentFocusNode,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -478,6 +496,9 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   }
 
   Widget _buildCommentsList(ScrollController controller) {
+    if (isLoading) {
+      return const Expanded(child: SkeletonLoaderComments());
+    }
     return Expanded(
       child: Column(
         children: [

@@ -26,53 +26,53 @@ const kSoundtrackOptions = [
   {
     'image': kMusic1,
     'title': 'Feel-Good Hits',
-    'desc': 'Songs that lift your sprits and make you smile'
+    'desc': 'Songs that lift your sprits and make you smile',
   },
   {
     'image': kMusic2,
     'title': 'Lyric Lovers',
-    'desc': 'Songs where the words speak to you'
+    'desc': 'Songs where the words speak to you',
   },
   {
     'image': kMusic3,
     'title': 'Workout Anthems',
-    'desc': 'Songs that motivate you through ever rep'
+    'desc': 'Songs that motivate you through ever rep',
   },
   {
     'image': kMusic4,
     'title': 'Rock and Metal',
-    'desc': 'Music that is loud, proud and with an edge'
+    'desc': 'Music that is loud, proud and with an edge',
   },
   {'image': kMusic5, 'title': 'Eclectic Mix', 'desc': 'A bit of everything'},
   {
     'image': kMusic6,
     'title': 'Dance Floor Hits',
-    'desc': 'Beats that make you move'
+    'desc': 'Beats that make you move',
   },
   {
     'image': kMusic7,
     'title': 'Sensual Rhythms',
-    'desc': 'Slow, intimate, and emotionally charged'
+    'desc': 'Slow, intimate, and emotionally charged',
   },
   {
     'image': kMusic8,
     'title': 'Chill Beats',
-    'desc': 'Relaxing tunes for a laid-back day'
+    'desc': 'Relaxing tunes for a laid-back day',
   },
   {
     'image': kMusic9,
     'title': 'Instrumental Magic',
-    'desc': 'From classical to modern instrumental'
+    'desc': 'From classical to modern instrumental',
   },
   {
     'image': kMusic10,
     'title': 'Epic Soundtracks',
-    'desc': 'Cinematic scores to powerful anthems.'
+    'desc': 'Cinematic scores to powerful anthems.',
   },
   {
     'image': kMusic11,
     'title': 'World Explorer',
-    'desc': 'Music from around the globe'
+    'desc': 'Music from around the globe',
   },
 ];
 
@@ -93,53 +93,53 @@ const kWeekendOptions = [
   {
     'image': kWeekend1,
     'title': 'Play Sports',
-    'desc': 'You enjoy playing a game with friends'
+    'desc': 'You enjoy playing a game with friends',
   },
   {
     'image': kWeekend2,
     'title': 'Personal Fitness',
-    'desc': 'Any activity done for physical fitness'
+    'desc': 'Any activity done for physical fitness',
   },
   {
     'image': kWeekend3,
     'title': 'Mind Games',
-    'desc': 'Brain teasers and puzzles are your arena.'
+    'desc': 'Brain teasers and puzzles are your arena.',
   },
   {
     'image': kWeekend4,
     'title': 'Nature Adventures',
-    'desc': 'For those who love exploring the outdoors'
+    'desc': 'For those who love exploring the outdoors',
   },
   {
     'image': kWeekend5,
     'title': 'Creative Pursuits',
-    'desc': 'Painting, writing, playing music or anything artistic'
+    'desc': 'Painting, writing, playing music or anything artistic',
   },
   {
     'image': kWeekend6,
     'title': 'Gaming Glory',
-    'desc': 'You lose yourself in the world of video games'
+    'desc': 'You lose yourself in the world of video games',
   },
   {
     'image': kWeekend7,
     'title': 'Nightlife Navigator',
-    'desc': 'You\'re all about the nightlife scene.'
+    'desc': 'You\'re all about the nightlife scene.',
   },
   {'image': kWeekend8, 'title': 'Eclectic Mix', 'desc': 'A bit of everything'},
   {
     'image': kWeekend9,
     'title': 'Leisure Lover',
-    'desc': 'You enjoy relaxing activities Books, Series, etc'
+    'desc': 'You enjoy relaxing activities Books, Series, etc',
   },
   {
     'image': kWeekend10,
     'title': 'Sports Spectator',
-    'desc': 'You enjoy watching sports or sports documentary'
+    'desc': 'You enjoy watching sports or sports documentary',
   },
   {
     'image': kWeekend11,
     'title': 'World Explorer',
-    'desc': 'Participating in social causes & helping the community'
+    'desc': 'Participating in social causes & helping the community',
   },
 ];
 
@@ -155,32 +155,32 @@ const kConnectOptions = [
   {
     'image': kConnect1,
     'title': 'Life of the Party',
-    'desc': 'You are best in the midst of a bustling crowd'
+    'desc': 'You are best in the midst of a bustling crowd',
   },
   {
     'image': kConnect2,
     'title': 'Close-Knit Crew',
-    'desc': 'You enjoy meet ups with close friends and family'
+    'desc': 'You enjoy meet ups with close friends and family',
   },
   {
     'image': kConnect3,
     'title': 'Dynamic Duo',
-    'desc': 'Inseparable with your partner in crime'
+    'desc': 'Inseparable with your partner in crime',
   },
   {
     'image': kConnect4,
     'title': 'Solo Star',
-    'desc': 'You value and enjoy your alone time'
+    'desc': 'You value and enjoy your alone time',
   },
   {
     'image': kConnect5,
     'title': 'Social Guru',
-    'desc': 'You float from one group to another effortlessly'
+    'desc': 'You float from one group to another effortlessly',
   },
   {
     'image': kConnect6,
     'title': 'Digital Socialite',
-    'desc': 'Your friends are online - on social media, forums, etc'
+    'desc': 'Your friends are online - on social media, forums, etc',
   },
 ];
 
@@ -202,58 +202,58 @@ const kMovieOptions = [
   {
     'image': kMovie1,
     'title': 'Comedies',
-    'desc': 'Serious Laugh out Loud stuff here'
+    'desc': 'Serious Laugh out Loud stuff here',
   },
   {
     'image': kMovie2,
     'title': 'Thrillers & Suspense',
-    'desc': 'Edge-of-your-seat suspense that keeps you guessing.'
+    'desc': 'Edge-of-your-seat suspense that keeps you guessing.',
   },
   {
     'image': kMovie3,
     'title': 'Ghosts and Horror',
-    'desc': 'The supernatural, the eerie, the spooky & terrifying.'
+    'desc': 'The supernatural, the eerie, the spooky & terrifying.',
   },
   {
     'image': kMovie4,
     'title': 'Fantasy Worlds',
-    'desc': 'Where magic is real and adventure knows no bounds'
+    'desc': 'Where magic is real and adventure knows no bounds',
   },
   {
     'image': kMovie5,
     'title': 'True Stories',
-    'desc': 'Gripping documentaries to biopics or inspiration movies'
+    'desc': 'Gripping documentaries to biopics or inspiration movies',
   },
   {
     'image': kMovie6,
     'title': 'Romantic Stories',
-    'desc': 'Tales of love, laughter, and all the awkward moments'
+    'desc': 'Tales of love, laughter, and all the awkward moments',
   },
   {
     'image': kMovie7,
     'title': 'Stoner Comedies',
-    'desc': 'A unique blend of humor and hijinks'
+    'desc': 'A unique blend of humor and hijinks',
   },
   {
     'image': kMovie8,
     'title': 'Sci-Fi',
-    'desc': 'Stories that push the boundaries of imagination.'
+    'desc': 'Stories that push the boundaries of imagination.',
   },
   {
     'image': kMovie9,
     'title': 'Animation',
-    'desc': 'A celebration of art and storytelling'
+    'desc': 'A celebration of art and storytelling',
   },
   {'image': kMovie10, 'title': 'Steamy Movies', 'desc': 'Hot and rated A'},
   {
     'image': kMovie11,
     'title': 'Anime',
-    'desc': 'Complex characters, plots & breathtaking visuals'
+    'desc': 'Complex characters, plots & breathtaking visuals',
   },
   {
     'image': kMovie12,
     'title': 'Drama',
-    'desc': 'Complexities of life and the depth of human emotions'
+    'desc': 'Complexities of life and the depth of human emotions',
   },
 ];
 
@@ -268,27 +268,29 @@ const kPetOptions = [
   {
     'image': kPet1,
     'title': 'Aero Pup',
-    'desc': 'A playful loving puppy with wings, ready to soar through the skies'
+    'desc':
+        'A playful loving puppy with wings, ready to soar through the skies',
   },
   {
     'image': kPet2,
     'title': 'Bicerpent',
-    'desc': 'A strong ripped serpent with arms, both powerful and charming'
+    'desc': 'A strong ripped serpent with arms, both powerful and charming',
   },
   {
     'image': kPet3,
     'title': 'Sea Stallion',
-    'desc': 'A beautiful horse that can, swim and gallop with ease'
+    'desc': 'A beautiful horse that can, swim and gallop with ease',
   },
   {
     'image': kPet4,
     'title': 'Guinea Bunny',
-    'desc': 'An intelligent mix of guinea pig and rabbit, with captivating eyes'
+    'desc':
+        'An intelligent mix of guinea pig and rabbit, with captivating eyes',
   },
   {
     'image': kPet5,
     'title': 'Fiery Macaw',
-    'desc': 'A macaw made of fire that spits flames and radiates heat'
+    'desc': 'A macaw made of fire that spits flames and radiates heat',
   },
 ];
 
@@ -310,62 +312,64 @@ const kCategoryOptions = [
   {
     'image': kCategory1,
     'title': 'Health, Fitness & Wellness',
-    'desc': 'A playful loving puppy with wings, ready to soar through the skies'
+    'desc':
+        'A playful loving puppy with wings, ready to soar through the skies',
   },
   {
     'image': kCategory2,
     'title': 'Lifeestyle & Daily Living',
-    'desc': 'A strong ripped serpent with arms, both powerful and charming'
+    'desc': 'A strong ripped serpent with arms, both powerful and charming',
   },
   {
     'image': kCategory3,
     'title': 'Fashion, Beauty & Style',
-    'desc': 'A beautiful horse that can, swim and gallop with ease'
+    'desc': 'A beautiful horse that can, swim and gallop with ease',
   },
   {
     'image': kCategory4,
     'title': 'Travel & Adventure',
-    'desc': 'An intelligent mix of guinea pig and rabbit, with captivating eyes'
+    'desc':
+        'An intelligent mix of guinea pig and rabbit, with captivating eyes',
   },
   {
     'image': kCategory5,
     'title': 'Food, Cooking & Beverages',
-    'desc': 'A macaw made of fire that spits flames and radiates heat'
+    'desc': 'A macaw made of fire that spits flames and radiates heat',
   },
   {
     'image': kCategory6,
     'title': 'Entertainment & Pop Culture',
-    'desc': 'A macaw made of fire that spits flames and radiates heat'
+    'desc': 'A macaw made of fire that spits flames and radiates heat',
   },
   {
     'image': kCategory7,
     'title': 'Business, Finance & Career',
-    'desc': 'A macaw made of fire that spits flames and radiates heat'
+    'desc': 'A macaw made of fire that spits flames and radiates heat',
   },
   {
     'image': kCategory8,
     'title': 'Co-working & Collaboration',
-    'desc': 'A macaw made of fire that spits flames and radiates heat'
+    'desc': 'A macaw made of fire that spits flames and radiates heat',
   },
   {
     'image': kCategory9,
     'title': 'Technology & Innovation',
-    'desc': 'A macaw made of fire that spits flames and radiates heat'
+    'desc': 'A macaw made of fire that spits flames and radiates heat',
   },
   {
     'image': kCategory10,
     'title': 'Art Design & Creativity',
-    'desc': 'A macaw made of fire that spits flames and radiates heat'
+    'desc': 'A macaw made of fire that spits flames and radiates heat',
   },
   {
     'image': kCategory11,
     'title': 'Humor and Comedy',
-    'desc': 'A macaw made of fire that spits flames and radiates heat'
+    'desc': 'A macaw made of fire that spits flames and radiates heat',
   },
   {
     'image': kCategory12,
     'title': 'Musc',
-    'desc': 'A macaw made of fire that spits flames and radiates heat'
+    'desc': 'A macaw made of fire that spits flames and radiates heat',
   },
 ];
 
@@ -417,3 +421,10 @@ const kCreator8 = 'assets/images/creator/8.png';
 const kQuicky1 = 'assets/images/quickies/1.jpeg';
 const kQuicky2 = 'assets/images/quickies/2.jpeg';
 const kQuicky3 = 'assets/images/quickies/3.jpeg';
+
+// External share icons
+const kShareWhatsapp = 'assets/images/external/Whatsapp.png';
+const kShareSlack = 'assets/images/external/Slack.png';
+const kShareInstagram = 'assets/images/external/Instagram.png';
+const kShareMessenger = 'assets/images/external/Messenger.png';
+const kShareLink = 'assets/images/external/Link.png';

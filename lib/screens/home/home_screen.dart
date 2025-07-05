@@ -18,6 +18,7 @@ class HomeScreenState extends State<HomeScreen> {
   int _page = 1;
   bool _isLoadingMore = false;
   bool _alternateRecommendation = false;
+  bool _isSheetOpen = false;
 
   @override
   void initState() {
@@ -79,17 +80,18 @@ class HomeScreenState extends State<HomeScreen> {
       type: type,
       userName: 'Arjun',
       onDismiss: () {},
-      recommendations: type == 'Quicky'
-          ? const [
-              {"image": kQuicky1, "title": "My Royal Transformation"},
-              {"image": kQuicky2, "title": "Exploring Cheese"},
-              {"image": kQuicky3, "title": "The Modern Man’s..."},
-            ]
-          : const [
-              {"image": kCreator5, "title": "ninapetrov"},
-              {"image": kCreator6, "title": "fitandfearless"},
-              {"image": kCreator7, "title": "bechamonfield"},
-            ],
+      recommendations:
+          type == 'Quicky'
+              ? const [
+                {"image": kQuicky1, "title": "My Royal Transformation"},
+                {"image": kQuicky2, "title": "Exploring Cheese"},
+                {"image": kQuicky3, "title": "The Modern Man's..."},
+              ]
+              : const [
+                {"image": kCreator5, "title": "ninapetrov"},
+                {"image": kCreator6, "title": "fitandfearless"},
+                {"image": kCreator7, "title": "bechamonfield"},
+              ],
     );
   }
 
@@ -118,6 +120,11 @@ class HomeScreenState extends State<HomeScreen> {
         categoryIconImage: kUtensils,
         categoryColor: const Color(0xFFFA7921).withOpacity(0.5),
         isSubscribed: false,
+        onSheetOpen: () {
+          _setSheetOpen(true);
+          scrollPostIntoView(0);
+        },
+        onSheetClose: () => _setSheetOpen(false),
       ),
       PostWidget(
         profileImage: kCreator2,
@@ -135,6 +142,11 @@ class HomeScreenState extends State<HomeScreen> {
         categoryIconImage: kUtensils,
         categoryColor: const Color(0xFFFA2189).withOpacity(0.5),
         isSubscribed: true,
+        onSheetOpen: () {
+          _setSheetOpen(true);
+          scrollPostIntoView(1);
+        },
+        onSheetClose: () => _setSheetOpen(false),
       ),
       PostWidget(
         profileImage: kCreator3,
@@ -152,6 +164,11 @@ class HomeScreenState extends State<HomeScreen> {
         categoryIconImage: kUtensils,
         categoryColor: const Color(0xFF6621FA).withOpacity(0.5),
         isSubscribed: true,
+        onSheetOpen: () {
+          _setSheetOpen(true);
+          scrollPostIntoView(2);
+        },
+        onSheetClose: () => _setSheetOpen(false),
       ),
       PostWidget(
         profileImage: kCreator4,
@@ -169,39 +186,72 @@ class HomeScreenState extends State<HomeScreen> {
         categoryIconImage: kUtensils,
         categoryColor: const Color(0xFF9DD6FF).withOpacity(0.5),
         isSubscribed: false,
+        onSheetOpen: () {
+          _setSheetOpen(true);
+          scrollPostIntoView(3);
+        },
+        onSheetClose: () => _setSheetOpen(false),
       ),
     ];
 
     if (_shouldShowRecommendation(_page)) {
       posts.insert(
-          2,
-          _buildRecommendation(
-              _alternateRecommendation ? 'Quicky' : 'Creator'));
+        2,
+        _buildRecommendation(_alternateRecommendation ? 'Quicky' : 'Creator'),
+      );
       _alternateRecommendation = !_alternateRecommendation;
     }
 
     return posts;
   }
 
+  void _setSheetOpen(bool open) {
+    setState(() {
+      _isSheetOpen = open;
+    });
+  }
+
+  void scrollPostIntoView(int postIndex) {
+    // Calculate offset for the post (profile/meta at top)
+    // For simplicity, assume each post has a fixed height (or use a GlobalKey for more accuracy)
+    double offset = 0;
+    for (int i = 0; i < postIndex; i++) {
+      offset += 400; // Approximate post height, adjust as needed
+    }
+    _scrollController.animateTo(
+      offset,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeInOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Image.asset(kLogoText, height: 28),
-            const SizedBox(width: 5),
-            Image.asset(kChevronDown),
-          ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AnimatedSlide(
+          offset: _isSheetOpen ? const Offset(0, -1) : Offset.zero,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          child: AppBar(
+            title: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Image.asset(kLogoText, height: 28),
+                const SizedBox(width: 5),
+                Image.asset(kChevronDown),
+              ],
+            ),
+            backgroundColor: kAppWhite,
+            actions: [
+              GestureDetector(onTap: () {}, child: Image.asset(kNotification)),
+              const SizedBox(width: 15),
+              GestureDetector(onTap: () {}, child: Image.asset(kMessage)),
+              const SizedBox(width: 15),
+            ],
+          ),
         ),
-        backgroundColor: kAppWhite,
-        actions: [
-          GestureDetector(onTap: () {}, child: Image.asset(kNotification)),
-          const SizedBox(width: 15),
-          GestureDetector(onTap: () {}, child: Image.asset(kMessage)),
-          const SizedBox(width: 15),
-        ],
       ),
       body: RefreshIndicator(
         onRefresh: _onRefresh,
@@ -209,7 +259,31 @@ class HomeScreenState extends State<HomeScreen> {
           controller: _scrollController,
           itemCount: _feed.length + (_isLoadingMore ? 1 : 0),
           itemBuilder: (context, index) {
-            if (index < _feed.length) return _feed[index];
+            if (index < _feed.length) {
+              final widget = _feed[index];
+              if (widget is PostWidget) {
+                return PostWidget(
+                  profileImage: widget.profileImage,
+                  postType: widget.postType,
+                  username: widget.username,
+                  category: widget.category,
+                  postImage: widget.postImage,
+                  likes: widget.likes,
+                  comments: widget.comments,
+                  shares: widget.shares,
+                  title: widget.title,
+                  rating: widget.rating,
+                  views: widget.views,
+                  timeAgo: widget.timeAgo,
+                  categoryIconImage: widget.categoryIconImage,
+                  categoryColor: widget.categoryColor,
+                  isSubscribed: widget.isSubscribed,
+                  onSheetOpen: widget.onSheetOpen,
+                  onSheetClose: widget.onSheetClose,
+                );
+              }
+              return widget;
+            }
             return const Padding(
               padding: EdgeInsets.all(16),
               child: Center(child: CircularProgressIndicator()),

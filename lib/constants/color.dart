@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
-ColorScheme kColorScheme =
-    ColorScheme.fromSeed(seedColor: const Color(0xFF822FAF));
+ColorScheme kColorScheme = ColorScheme.fromSeed(
+  seedColor: const Color(0xFF822FAF),
+);
 
 ColorScheme kDarkColorScheme = ColorScheme.fromSeed(
-    brightness: Brightness.dark, seedColor: const Color(0xFF822FAF));
+  brightness: Brightness.dark,
+  seedColor: const Color(0xFF822FAF),
+);
 
 const kAppPurple = Color(0xFF822FAF);
 const kAppGreen = Color(0xFF9FC7AA);
@@ -20,3 +23,4 @@ const kAppLightPurple = Color(0xFFF3EAF7);
 const kAppOrange = Color(0xFFFF8200);
 const kDarkGreay = Color(0xFF7F8385);
 const kAppYellow = Color(0xFFFFBE0B);
+const kAppTeal = Color(0xFF06D6A0);
