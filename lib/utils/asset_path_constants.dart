@@ -428,3 +428,11 @@ const kShareSlack = 'assets/images/external/Slack.png';
 const kShareInstagram = 'assets/images/external/Instagram.png';
 const kShareMessenger = 'assets/images/external/Messenger.png';
 const kShareLink = 'assets/images/external/Link.png';
+
+// Buddy Feed images
+const String kBuddyFeed1 = 'assets/images/buddy-feed/1.png';
+const String kBuddyFeed2 = 'assets/images/buddy-feed/2.png';
+const String kBuddyFeed3 = 'assets/images/buddy-feed/3.png';
+const String kBuddyFeed4 = 'assets/images/buddy-feed/4.png';
+const String kBuddyFeed5 = 'assets/images/buddy-feed/5.png';
+const String kBuddyFeed6 = 'assets/images/buddy-feed/6.png';

@@ -4,6 +4,7 @@ import 'package:sociord/widgets/gradient_text.dart';
 import 'package:sociord/widgets/home/comments_bottom_sheet.dart';
 import 'package:sociord/widgets/home/ratings_bottom_sheet.dart';
 import 'package:sociord/widgets/home/share_bottom_sheet.dart';
+import 'package:sociord/utils/routes.dart';
 
 class PostWidget extends StatefulWidget {
   final String profileImage;

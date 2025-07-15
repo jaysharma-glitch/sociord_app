@@ -14,17 +14,40 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
-  final List<Widget> _feed = [];
   int _page = 1;
   bool _isLoadingMore = false;
   bool _alternateRecommendation = false;
   bool _isSheetOpen = false;
+  final List<GlobalKey> _postKeys = [];
+  // Helper to get or create a stable key for a post index
+  GlobalKey _getPostKey(int index) {
+    if (_postKeys.length > index) {
+      return _postKeys[index];
+    } else {
+      while (_postKeys.length <= index) {
+        _postKeys.add(GlobalKey());
+      }
+      return _postKeys[index];
+    }
+  }
+
+  bool showTopRecommendation = true;
+  Set<int> dismissedIntervalRecommendations = {};
+  List<Widget> _posts = [];
 
   @override
   void initState() {
     super.initState();
-    _initializeFeed();
     _scrollController.addListener(_onScroll);
+    _initializePosts();
+  }
+
+  void _initializePosts() {
+    _posts = _generateInitialPosts();
+    _page = 1;
+    _isLoadingMore = false;
+    _alternateRecommendation = false;
+    _postKeys.clear();
   }
 
   void scrollToTop() {
@@ -37,14 +60,6 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _initializeFeed() {
-    _feed.addAll([
-      const FeedSlider(),
-      _buildRecommendation('Quicky'),
-      ..._generatePostWidgets(),
-    ]);
-  }
-
   Future<void> _fetchMorePosts() async {
     if (_isLoadingMore) return;
 
@@ -52,7 +67,7 @@ class HomeScreenState extends State<HomeScreen> {
 
     await Future.delayed(const Duration(seconds: 2));
     setState(() {
-      _feed.addAll(_generatePostWidgets());
+      _posts.addAll(_generateMorePosts(_page));
       _isLoadingMore = false;
       _page++;
     });
@@ -61,9 +76,9 @@ class HomeScreenState extends State<HomeScreen> {
   Future<void> _onRefresh() async {
     await Future.delayed(const Duration(seconds: 2));
     setState(() {
-      _feed.clear();
-      _page = 1;
-      _initializeFeed();
+      _initializePosts();
+      showTopRecommendation = true;
+      dismissedIntervalRecommendations.clear();
     });
   }
 
@@ -75,23 +90,37 @@ class HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget _buildRecommendation(String type) {
+  Widget _buildTopRecommendation() {
     return HomePageRecommendation(
-      type: type,
+      type: 'Quicky',
       userName: 'Arjun',
-      onDismiss: () {},
-      recommendations:
-          type == 'Quicky'
-              ? const [
-                {"image": kQuicky1, "title": "My Royal Transformation"},
-                {"image": kQuicky2, "title": "Exploring Cheese"},
-                {"image": kQuicky3, "title": "The Modern Man's..."},
-              ]
-              : const [
-                {"image": kCreator5, "title": "ninapetrov"},
-                {"image": kCreator6, "title": "fitandfearless"},
-                {"image": kCreator7, "title": "bechamonfield"},
-              ],
+      onDismiss: () {
+        setState(() {
+          showTopRecommendation = false;
+        });
+      },
+      recommendations: const [
+        {"image": kQuicky1, "title": "My Royal Transformation"},
+        {"image": kQuicky2, "title": "Exploring Cheese"},
+        {"image": kQuicky3, "title": "The Modern Man's..."},
+      ],
+    );
+  }
+
+  Widget _buildIntervalRecommendation(int feedIndex) {
+    return HomePageRecommendation(
+      type: 'Creator',
+      userName: 'Arjun',
+      onDismiss: () {
+        setState(() {
+          dismissedIntervalRecommendations.add(feedIndex);
+        });
+      },
+      recommendations: const [
+        {"image": kCreator5, "title": "ninapetrov"},
+        {"image": kCreator6, "title": "fitandfearless"},
+        {"image": kCreator7, "title": "bechamonfield"},
+      ],
     );
   }
 
@@ -102,9 +131,10 @@ class HomeScreenState extends State<HomeScreen> {
     return false;
   }
 
-  List<Widget> _generatePostWidgets() {
+  List<Widget> _generateInitialPosts() {
     List<Widget> posts = [
       PostWidget(
+        key: _getPostKey(0),
         profileImage: kCreator1,
         postType: 'Quickies',
         username: "darius_nova1",
@@ -122,11 +152,12 @@ class HomeScreenState extends State<HomeScreen> {
         isSubscribed: false,
         onSheetOpen: () {
           _setSheetOpen(true);
-          scrollPostIntoView(0);
+          _scrollToPostByKey(_getPostKey(0));
         },
         onSheetClose: () => _setSheetOpen(false),
       ),
       PostWidget(
+        key: _getPostKey(1),
         profileImage: kCreator2,
         postType: 'Clips',
         username: "sofia_rivera88",
@@ -144,11 +175,24 @@ class HomeScreenState extends State<HomeScreen> {
         isSubscribed: true,
         onSheetOpen: () {
           _setSheetOpen(true);
-          scrollPostIntoView(1);
+          _scrollToPostByKey(_getPostKey(1));
         },
         onSheetClose: () => _setSheetOpen(false),
       ),
+    ];
+    return posts;
+  }
+
+  List<Widget> _generateMorePosts(int page) {
+    int startIdx = _postKeys.length;
+    List<Widget> morePosts = [];
+    if (_shouldShowRecommendation(page) &&
+        !dismissedIntervalRecommendations.contains(startIdx)) {
+      morePosts.add(_buildIntervalRecommendation(startIdx));
+    }
+    morePosts.addAll([
       PostWidget(
+        key: _getPostKey(startIdx),
         profileImage: kCreator3,
         postType: 'View the Collection',
         username: "hiddeninplainview",
@@ -166,11 +210,12 @@ class HomeScreenState extends State<HomeScreen> {
         isSubscribed: true,
         onSheetOpen: () {
           _setSheetOpen(true);
-          scrollPostIntoView(2);
+          _scrollToPostByKey(_getPostKey(startIdx));
         },
         onSheetClose: () => _setSheetOpen(false),
       ),
       PostWidget(
+        key: _getPostKey(startIdx + 1),
         profileImage: kCreator4,
         postType: 'Quickies',
         username: "quietlysneaky",
@@ -188,21 +233,12 @@ class HomeScreenState extends State<HomeScreen> {
         isSubscribed: false,
         onSheetOpen: () {
           _setSheetOpen(true);
-          scrollPostIntoView(3);
+          _scrollToPostByKey(_getPostKey(startIdx + 1));
         },
         onSheetClose: () => _setSheetOpen(false),
       ),
-    ];
-
-    if (_shouldShowRecommendation(_page)) {
-      posts.insert(
-        2,
-        _buildRecommendation(_alternateRecommendation ? 'Quicky' : 'Creator'),
-      );
-      _alternateRecommendation = !_alternateRecommendation;
-    }
-
-    return posts;
+    ]);
+    return morePosts;
   }
 
   void _setSheetOpen(bool open) {
@@ -211,85 +247,135 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void scrollPostIntoView(int postIndex) {
-    // Calculate offset for the post (profile/meta at top)
-    // For simplicity, assume each post has a fixed height (or use a GlobalKey for more accuracy)
-    double offset = 0;
-    for (int i = 0; i < postIndex; i++) {
-      offset += 400; // Approximate post height, adjust as needed
+  // Scroll to a post by its GlobalKey, retrying if context is not available
+  void _scrollToPostByKey(GlobalKey key, [int attempt = 0]) async {
+    final context = key.currentContext;
+    // Find the index of this key in _postKeys
+    final postIndex = _postKeys.indexOf(key);
+    // Adjust these values for your UI:
+    const double topOffset = 450; // SafeArea + AppBar + FeedSlider
+    const double postHeight = 210; // Estimated post height
+    if (context != null) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        alignment: (postIndex == 0 || postIndex == 1) ? 0.0 : 0.1,
+      );
+    } else if (attempt < 5) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      _scrollToPostByKey(key, attempt + 1);
+    } else if (postIndex == 0) {
+      // As a last resort, scroll to offset topOffset for the very first post
+      _scrollController.animateTo(
+        topOffset,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+      );
+    } else if (postIndex == 1) {
+      // As a last resort, scroll to offset topOffset + postHeight for the second post
+      _scrollController.animateTo(
+        topOffset + postHeight,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+      );
     }
-    _scrollController.animateTo(
-      offset,
-      duration: const Duration(milliseconds: 350),
-      curve: Curves.easeInOut,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AnimatedSlide(
-          offset: _isSheetOpen ? const Offset(0, -1) : Offset.zero,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          child: AppBar(
-            title: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Image.asset(kLogoText, height: 28),
-                const SizedBox(width: 5),
-                Image.asset(kChevronDown),
-              ],
+    // Build feedWidgets and keep a mapping from post key to its index in feedWidgets
+    List<Widget> feedWidgets = [
+      SizedBox(height: showTopRecommendation ? 55 : 20),
+      const FeedSlider(),
+    ];
+    if (showTopRecommendation) {
+      feedWidgets.add(_buildTopRecommendation());
+    }
+    // We'll build posts with a callback that will be set after feedWidgets is built
+    List<Widget> postsWithScroll = [];
+    Map<GlobalKey, int> postKeyToFeedIndex = {};
+    int feedIndex = feedWidgets.length;
+    for (var post in _posts) {
+      if (post is PostWidget) {
+        postKeyToFeedIndex[post.key as GlobalKey] = feedIndex;
+      }
+      postsWithScroll.add(post);
+      feedIndex++;
+    }
+    // Filter out dismissed interval recommendations
+    feedWidgets.addAll(
+      postsWithScroll.where((w) {
+        if (w is HomePageRecommendation && w.type == 'Creator') {
+          int idx = postsWithScroll.indexOf(w);
+          return !dismissedIntervalRecommendations.contains(idx);
+        }
+        return true;
+      }),
+    );
+
+    // No need to update onSheetOpen here; handled in _generateInitialPosts/_generateMorePosts
+
+    return SafeArea(
+      child: Stack(
+        children: [
+          RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: feedWidgets.length + (_isLoadingMore ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index < feedWidgets.length) {
+                  return feedWidgets[index];
+                } else {
+                  // Loading indicator at the end
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 32),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+              },
             ),
-            backgroundColor: kAppWhite,
-            actions: [
-              GestureDetector(onTap: () {}, child: Image.asset(kNotification)),
-              const SizedBox(width: 15),
-              GestureDetector(onTap: () {}, child: Image.asset(kMessage)),
-              const SizedBox(width: 15),
-            ],
           ),
-        ),
-      ),
-      body: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: ListView.builder(
-          controller: _scrollController,
-          itemCount: _feed.length + (_isLoadingMore ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index < _feed.length) {
-              final widget = _feed[index];
-              if (widget is PostWidget) {
-                return PostWidget(
-                  profileImage: widget.profileImage,
-                  postType: widget.postType,
-                  username: widget.username,
-                  category: widget.category,
-                  postImage: widget.postImage,
-                  likes: widget.likes,
-                  comments: widget.comments,
-                  shares: widget.shares,
-                  title: widget.title,
-                  rating: widget.rating,
-                  views: widget.views,
-                  timeAgo: widget.timeAgo,
-                  categoryIconImage: widget.categoryIconImage,
-                  categoryColor: widget.categoryColor,
-                  isSubscribed: widget.isSubscribed,
-                  onSheetOpen: widget.onSheetOpen,
-                  onSheetClose: widget.onSheetClose,
-                );
-              }
-              return widget;
-            }
-            return const Padding(
-              padding: EdgeInsets.all(16),
-              child: Center(child: CircularProgressIndicator()),
-            );
-          },
-        ),
+          // Restore custom AppBar overlay
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedSlide(
+              offset: _isSheetOpen ? const Offset(0, -2) : Offset.zero,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              child: SafeArea(
+                bottom: false,
+                child: Container(
+                  height: kToolbarHeight,
+                  color: kAppWhite,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(kLogoText, height: 28),
+                      const SizedBox(width: 5),
+                      Image.asset(kChevronDown),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Image.asset(kNotification),
+                      ),
+                      const SizedBox(width: 15),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Image.asset(kMessage),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

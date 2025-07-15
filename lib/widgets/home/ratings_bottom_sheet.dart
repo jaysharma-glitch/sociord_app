@@ -3,7 +3,6 @@ import 'package:sociord/constants/color.dart';
 import 'package:sociord/mock_data/ratings_mock_data.dart';
 import 'package:sociord/widgets/home/rating_list_item.dart';
 import 'package:sociord/widgets/skeleton/skeleton_loader_ratings.dart';
-import 'package:sociord/widgets/sociord_draggable_sheet.dart';
 
 class RatingsBottomSheet extends StatefulWidget {
   final VoidCallback? onOpen;
@@ -20,6 +19,7 @@ class _RatingsBottomSheetState extends State<RatingsBottomSheet> {
   final String currentUserId = '1'; // For mock/demo
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+  late DraggableScrollableController _draggableController;
 
   List<MockRating> ratings = [];
   bool isLoading = false;
@@ -33,14 +33,35 @@ class _RatingsBottomSheetState extends State<RatingsBottomSheet> {
   @override
   void initState() {
     super.initState();
+    _draggableController = DraggableScrollableController();
+    _draggableController.addListener(_handleSheetDrag);
     _fetchInitial();
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && widget.onOpen != null) {
-        debugPrint('RatingsBottomSheet: onOpen called');
         widget.onOpen!();
       }
     });
+  }
+
+  void _handleSheetDrag() {
+    final size = _draggableController.size;
+    if (size < 0.6) {
+      if (widget.onClose != null) {
+        widget.onClose!();
+      }
+      Navigator.of(context).maybePop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _draggableController.removeListener(_handleSheetDrag);
+    _draggableController.dispose();
+    _scrollController.dispose();
+    _searchController.dispose();
+    // Don't call onClose here as it can cause setState during disposal
+    super.dispose();
   }
 
   Future<void> _fetchInitial() async {
@@ -141,17 +162,6 @@ class _RatingsBottomSheetState extends State<RatingsBottomSheet> {
   }
 
   @override
-  void dispose() {
-    if (widget.onClose != null) {
-      debugPrint('RatingsBottomSheet: onClose called');
-      widget.onClose!();
-    }
-    _scrollController.dispose();
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final userOwn = ratings.firstWhere(
       (r) => r.userId == currentUserId,
@@ -168,274 +178,273 @@ class _RatingsBottomSheetState extends State<RatingsBottomSheet> {
             .where((r) => r.rating >= 3 || r.userId == currentUserId)
             .toList();
     final notEnough = showList.where((r) => r.rating >= 3).isEmpty;
-    return SociordDraggableSheet(
+    return DraggableScrollableSheet(
+      controller: _draggableController,
+      initialChildSize: 0.84,
       minChildSize: 0.6,
-      maxChildSize: 0.88,
-      onOpen: widget.onOpen,
-      onClose: widget.onClose,
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.88,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          children: [
-            const SizedBox(height: 12),
-            Container(
-              width: 43,
-              height: 2,
-              decoration: BoxDecoration(
-                color: kAppBlack,
-                borderRadius: BorderRadius.circular(2),
+      maxChildSize: 0.84,
+      snap: true,
+      snapSizes: [0.6, 0.84],
+      builder: (context, scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 43,
+                height: 2,
+                decoration: BoxDecoration(
+                  color: kAppBlack,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Ratings',
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-                color: kAppBlack,
+              const SizedBox(height: 12),
+              Text(
+                'Ratings',
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  color: kAppBlack,
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SizedBox(
-                height: 33,
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (_) => _onSearchChanged(),
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall!.copyWith(color: kAppBlack),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    hintText: 'Search usernames',
-                    hintStyle: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: kAppBlack.withOpacity(0.5),
-                    ),
-                    prefixIcon: Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 0,
-                      horizontal: 5,
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SizedBox(
+                  height: 33,
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (_) => _onSearchChanged(),
+                    style: Theme.of(context).textTheme.titleSmall,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Search usernames or names',
+                      hintStyle: Theme.of(context).textTheme.titleSmall!
+                          .copyWith(color: Colors.black.withOpacity(0.5)),
+                      prefixIcon: Icon(Icons.search),
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 0,
+                        horizontal: 5,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child:
-                  error != null
-                      ? Center(
-                        child: Text(
-                          error!,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyMedium!.copyWith(color: Colors.red),
-                        ),
-                      )
-                      : isLoading
-                      ? const SkeletonLoaderRatings()
-                      : notEnough
-                      ? Center(
-                        child: Text(
-                          'Not enough ratings to show',
-                          style: Theme.of(context).textTheme.bodyMedium!
-                              .copyWith(color: Colors.grey[700], fontSize: 16),
-                        ),
-                      )
-                      : ListView.builder(
-                        controller: _scrollController,
-                        itemCount: showList.length + (hasMore ? 1 : 0),
-                        itemBuilder: (context, idx) {
-                          if (idx == showList.length) {
-                            return Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Center(
-                                child: SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-                          final r = showList[idx];
-                          return RatingListItem(
-                            rating: r,
-                            isCurrentUser: r.userId == currentUserId,
-                            onDelete:
-                                r.userId == currentUserId
-                                    ? () async {
-                                      Feedback.forLongPress(context);
-                                      final confirm = await showDialog<bool>(
-                                        context: context,
-                                        builder:
-                                            (ctx) => AlertDialog(
-                                              title: Text(
-                                                'Delete your rating?',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.titleMedium,
-                                              ),
-                                              content: Text(
-                                                'Are you sure you want to delete your rating?',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyMedium,
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed:
-                                                      () => Navigator.pop(
-                                                        ctx,
-                                                        false,
-                                                      ),
-                                                  child: Text(
-                                                    'Cancel',
-                                                    style:
-                                                        Theme.of(
-                                                          context,
-                                                        ).textTheme.bodyMedium,
-                                                  ),
-                                                ),
-                                                TextButton(
-                                                  onPressed:
-                                                      () => Navigator.pop(
-                                                        ctx,
-                                                        true,
-                                                      ),
-                                                  child: Text(
-                                                    'Delete',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium!
-                                                        .copyWith(
-                                                          color: Colors.red,
-                                                        ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                      );
-                                      if (confirm == true) _onDeleteRating();
-                                    }
-                                    : null,
-                          );
-                        },
-                      ),
-            ),
-            Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
-                children: [
-                  if (userOwn.userImage.isNotEmpty)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: Image.asset(
-                        userOwn.userImage,
-                        height: 32,
-                        width: 32,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  else
-                    Icon(
-                      Icons.account_circle,
-                      size: 32,
-                      color: Colors.grey[400],
-                    ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (userRating > 0)
-                          Text(
-                            'Your Rating : ${getRatingDisplay(userRating).keyword.replaceFirst('Rated ', '')}',
+              const SizedBox(height: 8),
+              Expanded(
+                child:
+                    error != null
+                        ? Center(
+                          child: Text(
+                            error!,
                             style: Theme.of(
                               context,
-                            ).textTheme.bodyMedium!.copyWith(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              color: kAppBlack.withOpacity(0.75),
-                            ),
+                            ).textTheme.bodyMedium!.copyWith(color: Colors.red),
                           ),
-                        Row(
-                          children: List.generate(5, (i) {
-                            final idx = i + 1;
-                            final color =
-                                userRating == 0
-                                    ? Colors.grey[300]
-                                    : getRatingDisplay(userRating).color;
-                            return GestureDetector(
-                              onTap: () => setState(() => userRating = idx),
-                              child: Icon(
-                                idx <= userRating
-                                    ? Icons.star_rounded
-                                    : Icons.star_border_rounded,
-                                color:
-                                    idx <= userRating
-                                        ? color
-                                        : Colors.grey[300],
-                                size: 24,
-                              ),
+                        )
+                        : isLoading
+                        ? const SkeletonLoaderRatings()
+                        : ListView.builder(
+                          controller: scrollController,
+                          itemCount: showList.length + (hasMore ? 1 : 0),
+                          itemBuilder: (context, idx) {
+                            if (idx == showList.length) {
+                              return Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Center(
+                                  child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                            final r = showList[idx];
+                            return RatingListItem(
+                              rating: r,
+                              isCurrentUser: r.userId == currentUserId,
+                              onDelete:
+                                  r.userId == currentUserId
+                                      ? () async {
+                                        Feedback.forLongPress(context);
+                                        final confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder:
+                                              (ctx) => AlertDialog(
+                                                title: Text(
+                                                  'Delete your rating?',
+                                                  style:
+                                                      Theme.of(
+                                                        context,
+                                                      ).textTheme.titleMedium,
+                                                ),
+                                                content: Text(
+                                                  'Are you sure you want to delete your rating?',
+                                                  style:
+                                                      Theme.of(
+                                                        context,
+                                                      ).textTheme.bodyMedium,
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed:
+                                                        () => Navigator.pop(
+                                                          ctx,
+                                                          false,
+                                                        ),
+                                                    child: Text(
+                                                      'Cancel',
+                                                      style:
+                                                          Theme.of(context)
+                                                              .textTheme
+                                                              .bodyMedium,
+                                                    ),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed:
+                                                        () => Navigator.pop(
+                                                          ctx,
+                                                          true,
+                                                        ),
+                                                    child: Text(
+                                                      'Delete',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium!
+                                                          .copyWith(
+                                                            color: Colors.red,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                        );
+                                        if (confirm == true) _onDeleteRating();
+                                      }
+                                      : null,
                             );
-                          }),
+                          },
                         ),
-                      ],
-                    ),
+              ),
+              SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 10,
+                    bottom: 20,
                   ),
-                  const SizedBox(width: 10),
-                  isSending
-                      ? SizedBox(
-                        width: 32,
-                        height: 32,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                      : Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color:
-                              userRating > 0 && !isSending
-                                  ? kAppPurple
-                                  : Colors.grey[300],
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          icon: Icon(
-                            Icons.send_rounded,
-                            color: Colors.white,
-                            size: 18,
+                  child: Row(
+                    children: [
+                      if (userOwn.userImage.isNotEmpty)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Image.asset(
+                            userOwn.userImage,
+                            height: 32,
+                            width: 32,
+                            fit: BoxFit.cover,
                           ),
-                          onPressed:
-                              userRating > 0 && !isSending
-                                  ? _onSendRating
-                                  : null,
+                        )
+                      else
+                        Icon(
+                          Icons.account_circle,
+                          size: 32,
+                          color: Colors.grey[400],
+                        ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (userRating > 0)
+                              Text(
+                                'Your Rating : ${getRatingDisplay(userRating).keyword.replaceFirst('Rated ', '')}',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium!.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: kAppBlack.withOpacity(0.75),
+                                ),
+                              ),
+                            Row(
+                              children: List.generate(5, (i) {
+                                final idx = i + 1;
+                                final color =
+                                    userRating == 0
+                                        ? Colors.grey[300]
+                                        : getRatingDisplay(userRating).color;
+                                return GestureDetector(
+                                  onTap: () => setState(() => userRating = idx),
+                                  child: Icon(
+                                    idx <= userRating
+                                        ? Icons.star_rounded
+                                        : Icons.star_border_rounded,
+                                    color:
+                                        idx <= userRating
+                                            ? color
+                                            : Colors.grey[300],
+                                    size: 24,
+                                  ),
+                                );
+                              }),
+                            ),
+                          ],
                         ),
                       ),
-                ],
+                      const SizedBox(width: 10),
+                      isSending
+                          ? SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                          : Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color:
+                                  userRating > 0 && !isSending
+                                      ? kAppPurple
+                                      : Colors.grey[300],
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: Icon(
+                                Icons.send_rounded,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              onPressed:
+                                  userRating > 0 && !isSending
+                                      ? _onSendRating
+                                      : null,
+                            ),
+                          ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
