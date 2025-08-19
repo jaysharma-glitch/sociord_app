@@ -435,4 +435,43 @@ const String kBuddyFeed2 = 'assets/images/buddy-feed/2.png';
 const String kBuddyFeed3 = 'assets/images/buddy-feed/3.png';
 const String kBuddyFeed4 = 'assets/images/buddy-feed/4.png';
 const String kBuddyFeed5 = 'assets/images/buddy-feed/5.png';
-const String kBuddyFeed6 = 'assets/images/buddy-feed/6.png';
+
+// Buddy Uploads images
+const String kBuddyUpload1 = 'assets/images/buddy-uploads/1.png';
+const String kBuddyUpload2 = 'assets/images/buddy-uploads/2.png';
+const String kBuddyUpload3 = 'assets/images/buddy-uploads/3.png';
+const String kBuddyUpload4 = 'assets/images/buddy-uploads/4.png';
+const String kBuddyUpload5 = 'assets/images/buddy-uploads/5.png';
+const String kBuddyUpload6 = 'assets/images/buddy-uploads/6.png';
+const String kBuddyUpload7 = 'assets/images/buddy-uploads/7.png';
+const String kBuddyUpload8 = 'assets/images/buddy-uploads/8.png';
+const String kBuddyUpload9 = 'assets/images/buddy-uploads/9.png';
+const String kBuddyHighlight1 = 'assets/images/buddy-uploads/10.png';
+const String kBuddyHighlight2 = 'assets/images/buddy-uploads/11.png';
+const String kBuddyHighlight3 = 'assets/images/buddy-uploads/12.png';
+const String kBuddyHighlight4 = 'assets/images/buddy-uploads/13.png';
+const String kBuddyHighlight5 = 'assets/images/buddy-uploads/14.png';
+const String kBuddyHighlight6 = 'assets/images/buddy-uploads/15.png';
+
+// Buddy Uploads array for easy access
+const List<String> kBuddyUploads = [
+  kBuddyUpload1,
+  kBuddyUpload2,
+  kBuddyUpload3,
+  kBuddyUpload4,
+  kBuddyUpload5,
+  kBuddyUpload6,
+  kBuddyUpload7,
+  kBuddyUpload8,
+  kBuddyUpload9,
+];
+
+// Buddy Highlights array for easy access
+const List<String> kBuddyHighlights = [
+  kBuddyHighlight1,
+  kBuddyHighlight2,
+  kBuddyHighlight3,
+  kBuddyHighlight4,
+  kBuddyHighlight5,
+  kBuddyHighlight6,
+];

@@ -55,16 +55,18 @@ class PostWidget extends StatefulWidget {
 class _PostComponentState extends State<PostWidget> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(context),
-          _buildPostImage(),
-          _buildEngagementBar(context),
-          _buildTitleAndMeta(context),
-        ],
+    return RepaintBoundary(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(context),
+            _buildPostImage(),
+            _buildEngagementBar(context),
+            _buildTitleAndMeta(context),
+          ],
+        ),
       ),
     );
   }

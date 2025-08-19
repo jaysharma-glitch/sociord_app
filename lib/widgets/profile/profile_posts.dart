@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
 
+enum UserType { explorer, creator }
+
+enum ProfileViewType { own, other }
+
 class ProfilePosts extends StatelessWidget {
   final String profileType;
-  const ProfilePosts({super.key, required this.profileType});
+  final UserType? userType;
+  final ProfileViewType? viewType;
+
+  const ProfilePosts({
+    super.key,
+    required this.profileType,
+    this.userType,
+    this.viewType,
+  });
 
   @override
   Widget build(BuildContext context) {
     print(profileType);
     final bool isCreator = profileType == 'Creator';
-    final tabTitles = isCreator
-        ? const ['Quickies', 'Clips', 'Collections']
-        : const ['Uploads', 'Tagged'];
-    final message = isCreator
-        ? 'Your journey starts here—upload your first post and share it with your audience.'
-        : 'Your story starts here—upload your first post and share it with friends and family';
+    final currentUserType =
+        userType ?? (isCreator ? UserType.creator : UserType.explorer);
+    final currentViewType = viewType ?? ProfileViewType.own;
+
+    final tabTitles =
+        isCreator
+            ? const ['Quickies', 'Clips', 'Collections']
+            : const ['Uploads', 'Tagged'];
+    final message = _getEmptyStateMessage(currentUserType, currentViewType);
 
     return Column(
       children: [
@@ -41,14 +56,15 @@ class ProfilePosts extends StatelessWidget {
                       dividerHeight: 0,
                       labelColor: kAppBlack,
                       unselectedLabelColor: kAppBlack,
-                      labelStyle: Theme.of(context)
-                          .textTheme
-                          .headlineSmall!
-                          .copyWith(fontSize: 12),
+                      labelStyle: Theme.of(
+                        context,
+                      ).textTheme.headlineSmall!.copyWith(fontSize: 12),
                       indicator: UnderlineTabIndicator(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                            const BorderSide(width: 4, color: kAppPurple),
+                        borderSide: const BorderSide(
+                          width: 4,
+                          color: kAppPurple,
+                        ),
                         insets: EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width * 0.29,
                         ),
@@ -61,70 +77,61 @@ class ProfilePosts extends StatelessWidget {
               SizedBox(
                 height: 50,
                 child: TabBarView(
-                  children: tabTitles
-                      .map((_) => Center(
-                            child: Text(
-                              message,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(),
+                  children:
+                      tabTitles
+                          .map(
+                            (_) => Center(
+                              child: Text(
+                                message,
+                                style:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall!.copyWith(),
+                              ),
                             ),
-                          ))
-                      .toList(),
+                          )
+                          .toList(),
                 ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 16),
-        isCreator
-            ? Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    backgroundColor: kAppPurple,
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: Text(
-                    'Upload Post',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall!
-                        .copyWith(fontSize: 12, color: kAppWhite),
-                  ),
+        if (currentViewType == ProfileViewType.own && isCreator)
+          Center(
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
                 ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildOutlinedButton(context, Icons.image, 'Upload an image'),
-                  const SizedBox(width: 16),
-                  _buildOutlinedButton(
-                      context, Icons.videocam, 'Upload a video'),
-                ],
+                backgroundColor: kAppPurple,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
+              child: Text(
+                'Upload Post',
+                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                  fontSize: 12,
+                  color: kAppWhite,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
 
-  Widget _buildOutlinedButton(
-      BuildContext context, IconData icon, String label) {
-    return OutlinedButton.icon(
-      onPressed: () {},
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        minimumSize: Size.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
-      icon: Icon(icon, size: 20, color: kAppBlack),
-      label: Text(
-        label,
-        style: Theme.of(context).textTheme.bodySmall!.copyWith(),
-      ),
-    );
+  String _getEmptyStateMessage(UserType userType, ProfileViewType viewType) {
+    if (viewType == ProfileViewType.own) {
+      return userType == UserType.creator
+          ? 'Your journey starts here—upload your first post and share it with your audience.'
+          : 'Your story starts here—upload your first post and share it with friends and family';
+    } else {
+      return userType == UserType.creator
+          ? 'No content available yet.'
+          : 'No posts available yet.';
+    }
   }
 }

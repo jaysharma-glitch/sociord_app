@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sociord/widgets/profile/profile_hero.dart'
+    show RelationshipType;
 
 // screens
 import 'package:sociord/screens/add/add_screen.dart';
@@ -11,11 +13,16 @@ import 'package:sociord/screens/onboarding/final_onboarding_screen.dart';
 import 'package:sociord/screens/onboarding/location_search.dart';
 import 'package:sociord/screens/onboarding/other_gender.dart';
 import 'package:sociord/screens/profile/become_a_creator.dart';
+import 'package:sociord/screens/profile/buddy_profile_screen.dart';
 import 'package:sociord/screens/profile/profile_scree.dart';
 import 'package:sociord/screens/sign_in_sign_up_screen.dart';
 import 'package:sociord/screens/onboarding/sign_up_flow.dart';
 import 'package:sociord/screens/personality/personality_flow.dart';
 import 'package:sociord/screens/profile_pic.dart';
+import 'package:sociord/widgets/feed/feed_sheet.dart';
+import 'package:sociord/widgets/feed/feed_data.dart';
+import 'package:sociord/widgets/feed/feed_item.dart';
+import 'package:sociord/widgets/feed/feed_type.dart';
 
 // shell
 import 'package:sociord/widgets/scaffold_with_nav.dart';
@@ -35,9 +42,25 @@ const String homeRoute = '/home';
 const String addRoute = '/add';
 const String exploreRoute = '/explore';
 const String profileRoute = '/profile';
+const String buddyProfileRoute = '/buddy-profile';
+const String buddyFeedRoute = '/buddy-feed';
 
 /// Root navigator key (needed for full-screen dialogs, etc.)
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
+/// Helper function to parse relationship string to enum
+RelationshipType _parseRelationship(String relationship) {
+  switch (relationship.toLowerCase()) {
+    case 'buddy':
+      return RelationshipType.buddy;
+    case 'following':
+      return RelationshipType.following;
+    case 'subscribed':
+      return RelationshipType.subscribed;
+    default:
+      return RelationshipType.none;
+  }
+}
 
 /// ---------- All application routes (consumed by goRouterProvider) ----------
 final List<RouteBase> appRoutes = [
@@ -46,10 +69,7 @@ final List<RouteBase> appRoutes = [
     path: signInSignUpRoute,
     builder: (_, __) => const SignInSignUpScreen(),
   ),
-  GoRoute(
-    path: signUpFlowRoute,
-    builder: (_, __) => const SignUpFlow(),
-  ),
+  GoRoute(path: signUpFlowRoute, builder: (_, __) => const SignUpFlow()),
   GoRoute(
     path: locationSearchRoute,
     builder: (_, __) => const LocationSearch(),
@@ -62,67 +82,103 @@ final List<RouteBase> appRoutes = [
     path: personalityFlowRoute,
     builder: (_, __) => const PersonalityFlow(),
   ),
+  GoRoute(path: profilePicRoute, builder: (_, __) => const ProfilePicScreen()),
+  GoRoute(path: otherGenderRoute, builder: (_, __) => const OtherGenderDes()),
+  GoRoute(path: loginRoute, builder: (_, __) => LoginScreen()),
+  GoRoute(path: loginOtpRoute, builder: (_, __) => LogInOtpScreen()),
+
+  /// Buddy Profile Route (outside shell for navigation from anywhere)
   GoRoute(
-    path: profilePicRoute,
-    builder: (_, __) => const ProfilePicScreen(),
+    path: buddyProfileRoute,
+    builder: (context, state) {
+      final username = state.uri.queryParameters['username'] ?? '';
+      final profileImage = state.uri.queryParameters['profileImage'] ?? '';
+      final relationship = state.uri.queryParameters['relationship'] ?? 'none';
+
+      return BuddyProfileScreen(
+        username: username,
+        profileImage: profileImage,
+        relationship: _parseRelationship(relationship),
+      );
+    },
   ),
+
+  /// Buddy Feed Route (outside shell for navigation from anywhere)
   GoRoute(
-    path: otherGenderRoute,
-    builder: (_, __) => const OtherGenderDes(),
-  ),
-  GoRoute(
-    path: loginRoute,
-    builder: (_, __) => LoginScreen(),
-  ),
-  GoRoute(
-    path: loginOtpRoute,
-    builder: (_, __) => LogInOtpScreen(),
+    path: buddyFeedRoute,
+    builder: (context, state) {
+      final extra = state.extra as Map<String, dynamic>? ?? {};
+
+      // Create FeedData for buddy feed
+      final feedData = FeedData.buddy(
+        items: [
+          FeedItem(
+            imagePath: extra['imagePath'] ?? '',
+            title: extra['username'] ?? '',
+            caption: extra['caption'] ?? '',
+            profileImage: extra['profileImage'] ?? '',
+            userName: extra['username'] ?? '',
+          ),
+        ],
+        userName: extra['username'] ?? '',
+        profileImage: extra['profileImage'] ?? '',
+      );
+
+      return FeedSheet(feedData: feedData, initialIndex: 0);
+    },
   ),
 
   /// ---- Bottom-nav shell with four branches ----
   StatefulShellRoute.indexedStack(
     parentNavigatorKey: rootNavigatorKey,
-    builder: (_, __, navigationShell) =>
-        ScaffoldWithNavBar(navigationShell: navigationShell),
+    builder:
+        (_, __, navigationShell) =>
+            ScaffoldWithNavBar(navigationShell: navigationShell),
     branches: [
       /// Home
-      StatefulShellBranch(routes: [
-        GoRoute(
-          path: homeRoute,
-          builder: (_, __) => HomeScreen(key: ScaffoldWithNavBar.homeScreenKey),
-        ),
-      ]),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: homeRoute,
+            builder:
+                (_, __) => HomeScreen(key: ScaffoldWithNavBar.homeScreenKey),
+          ),
+        ],
+      ),
 
       /// Add
-      StatefulShellBranch(routes: [
-        GoRoute(
-          path: addRoute,
-          builder: (_, __) => const AddScreen(),
-        ),
-      ]),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(path: addRoute, builder: (_, __) => const AddScreen()),
+        ],
+      ),
 
       /// Explore
-      StatefulShellBranch(routes: [
-        GoRoute(
-          path: exploreRoute,
-          builder: (_, __) => const ExploreScreen(),
-        ),
-      ]),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: exploreRoute,
+            builder: (_, __) => const ExploreScreen(),
+          ),
+        ],
+      ),
 
       /// Profile + nested “Become a Creator”
-      StatefulShellBranch(routes: [
-        GoRoute(
-          path: profileRoute,
-          builder: (_, __) => ProfileScreen(),
-          routes: [
-            GoRoute(
-              path: 'becomeACreator',
-              parentNavigatorKey: rootNavigatorKey,
-              builder: (_, __) => const BecomeACreator(),
-            ),
-          ],
-        ),
-      ]),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: profileRoute,
+            builder: (_, __) => ProfileScreen(),
+            routes: [
+              GoRoute(
+                path: 'becomeACreator',
+                parentNavigatorKey: rootNavigatorKey,
+                builder: (_, __) => const BecomeACreator(),
+              ),
+            ],
+          ),
+        ],
+      ),
     ],
   ),
 ];

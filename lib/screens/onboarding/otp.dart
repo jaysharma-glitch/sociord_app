@@ -81,15 +81,16 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
         setState(() => isLoading = false);
 
         if (result != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login Successful')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Login Successful')));
         }
       } catch (e) {
         setState(() => isLoading = false);
         if (e.toString().contains('Connection refused')) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(CustomSnackBar().build(context));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(CustomSnackBar().build(context));
         } else {
           setState(() => wrongOtp = true);
         }
@@ -127,8 +128,9 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
       await userNotifier.resendOtp();
     } catch (e) {
       if (e.toString().contains('Connection refused')) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(CustomSnackBar().build(context));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(CustomSnackBar().build(context));
       }
     } finally {
       setState(() => isLoading = false);
@@ -191,14 +193,15 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
       height: 50,
       child: ElevatedButton(
         onPressed: () => _handleOtpSubmit(context),
-        child: isLoading
-            ? kSmallLoadingIndicator
-            : Text(
-                'Continue',
-                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                      color: Colors.white,
-                    ),
-              ),
+        child:
+            isLoading
+                ? kSmallLoadingIndicator
+                : Text(
+                  'Continue',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.headlineSmall!.copyWith(color: Colors.white),
+                ),
       ),
     );
   }
@@ -208,43 +211,43 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
       children: [
         Text(
           "Didn’t receive it?",
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium!
-              .copyWith(fontWeight: FontWeight.w300, fontSize: 15),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            fontWeight: FontWeight.w300,
+            fontSize: 15,
+          ),
         ),
         const SizedBox(width: 5),
         _start == 0
             ? ElevatedButton(
-                onPressed: _resendOtp,
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size.zero,
-                  backgroundColor: kBorderGreay,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+              onPressed: _resendOtp,
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size.zero,
+                backgroundColor: kBorderGreay,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.refresh, color: kAppBlack, size: 20),
-                    const SizedBox(width: 5),
-                    Text('Resend',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(fontWeight: FontWeight.w800)),
-                  ],
-                ),
-              )
-            : Text(
-                "Resend it in 00:$_start",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontWeight: FontWeight.w300, fontSize: 15),
               ),
+              child: Row(
+                children: [
+                  const Icon(Icons.refresh, color: kAppBlack, size: 20),
+                  const SizedBox(width: 5),
+                  Text(
+                    'Resend',
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            )
+            : Text(
+              "Resend it in 00:$_start",
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.w300,
+                fontSize: 15,
+              ),
+            ),
       ],
     );
   }

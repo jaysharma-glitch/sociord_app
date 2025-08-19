@@ -21,14 +21,11 @@ class HomeScreenState extends State<HomeScreen> {
   final List<GlobalKey> _postKeys = [];
   // Helper to get or create a stable key for a post index
   GlobalKey _getPostKey(int index) {
-    if (_postKeys.length > index) {
-      return _postKeys[index];
-    } else {
-      while (_postKeys.length <= index) {
-        _postKeys.add(GlobalKey());
-      }
-      return _postKeys[index];
+    // Pre-allocate keys more efficiently
+    while (_postKeys.length <= index) {
+      _postKeys.add(GlobalKey());
     }
+    return _postKeys[index];
   }
 
   bool showTopRecommendation = true;
@@ -325,6 +322,10 @@ class HomeScreenState extends State<HomeScreen> {
             child: ListView.builder(
               controller: _scrollController,
               itemCount: feedWidgets.length + (_isLoadingMore ? 1 : 0),
+              // Performance optimizations
+              cacheExtent: 1000, // Cache more items
+              addAutomaticKeepAlives: false, // Don't keep all items alive
+              addRepaintBoundaries: true, // Add repaint boundaries
               itemBuilder: (context, index) {
                 if (index < feedWidgets.length) {
                   return feedWidgets[index];

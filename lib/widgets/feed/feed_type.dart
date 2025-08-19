@@ -1,0 +1,1 @@
+enum FeedType { buddy, highlight }
