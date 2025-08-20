@@ -62,80 +62,85 @@ class ProfileHero extends StatelessWidget {
     final isCreator = profileType == 'Creator';
     final theme = Theme.of(context).textTheme;
 
-    return Column(
-      children: [
-        SizedBox(
-          height: 160,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: Image.asset(
-                  imageUrl,
-                  width: 150,
-                  height: 160,
-                  fit: BoxFit.cover,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 160,
+
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: Image.asset(
+                    imageUrl,
+                    width: 150,
+                    height: 160,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Text(
-                      name,
-                      style: theme.headlineSmall!.copyWith(color: kAppBlack),
-                    ),
-                    const SizedBox(height: 4),
-                    if (isCreator && creatorCategory.isNotEmpty)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: kAppYellow,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.airplanemode_active,
-                              size: 12,
-                              color: kAppBlack,
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              creatorCategory,
-                              style: theme.bodySmall!.copyWith(
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text(
+                        name,
+                        style: theme.headlineSmall!.copyWith(color: kAppBlack),
+                      ),
+                      const SizedBox(height: 4),
+                      if (isCreator && creatorCategory.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: kAppYellow,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.airplanemode_active,
+                                size: 12,
                                 color: kAppBlack,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 5),
+                              Text(
+                                creatorCategory,
+                                style: theme.bodySmall!.copyWith(
+                                  color: kAppBlack,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    const SizedBox(height: 2),
-                    _infoRow(Icons.person_rounded, '$gender, $age'),
-                    _infoRow(Icons.location_pin, location),
-                    const SizedBox(height: 5),
-                    if (syncContactOption) _syncContactsSection(context, theme),
-                    Spacer(),
-                    _statsRow(theme),
-                  ],
+                      const SizedBox(height: 2),
+                      _infoRow(Icons.person_rounded, '$gender, $age'),
+                      _infoRow(Icons.location_pin, location),
+                      const SizedBox(height: 5),
+                      if (syncContactOption)
+                        _syncContactsSection(context, theme),
+                      Spacer(),
+                      _statsRow(theme),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: isCreator ? 10 : 16),
-        _handleAndProfileSwitch(context, theme),
-        const SizedBox(height: 8),
-        _actionButtons(context, theme),
-        const SizedBox(height: 20),
-      ],
+          SizedBox(height: isCreator ? 10 : 16),
+          _handleAndProfileSwitch(context, theme),
+          const SizedBox(height: 8),
+          _actionButtons(context, theme),
+          const SizedBox(height: 20),
+        ],
+      ),
     );
   }
 

@@ -47,96 +47,93 @@ class _FeedSliderState extends State<FeedSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Only show header if showHeader is true
-            if (widget.showHeader) ...[
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isExpanded = !isExpanded;
-                  });
-                },
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: GradientText(
-                        text: widget.feedData.sectionTitle,
-                        gradient: const LinearGradient(
-                          colors: [kAppPurple, kAppOrange],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        style: Theme.of(
-                          context,
-                        ).textTheme.headlineSmall!.copyWith(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
+    return Container(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Only show header if showHeader is true
+          if (widget.showHeader) ...[
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isExpanded = !isExpanded;
+                });
+              },
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: GradientText(
+                      text: widget.feedData.sectionTitle,
+                      gradient: const LinearGradient(
+                        colors: [kAppPurple, kAppOrange],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
+                      style: Theme.of(context).textTheme.headlineSmall!
+                          .copyWith(fontSize: 15, fontWeight: FontWeight.w600),
                     ),
-                    const SizedBox(width: 5),
-                    AnimatedRotation(
-                      turns: isExpanded ? 0.0 : 0.5,
-                      duration: const Duration(milliseconds: 200),
-                      child: const Icon(
-                        Icons.expand_less,
-                        color: Colors.deepPurple,
-                        size: 18,
-                      ),
+                  ),
+                  const SizedBox(width: 5),
+                  AnimatedRotation(
+                    turns: isExpanded ? 0.0 : 0.5,
+                    duration: const Duration(milliseconds: 200),
+                    child: const Icon(
+                      Icons.expand_less,
+                      color: Colors.deepPurple,
+                      size: 18,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-            ],
-
-            // Feed items section
-            AnimatedSize(
-              duration: const Duration(milliseconds: 300),
-              child:
-                  isExpanded
-                      ? SizedBox(
-                        height:
-                            widget.sliderType == FeedSliderType.buddyFeed
-                                ? 150
-                                : 155,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding:
-                              widget.sliderType == FeedSliderType.buddyFeed
-                                  ? const EdgeInsets.symmetric(horizontal: 16)
-                                  : const EdgeInsets.only(top: 5),
-                          itemCount: widget.feedData.items.length,
-                          itemBuilder: (context, index) {
-                            return _buildFeedItem(
-                              widget.feedData.items[index],
-                              index,
-                            );
-                          },
-                        ),
-                      )
-                      : const SizedBox.shrink(),
             ),
           ],
-        ),
+
+          // Feed items section
+          AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            child:
+                isExpanded
+                    ? SizedBox(
+                      height:
+                          widget.sliderType == FeedSliderType.buddyFeed
+                              ? 150
+                              : 155,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding:
+                            widget.sliderType == FeedSliderType.buddyFeed
+                                ? const EdgeInsets.symmetric(horizontal: 16)
+                                : const EdgeInsets.only(top: 5),
+                        itemCount: widget.feedData.items.length,
+                        itemBuilder: (context, index) {
+                          return _buildFeedItem(
+                            widget.feedData.items[index],
+                            index,
+                          );
+                        },
+                      ),
+                    )
+                    : const SizedBox.shrink(),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildFeedItem(FeedItem item, int index) {
-    return Padding(
+    return Container(
       padding:
           index == 0 && widget.sliderType == FeedSliderType.buddyFeed
               ? const EdgeInsets.only(left: 12.0, right: 3)
               : index == 0 && widget.sliderType == FeedSliderType.highlight
               ? const EdgeInsets.only(left: 0.0, right: 3)
               : const EdgeInsets.symmetric(horizontal: 2.0),
+      margin:
+          index == 0 && widget.sliderType == FeedSliderType.highlight
+              ? const EdgeInsets.only(left: 15)
+              : const EdgeInsets.only(left: 0),
       child: GestureDetector(
         onTap: () {
           if (widget.onItemTap != null) {

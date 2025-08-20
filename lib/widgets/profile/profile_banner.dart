@@ -26,6 +26,7 @@ class ProfileBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Container(
+      margin: EdgeInsets.only(left: 15, right: 15),
       padding: EdgeInsets.symmetric(horizontal: centerAlign ? 20 : 15),
       width: double.infinity,
       decoration: BoxDecoration(
@@ -40,9 +41,10 @@ class ProfileBanner extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           Column(
-            crossAxisAlignment: centerAlign
-                ? CrossAxisAlignment.center
-                : CrossAxisAlignment.start,
+            crossAxisAlignment:
+                centerAlign
+                    ? CrossAxisAlignment.center
+                    : CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 15),
               Text(
@@ -54,9 +56,10 @@ class ProfileBanner extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               SizedBox(
-                width: centerAlign
-                    ? double.infinity
-                    : MediaQuery.of(context).size.width * 0.65,
+                width:
+                    centerAlign
+                        ? double.infinity
+                        : MediaQuery.of(context).size.width * 0.65,
                 child: Text(
                   desc,
                   textAlign: centerAlign ? TextAlign.center : TextAlign.left,
@@ -75,8 +78,10 @@ class ProfileBanner extends StatelessWidget {
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     backgroundColor: kAppWhite,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 5,
+                      horizontal: 10,
+                    ),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(5),
@@ -112,10 +117,7 @@ class ProfileBanner extends StatelessWidget {
             right: centerAlign ? 0 : -8,
             child: Align(
               alignment: centerAlign ? Alignment.topCenter : Alignment.topRight,
-              child: Image.asset(
-                image,
-                width: centerAlign ? 200 : null,
-              ),
+              child: Image.asset(image, width: centerAlign ? 200 : null),
             ),
           ),
         ],

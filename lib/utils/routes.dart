@@ -42,7 +42,7 @@ const String homeRoute = '/home';
 const String addRoute = '/add';
 const String exploreRoute = '/explore';
 const String profileRoute = '/profile';
-const String buddyProfileRoute = '/buddy-profile';
+const String buddyProfileRoute = '/home/buddy-profile'; // Nested under home
 const String buddyFeedRoute = '/buddy-feed';
 
 /// Root navigator key (needed for full-screen dialogs, etc.)
@@ -87,22 +87,6 @@ final List<RouteBase> appRoutes = [
   GoRoute(path: loginRoute, builder: (_, __) => LoginScreen()),
   GoRoute(path: loginOtpRoute, builder: (_, __) => LogInOtpScreen()),
 
-  /// Buddy Profile Route (outside shell for navigation from anywhere)
-  GoRoute(
-    path: buddyProfileRoute,
-    builder: (context, state) {
-      final username = state.uri.queryParameters['username'] ?? '';
-      final profileImage = state.uri.queryParameters['profileImage'] ?? '';
-      final relationship = state.uri.queryParameters['relationship'] ?? 'none';
-
-      return BuddyProfileScreen(
-        username: username,
-        profileImage: profileImage,
-        relationship: _parseRelationship(relationship),
-      );
-    },
-  ),
-
   /// Buddy Feed Route (outside shell for navigation from anywhere)
   GoRoute(
     path: buddyFeedRoute,
@@ -142,6 +126,25 @@ final List<RouteBase> appRoutes = [
             path: homeRoute,
             builder:
                 (_, __) => HomeScreen(key: ScaffoldWithNavBar.homeScreenKey),
+            routes: [
+              /// Buddy Profile Route (nested under home to keep bottom nav)
+              GoRoute(
+                path: 'buddy-profile',
+                builder: (context, state) {
+                  final username = state.uri.queryParameters['username'] ?? '';
+                  final profileImage =
+                      state.uri.queryParameters['profileImage'] ?? '';
+                  final relationship =
+                      state.uri.queryParameters['relationship'] ?? 'none';
+
+                  return BuddyProfileScreen(
+                    username: username,
+                    profileImage: profileImage,
+                    relationship: _parseRelationship(relationship),
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
+import 'package:sociord/utils/routes.dart'; // Add import for route constants
 import 'package:sociord/widgets/feed/feed_data.dart';
 import 'package:sociord/widgets/feed/feed_item.dart';
 import 'package:sociord/widgets/feed/feed_type.dart';
@@ -626,8 +627,9 @@ class _FeedSheetState extends State<FeedSheet> with TickerProviderStateMixin {
               GestureDetector(
                 onTap: () {
                   // Navigate to buddy profile
-                  context.push(
-                    '/buddy-profile?username=${_currentItem.userName}&profileImage=${_currentItem.profileImage}&relationship=none',
+                  context.go(
+                    // Changed from context.push to context.go
+                    '$buddyProfileRoute?username=${_currentItem.userName}&profileImage=${_currentItem.profileImage}&relationship=none',
                   );
                 },
                 child: ClipRRect(
@@ -644,8 +646,9 @@ class _FeedSheetState extends State<FeedSheet> with TickerProviderStateMixin {
               GestureDetector(
                 onTap: () {
                   // Navigate to buddy profile
-                  context.push(
-                    '/buddy-profile?username=${_currentItem.userName}&profileImage=${_currentItem.profileImage}&relationship=none',
+                  context.go(
+                    // Changed from context.push to context.go
+                    '$buddyProfileRoute?username=${_currentItem.userName}&profileImage=${_currentItem.profileImage}&relationship=none',
                   );
                 },
                 child: Column(

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
+import 'package:sociord/utils/asset_path_constants.dart';
 
 enum UserType { explorer, creator }
 
 enum ProfileViewType { own, other }
 
-class ProfilePosts extends StatelessWidget {
+// PostsTabsBar - renders only the TabBar UI (no TabBarView)
+class PostsTabsBar extends StatelessWidget {
   final String profileType;
   final UserType? userType;
   final ProfileViewType? viewType;
 
-  const ProfilePosts({
+  const PostsTabsBar({
     super.key,
     required this.profileType,
     this.userType,
@@ -19,119 +21,66 @@ class ProfilePosts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(profileType);
     final bool isCreator = profileType == 'Creator';
-    final currentUserType =
-        userType ?? (isCreator ? UserType.creator : UserType.explorer);
-    final currentViewType = viewType ?? ProfileViewType.own;
-
     final tabTitles =
         isCreator
             ? const ['Quickies', 'Clips', 'Collections']
             : const ['Uploads', 'Tagged'];
-    final message = _getEmptyStateMessage(currentUserType, currentViewType);
 
-    return Column(
-      children: [
-        DefaultTabController(
-          length: tabTitles.length,
-          child: Column(
-            children: [
-              SizedBox(
-                height: 45,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
-                        height: 4,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          color: kBorderGreay,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    TabBar(
-                      dividerHeight: 0,
-                      labelColor: kAppBlack,
-                      unselectedLabelColor: kAppBlack,
-                      labelStyle: Theme.of(
-                        context,
-                      ).textTheme.headlineSmall!.copyWith(fontSize: 12),
-                      indicator: UnderlineTabIndicator(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(
-                          width: 4,
-                          color: kAppPurple,
-                        ),
-                        insets: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.29,
-                        ),
-                      ),
-                      tabs: tabTitles.map((title) => Tab(text: title)).toList(),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 50,
-                child: TabBarView(
-                  children:
-                      tabTitles
-                          .map(
-                            (_) => Center(
-                              child: Text(
-                                message,
-                                style:
-                                    Theme.of(
-                                      context,
-                                    ).textTheme.bodySmall!.copyWith(),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        if (currentViewType == ProfileViewType.own && isCreator)
-          Center(
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
-                backgroundColor: kAppPurple,
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Text(
-                'Upload Post',
-                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                  fontSize: 12,
-                  color: kAppWhite,
-                ),
-              ),
-            ),
-          ),
-      ],
+    return TabBar(
+      dividerHeight: 0,
+      labelColor: kAppBlack,
+      unselectedLabelColor: kAppBlack,
+      labelStyle: Theme.of(
+        context,
+      ).textTheme.headlineSmall!.copyWith(fontSize: 12),
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicator: const UnderlineTabIndicator(
+        borderSide: BorderSide(width: 4, color: kAppPurple),
+      ),
+      tabs: tabTitles.map((title) => Tab(text: title)).toList(),
     );
   }
-
-  String _getEmptyStateMessage(UserType userType, ProfileViewType viewType) {
-    if (viewType == ProfileViewType.own) {
-      return userType == UserType.creator
-          ? 'Your journey starts here—upload your first post and share it with your audience.'
-          : 'Your story starts here—upload your first post and share it with friends and family';
-    } else {
-      return userType == UserType.creator
-          ? 'No content available yet.'
-          : 'No posts available yet.';
-    }
-  }
 }
+
+// Sliver helper methods
+List<Widget> UploadsSlivers({
+  required int itemCount,
+  required Widget Function(BuildContext, int) itemBuilder,
+}) => [
+  SliverPadding(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+    sliver: SliverGrid(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        childAspectRatio: 1,
+      ),
+      delegate: SliverChildBuilderDelegate(itemBuilder, childCount: itemCount),
+    ),
+  ),
+];
+
+List<Widget> TaggedSlivers({required String message}) => [
+  SliverPadding(
+    padding: const EdgeInsets.all(20),
+    sliver: SliverToBoxAdapter(child: Center(child: Text(message))),
+  ),
+];
+
+List<Widget> QuickiesSlivers() => [
+  const SliverToBoxAdapter(
+    child: Center(child: Text('Quickies coming soon...')),
+  ),
+];
+
+List<Widget> ClipsSlivers() => [
+  const SliverToBoxAdapter(child: Center(child: Text('Clips coming soon...'))),
+];
+
+List<Widget> CollectionsSlivers() => [
+  const SliverToBoxAdapter(
+    child: Center(child: Text('Collections coming soon...')),
+  ),
+];
