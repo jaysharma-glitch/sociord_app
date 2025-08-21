@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/mock_data/ratings_mock_data.dart';
+import 'package:sociord/widgets/common/profile_picture.dart';
 
 class RatingListItem extends StatelessWidget {
   final MockRating rating;
@@ -23,14 +24,11 @@ class RatingListItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12),
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: Image.asset(
-                rating.userImage,
-                height: 22,
-                width: 22,
-                fit: BoxFit.cover,
-              ),
+            ProfilePicture(
+              imageUrl: rating.userImage,
+              width: 22,
+              height: 22,
+              borderRadius: 5,
             ),
             const SizedBox(width: 12),
             Expanded(

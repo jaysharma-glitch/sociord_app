@@ -3,6 +3,7 @@ import 'package:sociord/constants/color.dart';
 import 'package:sociord/mock_data/ratings_mock_data.dart';
 import 'package:sociord/widgets/home/rating_list_item.dart';
 import 'package:sociord/widgets/skeleton/skeleton_loader_ratings.dart';
+import 'package:sociord/widgets/common/profile_picture.dart';
 
 class RatingsBottomSheet extends StatefulWidget {
   final VoidCallback? onOpen;
@@ -351,14 +352,11 @@ class _RatingsBottomSheetState extends State<RatingsBottomSheet> {
                   child: Row(
                     children: [
                       if (userOwn.userImage.isNotEmpty)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: Image.asset(
-                            userOwn.userImage,
-                            height: 32,
-                            width: 32,
-                            fit: BoxFit.cover,
-                          ),
+                        ProfilePicture(
+                          imageUrl: userOwn.userImage,
+                          width: 32,
+                          height: 32,
+                          borderRadius: 5,
                         )
                       else
                         Icon(

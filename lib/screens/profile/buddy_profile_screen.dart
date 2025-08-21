@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sociord/widgets/profile/homePagePosts/profile_hero.dart';
 import 'package:sociord/widgets/profile/profile_component.dart';
-import 'package:sociord/widgets/profile/profile_hero.dart'
-    show RelationshipType;
 import 'package:sociord/widgets/profile/profile_posts.dart'
     show UserType, ProfileViewType;
 import 'package:sociord/utils/asset_path_constants.dart';

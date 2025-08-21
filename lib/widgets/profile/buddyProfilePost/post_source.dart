@@ -1,0 +1,1 @@
+enum PostSource { uploads, tagged }

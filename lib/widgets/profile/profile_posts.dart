@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
+import 'package:sociord/widgets/profile/buddyProfilePost/post_reader_page.dart';
+import 'package:sociord/widgets/profile/buddyProfilePost/post_source.dart';
+import 'package:sociord/widgets/common/post_image.dart';
 
 enum UserType { explorer, creator }
 
@@ -43,6 +46,44 @@ class PostsTabsBar extends StatelessWidget {
   }
 }
 
+Widget _buildGridItem(BuildContext context, int index) {
+  return Container(
+    margin: const EdgeInsets.all(2),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(5),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: PostImage(
+      imageUrl: kBuddyUploads[index],
+      borderRadius: 5,
+      onTap: () {
+        // Navigate to PostReaderPage
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder:
+                (_) => PostReaderPage(
+                  userId: 'user_1', // Replace with actual user ID
+                  initialPostId:
+                      'post_${index + 1}', // Generate post ID based on index
+                  source: PostSource.uploads, // or tagged based on current tab
+                  userName: 'Arjun Sethi', // Replace with actual user name
+                  profileImage:
+                      'assets/images/profileImage.png', // Replace with actual profile image
+                ),
+            fullscreenDialog: true, // feels like a sheet
+          ),
+        );
+      },
+    ),
+  );
+}
+
 // Sliver helper methods
 List<Widget> UploadsSlivers({
   required int itemCount,
@@ -55,7 +96,7 @@ List<Widget> UploadsSlivers({
         crossAxisCount: 3,
         mainAxisSpacing: 4,
         crossAxisSpacing: 4,
-        childAspectRatio: 1,
+        childAspectRatio: 0.85,
       ),
       delegate: SliverChildBuilderDelegate(itemBuilder, childCount: itemCount),
     ),

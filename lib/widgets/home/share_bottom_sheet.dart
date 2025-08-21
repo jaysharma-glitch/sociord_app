@@ -3,6 +3,7 @@ import 'package:sociord/mock_data/share_mock_data.dart';
 import 'package:sociord/widgets/home/share_user_grid_item.dart';
 import 'package:sociord/widgets/skeleton/skeleton_loader_share.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
+import 'package:sociord/widgets/common/profile_picture.dart';
 
 class ShareBottomSheet extends StatefulWidget {
   final VoidCallback? onOpen;
@@ -350,14 +351,12 @@ class _ShareBottomSheetState extends State<ShareBottomSheet>
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: Image.asset(
-                                          'assets/images/profileImage.png',
-                                          height: 32,
-                                          width: 32,
-                                          fit: BoxFit.cover,
-                                        ),
+                                      ProfilePicture(
+                                        imageUrl:
+                                            'assets/images/profileImage.png',
+                                        width: 32,
+                                        height: 32,
+                                        borderRadius: 5,
                                       ),
                                       const SizedBox(width: 10),
                                       Expanded(

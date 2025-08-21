@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
+import 'package:sociord/widgets/common/post_image.dart';
 
 class HomePageRecommendation extends StatelessWidget {
   final String type;
@@ -31,23 +32,21 @@ class HomePageRecommendation extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final title = type == "Quickies"
-        ? RichText(
-            text: TextSpan(
-              text: "Thought you'd like these quickies, ",
+    final title =
+        type == "Quickies"
+            ? RichText(
+              text: TextSpan(
+                text: "Thought you'd like these quickies, ",
+                style: _headerTextStyle(context),
+                children: [
+                  TextSpan(text: userName, style: _headerTextStyle(context)),
+                ],
+              ),
+            )
+            : Text(
+              "Some Creators you might like",
               style: _headerTextStyle(context),
-              children: [
-                TextSpan(
-                  text: userName,
-                  style: _headerTextStyle(context),
-                ),
-              ],
-            ),
-          )
-        : Text(
-            "Some Creators you might like",
-            style: _headerTextStyle(context),
-          );
+            );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -60,12 +59,12 @@ class HomePageRecommendation extends StatelessWidget {
             child: Text(
               "Dismiss",
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    fontSize: 12,
-                    color: kAppBlack,
-                    fontWeight: FontWeight.w400,
-                    decoration: TextDecoration.underline,
-                    decorationThickness: 1,
-                  ),
+                fontSize: 12,
+                color: kAppBlack,
+                fontWeight: FontWeight.w400,
+                decoration: TextDecoration.underline,
+                decorationThickness: 1,
+              ),
             ),
           ),
         ],
@@ -78,33 +77,37 @@ class HomePageRecommendation extends StatelessWidget {
 
     return SizedBox(
       height: 160,
-      child: isShort
-          ? Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: recommendations
-                    .map((item) => _buildCard(
-                          imagePath: item["image"]!,
-                          title: item["title"]!,
-                          context: context,
-                        ))
-                    .toList(),
+      child:
+          isShort
+              ? Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:
+                      recommendations
+                          .map(
+                            (item) => _buildCard(
+                              imagePath: item["image"]!,
+                              title: item["title"]!,
+                              context: context,
+                            ),
+                          )
+                          .toList(),
+                ),
+              )
+              : ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemCount: recommendations.length,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                itemBuilder: (context, index) {
+                  final item = recommendations[index];
+                  return _buildCard(
+                    imagePath: item["image"]!,
+                    title: item["title"]!,
+                    context: context,
+                  );
+                },
               ),
-            )
-          : ListView.builder(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: recommendations.length,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemBuilder: (context, index) {
-                final item = recommendations[index];
-                return _buildCard(
-                  imagePath: item["image"]!,
-                  title: item["title"]!,
-                  context: context,
-                );
-              },
-            ),
     );
   }
 
@@ -117,14 +120,11 @@ class HomePageRecommendation extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6.0),
       child: Column(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.asset(
-              imagePath,
-              width: 110,
-              height: 140,
-              fit: BoxFit.cover,
-            ),
+          PostImage(
+            imageUrl: imagePath,
+            width: 110,
+            height: 140,
+            borderRadius: 10,
           ),
           const SizedBox(height: 2),
           SizedBox(
@@ -135,9 +135,9 @@ class HomePageRecommendation extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
         ],
@@ -147,9 +147,9 @@ class HomePageRecommendation extends StatelessWidget {
 
   TextStyle _headerTextStyle(BuildContext context) {
     return Theme.of(context).textTheme.headlineSmall!.copyWith(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          color: kAppPurple,
-        );
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+      color: kAppPurple,
+    );
   }
 }

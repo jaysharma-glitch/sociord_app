@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/mock_data/share_mock_data.dart';
+import 'package:sociord/widgets/common/post_image.dart';
 
 class ShareUserGridItem extends StatelessWidget {
   final MockShareUser user;
@@ -22,12 +23,7 @@ class ShareUserGridItem extends StatelessWidget {
           Expanded(
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: SizedBox.expand(
-                    child: Image.asset(user.userImage, fit: BoxFit.cover),
-                  ),
-                ),
+                PostImage(imageUrl: user.userImage, borderRadius: 12),
                 if (selected)
                   Positioned(
                     top: 6,

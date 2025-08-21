@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/utils/routes.dart';
+import 'package:sociord/widgets/common/profile_picture.dart';
 
 enum RelationshipType { none, buddy, following, subscribed }
 
@@ -72,14 +73,10 @@ class ProfileHero extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: Image.asset(
-                    imageUrl,
-                    width: 150,
-                    height: 160,
-                    fit: BoxFit.cover,
-                  ),
+                ProfilePicture(
+                  imageUrl: imageUrl,
+                  imageSize: 160,
+                  borderRadius: 5,
                 ),
                 const SizedBox(width: 10),
                 Expanded(

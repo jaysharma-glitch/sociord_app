@@ -4,6 +4,7 @@ import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/utils/routes.dart'; // for path constants
 import 'package:sociord/screens/home/home_screen.dart';
+import 'package:sociord/widgets/common/profile_avatar.dart';
 
 class ScaffoldWithNavBar extends StatelessWidget {
   const ScaffoldWithNavBar({
@@ -45,37 +46,31 @@ class ScaffoldWithNavBar extends StatelessWidget {
   }
 
   List<BottomNavigationBarItem> get _navBarItems => [
-        BottomNavigationBarItem(
-          icon: Image.asset(kHome),
-          activeIcon: Image.asset(kHomeSelect),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(kAdd),
-          activeIcon: Image.asset(kAdd),
-          label: 'Add',
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(kExplore),
-          activeIcon: Image.asset(kExploreSelect),
-          label: 'Explore',
-        ),
-        BottomNavigationBarItem(
-          icon: ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: Image.asset(kProfilePic, height: 33, width: 33),
-          ),
-          activeIcon: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: kAppPurple, width: 3),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: Image.asset(kProfilePic, height: 28, width: 28),
-            ),
-          ),
-          label: 'Profile',
-        ),
-      ];
+    BottomNavigationBarItem(
+      icon: Image.asset(kHome),
+      activeIcon: Image.asset(kHomeSelect),
+      label: 'Home',
+    ),
+    BottomNavigationBarItem(
+      icon: Image.asset(kAdd),
+      activeIcon: Image.asset(kAdd),
+      label: 'Add',
+    ),
+    BottomNavigationBarItem(
+      icon: Image.asset(kExplore),
+      activeIcon: Image.asset(kExploreSelect),
+      label: 'Explore',
+    ),
+    BottomNavigationBarItem(
+      icon: ProfileAvatar(imageUrl: kProfilePic, size: 33),
+      activeIcon: ProfileAvatar(
+        imageUrl: kProfilePic,
+        size: 28,
+        showBorder: true,
+        borderWidth: 3,
+        borderColor: kAppPurple,
+      ),
+      label: 'Profile',
+    ),
+  ];
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
+import 'package:sociord/widgets/common/profile_picture.dart';
 
 class CommentInputBar extends StatelessWidget {
   final TextEditingController controller;
@@ -28,14 +29,11 @@ class CommentInputBar extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: Image.asset(
-                kProfilePic,
-                height: 40,
-                width: 40,
-                fit: BoxFit.cover,
-              ),
+            ProfilePicture(
+              imageUrl: kProfilePic,
+              width: 40,
+              height: 40,
+              borderRadius: 5,
             ),
             const SizedBox(width: 5),
             Expanded(

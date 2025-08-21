@@ -8,6 +8,7 @@ import 'package:sociord/widgets/feed/feed_data.dart';
 import 'package:sociord/widgets/feed/feed_item.dart';
 import 'package:sociord/widgets/feed/feed_sheet.dart';
 import 'package:sociord/widgets/feed/feed_type.dart';
+import 'package:sociord/widgets/common/post_image.dart';
 
 // Enum to distinguish between different types of feed sliders
 // This helps with better organization and potential future customization
@@ -183,18 +184,14 @@ class _FeedSliderState extends State<FeedSlider> {
                   padding: const EdgeInsets.all(2.5),
                   child: Hero(
                     tag: 'feed_${widget.feedData.type}_${index}',
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: SizedBox(
-                        width: 110,
-                        height: 130,
-                        child: Image.asset(
+                    child: PostImage(
+                      imageUrl:
                           widget.feedData.type == FeedType.buddy
                               ? (item.profileImage ?? item.imagePath)
                               : item.imagePath,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      width: 110,
+                      height: 130,
+                      borderRadius: 8,
                     ),
                   ),
                 ),

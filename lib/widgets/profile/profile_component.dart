@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
-import 'package:sociord/widgets/profile/profile_banner.dart';
-import 'package:sociord/widgets/profile/profile_hero.dart';
-import 'package:sociord/widgets/profile/profile_highlight.dart';
+import 'package:sociord/widgets/profile/homePagePosts/profile_banner.dart';
+import 'package:sociord/widgets/profile/homePagePosts/profile_hero.dart';
+import 'package:sociord/widgets/profile/homePagePosts/profile_highlight.dart';
 import 'package:sociord/widgets/profile/profile_posts.dart';
-
-// Import enums from existing components
-import 'package:sociord/widgets/profile/profile_hero.dart'
-    show RelationshipType;
-import 'package:sociord/widgets/profile/profile_posts.dart'
-    show UserType, ProfileViewType;
+import 'package:sociord/widgets/profile/buddyProfilePost/post_reader_page.dart';
+import 'package:sociord/widgets/profile/buddyProfilePost/post_source.dart';
 
 class ProfileData {
   final String imageUrl;
@@ -322,7 +318,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
         case 0:
           return UploadsSlivers(
             itemCount: kBuddyUploads.length,
-            itemBuilder: (ctx, i) => _buildGridItem(i),
+            itemBuilder: (ctx, i) => _buildGridItem(ctx, i),
           );
         case 1:
           return TaggedSlivers(message: msg);
@@ -332,10 +328,24 @@ class _ProfileComponentState extends State<ProfileComponent> {
     }
   }
 
-  Widget _buildGridItem(int index) {
+  Widget _buildGridItem(BuildContext context, int index) {
     return GestureDetector(
       onTap: () {
-        // Handle grid item tap
+        // Navigate to PostReaderPage
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder:
+                (_) => PostReaderPage(
+                  userId: 'user_1', // Replace with actual user ID
+                  initialPostId:
+                      'post_${index + 1}', // Generate post ID based on index
+                  source: PostSource.uploads, // or tagged based on current tab
+                  userName: widget.userData.name,
+                  profileImage: widget.userData.imageUrl,
+                ),
+            fullscreenDialog: true, // feels like a sheet
+          ),
+        );
       },
       child: Container(
         margin: const EdgeInsets.all(2),

@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/models/comment_model.dart';
+import 'package:sociord/widgets/common/profile_picture.dart';
 
 class CommentItem extends StatelessWidget {
   final CommentModel comment;
@@ -36,14 +37,11 @@ class CommentItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Avatar (left)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: Image.asset(
-              comment.profile,
-              height: isReply ? 40 : 50,
-              width: isReply ? 30 : 40,
-              fit: BoxFit.cover,
-            ),
+          ProfilePicture(
+            imageUrl: comment.profile,
+            width: isReply ? 30 : 40,
+            height: isReply ? 40 : 50,
+            borderRadius: 5,
           ),
           const SizedBox(width: 10),
           // Right: Column with header, text, actions

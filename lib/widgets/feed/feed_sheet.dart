@@ -9,6 +9,7 @@ import 'package:sociord/utils/routes.dart'; // Add import for route constants
 import 'package:sociord/widgets/feed/feed_data.dart';
 import 'package:sociord/widgets/feed/feed_item.dart';
 import 'package:sociord/widgets/feed/feed_type.dart';
+import 'package:sociord/widgets/common/profile_picture.dart';
 
 class FeedSheet extends StatefulWidget {
   final FeedData feedData;
@@ -624,7 +625,12 @@ class _FeedSheetState extends State<FeedSheet> with TickerProviderStateMixin {
         children: [
           Row(
             children: [
-              GestureDetector(
+              ProfilePicture(
+                imageUrl:
+                    _currentItem.profileImage ?? widget.feedData.profileImage,
+                width: 30,
+                height: 35,
+                borderRadius: 5,
                 onTap: () {
                   // Navigate to buddy profile
                   context.go(
@@ -632,15 +638,6 @@ class _FeedSheetState extends State<FeedSheet> with TickerProviderStateMixin {
                     '$buddyProfileRoute?username=${_currentItem.userName}&profileImage=${_currentItem.profileImage}&relationship=none',
                   );
                 },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: Image.asset(
-                    _currentItem.profileImage ?? widget.feedData.profileImage,
-                    height: 35,
-                    width: 30,
-                    fit: BoxFit.cover,
-                  ),
-                ),
               ),
               const SizedBox(width: 10),
               GestureDetector(

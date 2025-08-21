@@ -4,7 +4,8 @@ import 'package:sociord/widgets/gradient_text.dart';
 import 'package:sociord/widgets/home/comments_bottom_sheet.dart';
 import 'package:sociord/widgets/home/ratings_bottom_sheet.dart';
 import 'package:sociord/widgets/home/share_bottom_sheet.dart';
-import 'package:sociord/utils/routes.dart';
+import 'package:sociord/widgets/common/profile_picture.dart';
+import 'package:sociord/widgets/common/post_image.dart';
 
 class PostWidget extends StatefulWidget {
   final String profileImage;
@@ -80,14 +81,11 @@ class _PostComponentState extends State<PostWidget> {
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: Image.asset(
-                  widget.profileImage,
-                  height: 60,
-                  width: 40,
-                  fit: BoxFit.cover,
-                ),
+              ProfilePicture(
+                imageUrl: widget.profileImage,
+                width: 40,
+                height: 60,
+                borderRadius: 5,
               ),
               const SizedBox(width: 8),
               Column(
@@ -197,14 +195,7 @@ class _PostComponentState extends State<PostWidget> {
   }
 
   Widget _buildPostImage() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(0),
-      child: Image.asset(
-        widget.postImage,
-        width: double.infinity,
-        fit: BoxFit.cover,
-      ),
-    );
+    return PostImage(imageUrl: widget.postImage, borderRadius: 0);
   }
 
   Widget _buildEngagementBar(BuildContext context) {
