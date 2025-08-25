@@ -7,6 +7,8 @@ import 'package:sociord/widgets/profile/homePagePosts/profile_highlight.dart';
 import 'package:sociord/widgets/profile/profile_posts.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/post_reader_page.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/post_source.dart';
+import 'package:sociord/widgets/profile/buddyProfilePost/mock_post_repo.dart';
+import 'package:sociord/widgets/profile/buddyProfilePost/grid_post_tile.dart';
 
 class ProfileData {
   final String imageUrl;
@@ -143,6 +145,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
         animation: controller.animation!,
         builder: (context, _) {
           return CustomScrollView(
+            physics: const ClampingScrollPhysics(),
             slivers: [
               if (widget.viewType == ProfileViewType.own)
                 SliverToBoxAdapter(
@@ -317,7 +320,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
       switch (index) {
         case 0:
           return UploadsSlivers(
-            itemCount: kBuddyUploads.length,
+            itemCount: MockPostRepo.allPosts.length, // Use actual post count
             itemBuilder: (ctx, i) => _buildGridItem(ctx, i),
           );
         case 1:
@@ -329,39 +332,45 @@ class _ProfileComponentState extends State<ProfileComponent> {
   }
 
   Widget _buildGridItem(BuildContext context, int index) {
-    return GestureDetector(
-      onTap: () {
-        // Navigate to PostReaderPage
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder:
-                (_) => PostReaderPage(
+    // Get the actual post from mock data
+    final posts = MockPostRepo.allPosts;
+    if (index >= posts.length) {
+      return Container(); // Return empty container if index out of bounds
+    }
+
+    final post = posts[index];
+
+    return Container(
+      margin: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(5),
+        child: GridPostTile(
+          post: post,
+          onTap: () {
+            // Navigate to PostReaderPage
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => PostReaderPage(
                   userId: 'user_1', // Replace with actual user ID
-                  initialPostId:
-                      'post_${index + 1}', // Generate post ID based on index
+                  initialPostId: post.id, // Use actual post ID
                   source: PostSource.uploads, // or tagged based on current tab
                   userName: widget.userData.name,
                   profileImage: widget.userData.imageUrl,
                 ),
-            fullscreenDialog: true, // feels like a sheet
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(5),
-          child: Image.asset(kBuddyUploads[index], fit: BoxFit.cover),
+                fullscreenDialog: true, // feels like a sheet
+              ),
+            );
+          },
         ),
       ),
     );

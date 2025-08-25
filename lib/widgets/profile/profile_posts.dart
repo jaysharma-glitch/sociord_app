@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
-import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/post_reader_page.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/post_source.dart';
-import 'package:sociord/widgets/common/post_image.dart';
+import 'package:sociord/widgets/profile/buddyProfilePost/grid_post_tile.dart';
+import 'package:sociord/widgets/profile/buddyProfilePost/mock_post_repo.dart';
 
 enum UserType { explorer, creator }
 
@@ -47,40 +47,34 @@ class PostsTabsBar extends StatelessWidget {
 }
 
 Widget _buildGridItem(BuildContext context, int index) {
-  return Container(
-    margin: const EdgeInsets.all(2),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(5),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
+  // Get all posts from the mock repo
+  final posts = MockPostRepo.allPosts; // Use the static getter
+
+  if (index >= posts.length) {
+    return Container(); // Return empty container if index out of bounds
+  }
+
+  final post = posts[index]; // Use the actual post at this index
+
+  return GridPostTile(
+    post: post,
+    onTap: () {
+      // Navigate to PostReaderPage
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder:
+              (_) => PostReaderPage(
+                userId: 'user_1', // Replace with actual user ID
+                initialPostId: post.id,
+                source: PostSource.uploads, // or tagged based on current tab
+                userName: 'Arjun Sethi', // Replace with actual user name
+                profileImage:
+                    'assets/images/profileImage.png', // Replace with actual profile image
+              ),
+          fullscreenDialog: true, // feels like a sheet
         ),
-      ],
-    ),
-    child: PostImage(
-      imageUrl: kBuddyUploads[index],
-      borderRadius: 5,
-      onTap: () {
-        // Navigate to PostReaderPage
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder:
-                (_) => PostReaderPage(
-                  userId: 'user_1', // Replace with actual user ID
-                  initialPostId:
-                      'post_${index + 1}', // Generate post ID based on index
-                  source: PostSource.uploads, // or tagged based on current tab
-                  userName: 'Arjun Sethi', // Replace with actual user name
-                  profileImage:
-                      'assets/images/profileImage.png', // Replace with actual profile image
-                ),
-            fullscreenDialog: true, // feels like a sheet
-          ),
-        );
-      },
-    ),
+      );
+    },
   );
 }
 

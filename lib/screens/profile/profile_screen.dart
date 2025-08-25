@@ -5,6 +5,8 @@ import 'package:sociord/widgets/profile/profile_component.dart';
 import 'package:sociord/widgets/profile/homePagePosts/profile_hero.dart';
 import 'package:sociord/widgets/profile/profile_posts.dart'
     show UserType, ProfileViewType;
+import 'package:sociord/widgets/profile/homePagePosts/profile_hero.dart'
+    show RelationshipType;
 import 'package:sociord/utils/asset_path_constants.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -43,6 +45,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       subscriptions: 0,
       following: 0,
       creatorCategory: profileType == 'Creator' ? category : null,
+      isVerified: false,
+      hasHighlightData: true,
+      highlightImages: null,
+      highlightNames: null,
     );
 
     return ProfileComponent(

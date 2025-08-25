@@ -13,7 +13,7 @@ import 'package:sociord/screens/onboarding/location_search.dart';
 import 'package:sociord/screens/onboarding/other_gender.dart';
 import 'package:sociord/screens/profile/become_a_creator.dart';
 import 'package:sociord/screens/profile/buddy_profile_screen.dart';
-import 'package:sociord/screens/profile/profile_scree.dart';
+import 'package:sociord/screens/profile/profile_screen.dart';
 import 'package:sociord/screens/sign_in_sign_up_screen.dart';
 import 'package:sociord/screens/onboarding/sign_up_flow.dart';
 import 'package:sociord/screens/personality/personality_flow.dart';

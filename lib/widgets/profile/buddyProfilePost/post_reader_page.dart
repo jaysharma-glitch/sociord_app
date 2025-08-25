@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sociord/constants/color.dart';
 import 'post_model.dart';
 import 'post_repo.dart';
-import 'post_source.dart';
 import 'post_card.dart';
+import 'post_source.dart';
 import 'mock_post_repo.dart';
 import 'package:sociord/widgets/common/profile_picture.dart';
 
@@ -49,6 +50,11 @@ class _PostReaderPageState extends State<PostReaderPage> {
   }
 
   Future<void> _init() async {
+    // For debugging - print the parameters
+    print(
+      'PostReaderPage _init: userId=${widget.userId}, initialPostId=${widget.initialPostId}, source=${widget.source}',
+    );
+
     final newestToOldest =
         widget.prefetched ??
         await _repo.fetchUserPosts(
@@ -57,7 +63,14 @@ class _PostReaderPageState extends State<PostReaderPage> {
           limit: 30,
         );
 
+    // For debugging - print the fetched posts
+    print('PostReaderPage _init: fetched ${newestToOldest.length} posts');
+    for (var post in newestToOldest) {
+      print('  - ${post.id}: ${post.caption}');
+    }
+
     if (newestToOldest.isEmpty) {
+      print('PostReaderPage _init: No posts found, setting empty feed');
       setState(() => _feed = []);
       return;
     }
@@ -69,10 +82,16 @@ class _PostReaderPageState extends State<PostReaderPage> {
     );
     final rest = newestToOldest.where((p) => p.id != selected.id).toList();
 
+    print(
+      'PostReaderPage _init: Selected post: ${selected.id}, Rest posts: ${rest.length}',
+    );
+
     setState(() {
       _feed = [selected, ...rest];
       _oldestLoadedAt = newestToOldest.last.createdAt;
     });
+
+    print('PostReaderPage _init: Final feed has ${_feed.length} posts');
   }
 
   void _onScrollEndLoadMore() {
@@ -109,43 +128,62 @@ class _PostReaderPageState extends State<PostReaderPage> {
     setState(() => _loadingMore = false);
   }
 
+  bool _isVideoVisible(int index) {
+    if (index >= _feed.length) return false;
+    final post = _feed[index];
+    if (post.mediaType != MediaType.video) return false;
+
+    // Simple visibility check - assume first few videos are visible
+    // In a real implementation, you'd use IntersectionObserver or similar
+    return index < 3; // Only first 3 videos auto-play for now
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
         controller: _scroll,
+        physics: const ClampingScrollPhysics(),
         slivers: [
           SliverAppBar(
             pinned: true,
             floating: true,
             snap: false,
-            backgroundColor: Colors.white,
+            backgroundColor: kAppWhite,
             elevation: 0,
+            automaticallyImplyLeading: false,
             title: Row(
               children: [
                 if (widget.profileImage != null) ...[
                   ProfilePicture(
                     imageUrl: widget.profileImage!,
-                    imageSize: 40,
-                    borderRadius: 20,
+                    width: 40,
+                    height: 50,
+                    borderRadius: 5,
                   ),
                   const SizedBox(width: 12),
                 ],
-                Expanded(
+                Flexible(
+                  fit: FlexFit.loose,
                   child: Column(
+                    mainAxisSize: MainAxisSize.min, // don't force extra height
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         widget.userName ?? "Arjun's Posts",
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.copyWith(color: Colors.black),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       Text(
                         "@arjun.sethi",
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(color: Colors.black54),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: Colors.black,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ],
                   ),
@@ -163,23 +201,34 @@ class _PostReaderPageState extends State<PostReaderPage> {
           // Feed
           SliverList.builder(
             itemCount: _feed.length,
-            itemBuilder:
-                (context, i) => PostCard(
-                  post: _feed[i],
-                  userName: widget.userName,
-                  profileImage: widget.profileImage,
-                  showProfile: false, // Hide profile since it's in app bar
-                  onProfileTap: () {
-                    // Handle profile tap
-                  },
-                  onLikeTap: () {
-                    // Handle like tap
-                  },
-                  onMessageSend: (message) {
-                    // Handle message send
-                    print('Message sent: $message');
-                  },
-                ),
+            itemBuilder: (context, i) {
+              // For debugging
+              if (i == 0) {
+                print('PostReaderPage build: Rendering ${_feed.length} posts');
+              }
+              print(
+                'PostReaderPage build: Rendering post ${i + 1}/${_feed.length}: ${_feed[i].id}',
+              );
+
+              return PostCard(
+                post: _feed[i],
+                userName: widget.userName,
+                profileImage: widget.profileImage,
+                showProfile: false, // Hide profile since it's in app bar
+                autoPlay: _isVideoVisible(i),
+                onProfileTap: () {
+                  // Handle profile tap
+                },
+                onLikeChanged: (updatedPost) {
+                  // Handle like change
+                  print('Post ${updatedPost.id} liked: ${updatedPost.liked}');
+                },
+                onMessageSend: (message) {
+                  // Handle message send
+                  print('Message sent: $message');
+                },
+              );
+            },
           ),
 
           // Loading more indicator

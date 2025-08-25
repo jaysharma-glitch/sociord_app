@@ -92,8 +92,14 @@ class _FeedSliderState extends State<FeedSlider> {
           ],
 
           // Feed items section
-          AnimatedSize(
+          AnimatedContainer(
             duration: const Duration(milliseconds: 300),
+            height:
+                isExpanded
+                    ? (widget.sliderType == FeedSliderType.buddyFeed
+                        ? 150.0
+                        : 155.0)
+                    : 0.0,
             child:
                 isExpanded
                     ? SizedBox(
@@ -116,7 +122,7 @@ class _FeedSliderState extends State<FeedSlider> {
                         },
                       ),
                     )
-                    : const SizedBox.shrink(),
+                    : null,
           ),
         ],
       ),

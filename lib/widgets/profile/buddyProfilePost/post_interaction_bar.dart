@@ -159,10 +159,7 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
             children: [
               Expanded(
                 child: Container(
-                  constraints:
-                      widget.showProfile
-                          ? const BoxConstraints(minHeight: 60, maxHeight: 120)
-                          : const BoxConstraints(minHeight: 25, maxHeight: 60),
+                  height: widget.showProfile ? 60 : 40,
                   decoration: BoxDecoration(
                     color: kAppWhite,
                     borderRadius:
@@ -194,13 +191,12 @@ class _PostInteractionBarState extends State<PostInteractionBar> {
                       ),
                       isDense: true,
                     ),
-                    maxLines: null,
-                    minLines: 1,
-                    keyboardType: TextInputType.multiline,
-                    textInputAction: TextInputAction.newline,
-                    onSubmitted: (_) {
-                      if (_messageController.text.isNotEmpty) {
-                        widget.onMessageSend?.call(_messageController.text);
+                    maxLines: 1,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (text) {
+                      if (text.isNotEmpty) {
+                        widget.onMessageSend?.call(text);
                         _messageController.clear();
                         setState(() {});
                       }

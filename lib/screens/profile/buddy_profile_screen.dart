@@ -155,6 +155,7 @@ class BuddyProfileScreen extends StatelessWidget {
           'highlights': kBuddyHighlights, // All highlight images
         };
 
+    final highlights = data['highlights'] as List<String>? ?? [];
     return ProfileData(
       imageUrl: data['profileImage'] ?? profileImage,
       name: data['name'],
@@ -165,18 +166,19 @@ class BuddyProfileScreen extends StatelessWidget {
       buddies: data['buddies'],
       subscriptions: data['subscriptions'],
       following: data['following'],
-      hasHighlightData:
-          (data['highlights'] as List)
-              .isNotEmpty, // Show highlights only if buddy has highlight data
-      highlightImages: data['highlights'] as List<String>?,
-      highlightNames: [
-        'I KNOW..',
-        'The Best day of..',
-        'Honeymoon',
-        'Progress in the I..',
-        'Reunions',
-        'This one is to di..',
-      ],
+      hasHighlightData: highlights.isNotEmpty,
+      highlightImages: highlights.isNotEmpty ? highlights : null,
+      highlightNames:
+          highlights.isNotEmpty
+              ? [
+                'I KNOW..',
+                'The Best day of..',
+                'Honeymoon',
+                'Progress in the I..',
+                'Reunions',
+                'This one is to di..',
+              ]
+              : null,
     );
   }
 }
