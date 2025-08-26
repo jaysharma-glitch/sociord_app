@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
-import 'package:sociord/utils/routes.dart';
+
 import 'package:sociord/widgets/common/profile_picture.dart';
+import 'package:sociord/widgets/profile/buddy_profile_button.dart';
 
 enum RelationshipType { none, buddy, following, subscribed }
 
@@ -248,7 +249,6 @@ class ProfileHero extends StatelessWidget {
 
   Widget _actionButtons(BuildContext context, TextTheme theme) {
     final isOwn = isOwnProfile ?? true;
-    final currentRelationship = relationship ?? RelationshipType.none;
     final isCreator = profileType == 'Creator';
 
     if (isOwn) {
@@ -291,50 +291,60 @@ class ProfileHero extends StatelessWidget {
         ],
       );
     } else {
-      // Other user's profile actions
-      return Row(
-        children: [
-          // Primary action button
-          ElevatedButton(
-            onPressed: _getPrimaryAction(),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              backgroundColor: _getPrimaryButtonColor(),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(
-              _getPrimaryButtonText(),
-              style: theme.headlineSmall!.copyWith(
-                fontSize: 12,
-                color: kAppWhite,
-              ),
-            ),
-          ),
-          const SizedBox(width: 5),
-          // Secondary action button
-          if (onMessage != null)
+      // Other user's profile actions - use BuddyProfileButton for non-creator profiles
+      if (isCreator) {
+        // Creator profiles use original logic
+        return Row(
+          children: [
             ElevatedButton(
-              onPressed: onMessage,
+              onPressed: _getPrimaryAction(),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 4,
                 ),
-                backgroundColor: kAppPurple,
+                backgroundColor: _getPrimaryButtonColor(),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: Text(
-                'Message',
+                _getPrimaryButtonText(),
                 style: theme.headlineSmall!.copyWith(
                   fontSize: 12,
                   color: kAppWhite,
                 ),
               ),
             ),
-        ],
-      );
+            const SizedBox(width: 5),
+            if (onMessage != null)
+              ElevatedButton(
+                onPressed: onMessage,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  backgroundColor: kAppPurple,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: Text(
+                  'Message',
+                  style: theme.headlineSmall!.copyWith(
+                    fontSize: 12,
+                    color: kAppWhite,
+                  ),
+                ),
+              ),
+          ],
+        );
+      } else {
+        // Explorer profiles use new BuddyProfileButton
+        return BuddyProfileButton(
+          userId: handle, // Use handle as userId for now
+          userName: name,
+        );
+      }
     }
   }
 
