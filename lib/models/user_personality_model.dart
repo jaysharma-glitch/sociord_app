@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'personality_trait_model.dart';
 
 part 'user_personality_model.g.dart';
 

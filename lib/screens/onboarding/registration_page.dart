@@ -7,13 +7,12 @@ import 'package:sociord/constants/color.dart';
 import 'package:sociord/screens/onboarding/widget/tandc_checkbox.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/bottom_sheet_signUp.dart';
-import '../../widgets/custom_snack_bar.dart';
 import 'package:sociord/constants/ui.dart';
 
 class RegisterWidget extends ConsumerStatefulWidget {
   final PageController pageController;
 
-  RegisterWidget({super.key, required this.pageController});
+  const RegisterWidget({super.key, required this.pageController});
 
   @override
   _RegisterWidgetState createState() => _RegisterWidgetState();
@@ -72,13 +71,14 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                 labelStyle: Theme.of(context).textTheme.bodyLarge,
                 border: kTextFormFieldBorderStyles,
                 enabledBorder: kTextFormFieldBorderStyles,
-                suffixIcon: userState.firstName!.isNotEmpty
-                    ? const Icon(
-                        Icons.check_circle_rounded,
-                        color: kAppDarkGreen,
-                        size: 20,
-                      )
-                    : null,
+                suffixIcon:
+                    userState.firstName!.isNotEmpty
+                        ? const Icon(
+                          Icons.check_circle_rounded,
+                          color: kAppDarkGreen,
+                          size: 20,
+                        )
+                        : null,
               ),
               onChanged: (value) {
                 userNotifier.setFirstName(value);
@@ -92,13 +92,12 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
               },
               inputFormatters: [
                 FilteringTextInputFormatter.allow(
-                    RegExp(r'[a-zA-Z ]')), // Allow only letters and spaces
+                  RegExp(r'[a-zA-Z ]'),
+                ), // Allow only letters and spaces
               ],
               style: Theme.of(context).textTheme.bodyLarge,
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             TextFormField(
               controller: _lastNameController,
               textCapitalization: TextCapitalization.words,
@@ -107,13 +106,14 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                 labelStyle: Theme.of(context).textTheme.bodyLarge,
                 border: kTextFormFieldBorderStyles,
                 enabledBorder: kTextFormFieldBorderStyles,
-                suffixIcon: userState.lastName!.isNotEmpty
-                    ? const Icon(
-                        Icons.check_circle_rounded,
-                        color: kAppDarkGreen,
-                        size: 20,
-                      )
-                    : null,
+                suffixIcon:
+                    userState.lastName!.isNotEmpty
+                        ? const Icon(
+                          Icons.check_circle_rounded,
+                          color: kAppDarkGreen,
+                          size: 20,
+                        )
+                        : null,
               ),
               onChanged: (value) {
                 userNotifier.setLastName(value);
@@ -126,13 +126,12 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
               },
               inputFormatters: [
                 FilteringTextInputFormatter.allow(
-                    RegExp(r'[a-zA-Z ]')), // Allow only letters and spaces
+                  RegExp(r'[a-zA-Z ]'),
+                ), // Allow only letters and spaces
               ],
               style: Theme.of(context).textTheme.bodyLarge,
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             // DropdownSearch<String>(
             //   mode: Mode.MENU,
             //   showSelectedItems: true,
@@ -158,8 +157,9 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                   color: kBorderGreay, // Border color
                   width: 1.0, // Border width
                 ),
-                borderRadius:
-                    BorderRadius.circular(10.0), // Border radius (optional)
+                borderRadius: BorderRadius.circular(
+                  10.0,
+                ), // Border radius (optional)
               ),
               child: Row(
                 children: [
@@ -168,7 +168,8 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                       onChanged: (value) {
                         print(value);
                         userNotifier.setCountryCode(
-                            value.toString().split('+')[1] ?? '');
+                          value.toString().split('+')[1] ?? '',
+                        );
                       },
                       showFlag: false,
                       initialSelection: 'IN',
@@ -182,15 +183,11 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                     ),
                   ),
                   Image.asset(kDropDown),
-                  SizedBox(
-                    width: 15,
-                  )
+                  SizedBox(width: 15),
                 ],
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             TextFormField(
               controller: _phoneNumberController,
               decoration: InputDecoration(
@@ -199,29 +196,26 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                 border: kTextFormFieldBorderStyles,
                 enabledBorder: kTextFormFieldBorderStyles,
                 prefixStyle: TextStyle(fontSize: 18),
-                suffixIcon: userState.phoneNumber!.length == 10
-                    ? const Icon(
-                        Icons.check_circle_rounded,
-                        color: kAppDarkGreen,
-                        size: 20,
-                      )
-                    : GestureDetector(
-                        onTap: () {
-                          showModalBottomSheet(
+                suffixIcon:
+                    userState.phoneNumber!.length == 10
+                        ? const Icon(
+                          Icons.check_circle_rounded,
+                          color: kAppDarkGreen,
+                          size: 20,
+                        )
+                        : GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
                               context: context,
                               builder: (context) {
                                 return BottomSheetContent();
-                              });
-                        },
-                        child: const Icon(
-                          Icons.help_outline,
-                          size: 20,
+                              },
+                            );
+                          },
+                          child: const Icon(Icons.help_outline, size: 20),
                         ),
-                      ),
               ),
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               keyboardType: TextInputType.phone,
               onChanged: (value) {
                 userNotifier.setPhoneNumber(value);
@@ -239,15 +233,12 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                 padding: EdgeInsets.only(top: 15),
                 child: Text(
                   'User with the same phone number already exsists',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(color: kAppRed),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(color: kAppRed),
                 ),
               ),
-            const SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
             TandCCheckBox(
               isChecked: _tAndCAgreed,
               onChanged: (value) => setState(() => _tAndCAgreed = value!),
@@ -257,16 +248,13 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
               child: Center(
                 child: Text(
                   'Kindly agree to the T&C to proceed',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(color: kAppRed),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall!.copyWith(color: kAppRed),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -320,15 +308,14 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                     curve: Curves.easeIn,
                   );
                 },
-                child: isLoading
-                    ? kLoadingIndicator
-                    : Text(
-                        'Create your account',
-                        style:
-                            Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                  color: Colors.white,
-                                ),
-                      ),
+                child:
+                    isLoading
+                        ? kLoadingIndicator
+                        : Text(
+                          'Create your account',
+                          style: Theme.of(context).textTheme.headlineSmall!
+                              .copyWith(color: Colors.white),
+                        ),
               ),
             ),
           ],

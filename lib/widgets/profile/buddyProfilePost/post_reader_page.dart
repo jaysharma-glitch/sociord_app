@@ -6,6 +6,8 @@ import 'post_card.dart';
 import 'post_source.dart';
 import 'mock_post_repo.dart';
 import 'package:sociord/widgets/common/profile_picture.dart';
+import 'package:sociord/utils/asset_path_constants.dart';
+import 'package:sociord/widgets/common/options_bottom_sheet.dart';
 
 class PostReaderPage extends StatefulWidget {
   final String userId;
@@ -14,6 +16,7 @@ class PostReaderPage extends StatefulWidget {
   final List<Post>? prefetched; // optional: newest→oldest
   final String? userName;
   final String? profileImage;
+  final bool isCreator; // Add parameter to determine account type
 
   const PostReaderPage({
     super.key,
@@ -23,6 +26,7 @@ class PostReaderPage extends StatefulWidget {
     this.prefetched,
     this.userName,
     this.profileImage,
+    this.isCreator = false, // Default to personal account
   });
 
   @override
@@ -138,6 +142,16 @@ class _PostReaderPageState extends State<PostReaderPage> {
     return index < 3; // Only first 3 videos auto-play for now
   }
 
+  void _openSociordOptions(BuildContext context) {
+    OptionsBottomSheet.show(
+      context: context,
+      type:
+          widget.isCreator
+              ? BottomSheetType.selfPostCreator
+              : BottomSheetType.selfPostPersonal,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,6 +169,19 @@ class _PostReaderPageState extends State<PostReaderPage> {
             automaticallyImplyLeading: false,
             title: Row(
               children: [
+                // Sociord logo with dropdown
+                GestureDetector(
+                  onTap: () => _openSociordOptions(context),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(kLogoText, height: 28),
+                      const SizedBox(width: 5),
+                      Image.asset(kChevronDown),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
                 if (widget.profileImage != null) ...[
                   ProfilePicture(
                     imageUrl: widget.profileImage!,

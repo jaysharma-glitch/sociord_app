@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
@@ -30,7 +29,8 @@ class LocationNotifier extends _$LocationNotifier {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       state = state.copyWith(
-          error: 'Location services are disabled. Please enable the services');
+        error: 'Location services are disabled. Please enable the services',
+      );
       return false;
     }
     print('checkin per');
@@ -46,8 +46,9 @@ class LocationNotifier extends _$LocationNotifier {
 
     if (permission == LocationPermission.deniedForever) {
       state = state.copyWith(
-          error:
-              'Location permissions are permanently denied, we cannot request permissions.');
+        error:
+            'Location permissions are permanently denied, we cannot request permissions.',
+      );
       return false;
     }
     return true;
@@ -60,9 +61,12 @@ class LocationNotifier extends _$LocationNotifier {
       if (!isAllowed) return;
 
       final position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      final placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
       final place = placemarks[0];
 
       final location = LocationModel(
@@ -93,8 +97,10 @@ class LocationNotifier extends _$LocationNotifier {
       var data = json.decode(response.body);
 
       if (response.statusCode == 200) {
-        state =
-            state.copyWith(loading: false, suggestions: data['predictions']);
+        state = state.copyWith(
+          loading: false,
+          suggestions: data['predictions'],
+        );
       } else {
         throw Exception('Failed to load predictions');
       }
@@ -154,13 +160,14 @@ class LocationNotifier extends _$LocationNotifier {
   Future<LocationModel?> addLocation(userId) async {
     var locationService = LocationService();
     var res = await locationService.addLocation(
-        userId: userId,
-        lat: state.location?.lat,
-        long: state.location?.long,
-        street: state.location?.street,
-        city: state.location?.city,
-        state: state.location?.state,
-        zipCode: state.location?.zipCode);
+      userId: userId,
+      lat: state.location?.lat,
+      long: state.location?.long,
+      street: state.location?.street,
+      city: state.location?.city,
+      state: state.location?.state,
+      zipCode: state.location?.zipCode,
+    );
     print('in provider $res');
     return res;
   }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sociord/constants/color.dart';
+import 'package:sociord/utils/routes.dart';
 import 'package:sociord/widgets/gradient_text.dart';
 import 'package:sociord/widgets/home/comments_bottom_sheet.dart';
 import 'package:sociord/widgets/home/ratings_bottom_sheet.dart';
 import 'package:sociord/widgets/home/share_bottom_sheet.dart';
 import 'package:sociord/widgets/common/profile_picture.dart';
 import 'package:sociord/widgets/common/post_image.dart';
+import 'package:sociord/widgets/common/options_bottom_sheet.dart';
 
 class PostWidget extends StatefulWidget {
   final String profileImage;
@@ -81,11 +84,14 @@ class _PostComponentState extends State<PostWidget> {
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              ProfilePicture(
-                imageUrl: widget.profileImage,
-                width: 40,
-                height: 60,
-                borderRadius: 5,
+              GestureDetector(
+                onTap: () => _navigateToProfile(context),
+                child: ProfilePicture(
+                  imageUrl: widget.profileImage,
+                  width: 40,
+                  height: 60,
+                  borderRadius: 5,
+                ),
               ),
               const SizedBox(width: 8),
               Column(
@@ -93,9 +99,12 @@ class _PostComponentState extends State<PostWidget> {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        widget.username,
-                        style: _headlineText(context, size: 12),
+                      GestureDetector(
+                        onTap: () => _navigateToProfile(context),
+                        child: Text(
+                          widget.username,
+                          style: _headlineText(context, size: 12),
+                        ),
                       ),
                       const SizedBox(width: 10),
                       if (!widget.isSubscribed)
@@ -157,7 +166,7 @@ class _PostComponentState extends State<PostWidget> {
           ),
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () => _openOptionsSheet(context),
           constraints: const BoxConstraints(),
           padding: EdgeInsets.zero,
           visualDensity: VisualDensity.compact,
@@ -336,6 +345,13 @@ class _PostComponentState extends State<PostWidget> {
     });
   }
 
+  void _openOptionsSheet(BuildContext context) {
+    OptionsBottomSheet.show(
+      context: context,
+      type: BottomSheetType.homepagePost,
+    );
+  }
+
   TextStyle _headlineText(
     BuildContext context, {
     double size = 14,
@@ -351,5 +367,29 @@ class _PostComponentState extends State<PostWidget> {
     FontWeight weight = FontWeight.w400,
   }) {
     return Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: weight);
+  }
+
+  void _navigateToProfile(BuildContext context) {
+    // Map the actual usernames from home screen to creator usernames
+    final creatorUsernames = {
+      'darius_nova1': 'sarah.creative',
+      'sofia_rivera88': 'alex.tech',
+      'hiddeninplainview': 'maya.fitness',
+      'quietlysneaky': 'david.food',
+    };
+
+    final creatorUsername = creatorUsernames[widget.username];
+
+    if (creatorUsername != null) {
+      // Navigate to creator profile
+      context.go(
+        '$creatorProfileRoute?username=$creatorUsername&profileImage=${widget.profileImage}&relationship=none',
+      );
+    } else {
+      // Navigate to buddy profile (fallback)
+      context.go(
+        '$buddyProfileRoute?username=${widget.username}&profileImage=${widget.profileImage}&relationship=none',
+      );
+    }
   }
 }

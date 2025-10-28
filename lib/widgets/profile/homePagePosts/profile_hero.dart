@@ -215,6 +215,8 @@ class ProfileHero extends StatelessWidget {
   }
 
   Widget _handleAndProfileSwitch(BuildContext context, TextTheme theme) {
+    final isCreator = profileType == 'Creator';
+
     return Row(
       children: [
         Text(handle, style: theme.bodySmall!.copyWith(fontFamily: "Gibson")),
@@ -230,12 +232,23 @@ class ProfileHero extends StatelessWidget {
             child: Row(
               children: [
                 Text(
+                  isCreator ? 'Creator Profile' : 'Personal Profile',
+                  style: theme.bodySmall!.copyWith(
+                    fontFamily: "Gibson",
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: kAppBlack,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
                   'Switch',
                   style: theme.bodySmall!.copyWith(
                     fontFamily: "Gibson",
                     fontSize: 10,
                     decoration: TextDecoration.underline,
                     decorationThickness: 3,
+                    color: kAppPurple,
                   ),
                 ),
                 const SizedBox(width: 2),
@@ -252,7 +265,7 @@ class ProfileHero extends StatelessWidget {
     final isCreator = profileType == 'Creator';
 
     if (isOwn) {
-      // Own profile actions
+      // Own profile actions - match the original button style
       return Row(
         children: [
           ElevatedButton(
@@ -273,7 +286,15 @@ class ProfileHero extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           ElevatedButton(
-            onPressed: onEditProfile,
+            onPressed: () {
+              if (isCreator) {
+                // Navigate to creator dashboard or settings
+                onEditProfile?.call();
+              } else {
+                // Navigate to become a creator
+                context.go("/profile/becomeACreator");
+              }
+            },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               backgroundColor: kAppPurple,
@@ -281,7 +302,7 @@ class ProfileHero extends StatelessWidget {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
-              isCreator ? 'View Creator Dashboard' : 'Become a Creator',
+              isCreator ? 'Creator Dashboard' : 'Become a Creator',
               style: theme.headlineSmall!.copyWith(
                 fontSize: 12,
                 color: kAppWhite,

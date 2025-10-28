@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sociord/constants/color.dart';
 import 'package:sociord/constants/ui.dart';
 import 'package:sociord/provider/location_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -69,41 +68,43 @@ class _LocationSearchState extends ConsumerState<LocationSearch> {
               ),
               const SizedBox(height: 10),
               Expanded(
-                child: suggestions.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No suggestions yet',
-                          style: Theme.of(context).textTheme.bodyMedium,
+                child:
+                    suggestions.isEmpty
+                        ? Center(
+                          child: Text(
+                            'No suggestions yet',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        )
+                        : ListView.builder(
+                          itemCount: suggestions.length,
+                          itemBuilder: (context, index) {
+                            final suggestion = suggestions[index];
+                            return ListTile(
+                              leading: const Icon(Icons.location_on),
+                              title: Text(
+                                suggestion['description'],
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              onTap: () async {
+                                final placeId = suggestion['place_id'];
+                                await ref
+                                    .read(locationNotifierProvider.notifier)
+                                    .fetchPlaceDetails(placeId);
+
+                                final selectedCity =
+                                    ref
+                                        .read(locationNotifierProvider)
+                                        .location
+                                        ?.city;
+
+                                if (context.canPop()) {
+                                  context.pop(selectedCity);
+                                }
+                              },
+                            );
+                          },
                         ),
-                      )
-                    : ListView.builder(
-                        itemCount: suggestions.length,
-                        itemBuilder: (context, index) {
-                          final suggestion = suggestions[index];
-                          return ListTile(
-                            leading: const Icon(Icons.location_on),
-                            title: Text(
-                              suggestion['description'],
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            onTap: () async {
-                              final placeId = suggestion['place_id'];
-                              await ref
-                                  .read(locationNotifierProvider.notifier)
-                                  .fetchPlaceDetails(placeId);
-
-                              final selectedCity = ref
-                                  .read(locationNotifierProvider)
-                                  .location
-                                  ?.city;
-
-                              if (context.canPop()) {
-                                context.pop(selectedCity);
-                              }
-                            },
-                          );
-                        },
-                      ),
               ),
             ],
           ),

@@ -81,7 +81,7 @@ class ProfilePicture extends StatelessWidget {
                     style:
                         handleStyle ??
                         Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: kAppBlack.withOpacity(0.6),
+                          color: kAppBlack.withValues(alpha: 0.6),
                         ),
                   ),
               ],

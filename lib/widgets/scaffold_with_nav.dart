@@ -20,6 +20,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Adjust currentIndex to account for Add button being a modal
     final currentIndex = navigationShell.currentIndex;
 
     return Scaffold(
@@ -27,11 +28,16 @@ class ScaffoldWithNavBar extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) {
-          if (index == currentIndex && index == 0) {
+          if (index == 1) {
+            // Add button - navigate to full-screen modal
+            context.go(addRoute);
+          } else if (index == currentIndex && index == 0) {
             homeScreenKey.currentState?.scrollToTop();
           } else {
-            // Keeps each tab’s history; doesn’t rebuild the whole shell
-            navigationShell.goBranch(index, initialLocation: false);
+            // Keeps each tab's history; doesn't rebuild the whole shell
+            // Adjust index for Add button (index 1 is Add, so shift other indices)
+            final adjustedIndex = index > 1 ? index - 1 : index;
+            navigationShell.goBranch(adjustedIndex, initialLocation: false);
           }
         },
         backgroundColor: kAppWhite,

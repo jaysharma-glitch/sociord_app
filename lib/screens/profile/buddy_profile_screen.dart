@@ -5,7 +5,6 @@ import 'package:sociord/widgets/profile/profile_component.dart';
 import 'package:sociord/widgets/profile/profile_posts.dart'
     show UserType, ProfileViewType;
 import 'package:sociord/utils/asset_path_constants.dart';
-import 'package:sociord/constants/color.dart';
 
 class BuddyProfileScreen extends StatelessWidget {
   final String username;

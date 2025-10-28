@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'post_model.dart';
 import 'post_interaction_bar.dart';
 import 'post_media.dart';
+import 'package:sociord/widgets/common/options_bottom_sheet.dart';
 
 class PostCard extends StatefulWidget {
   final Post post;
@@ -126,47 +127,9 @@ class _PostCardState extends State<PostCard>
   }
 
   void _showMoreOptions(BuildContext context) {
-    showModalBottomSheet(
+    OptionsBottomSheet.show(
       context: context,
-      backgroundColor: Colors.transparent,
-      builder:
-          (context) => Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.share),
-                  title: const Text('Share'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    // Handle share
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.report),
-                  title: const Text('Report'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    // Handle report
-                  },
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
+      type: BottomSheetType.buddyFeedPost,
     );
   }
 }

@@ -1,6 +1,3 @@
-import 'dart:math';
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sociord/constants/color.dart';
@@ -632,21 +629,13 @@ class _FeedSheetState extends State<FeedSheet> with TickerProviderStateMixin {
                 height: 35,
                 borderRadius: 5,
                 onTap: () {
-                  // Navigate to buddy profile
-                  context.go(
-                    // Changed from context.push to context.go
-                    '$buddyProfileRoute?username=${_currentItem.userName}&profileImage=${_currentItem.profileImage}&relationship=none',
-                  );
+                  _navigateToProfile(context);
                 },
               ),
               const SizedBox(width: 10),
               GestureDetector(
                 onTap: () {
-                  // Navigate to buddy profile
-                  context.go(
-                    // Changed from context.push to context.go
-                    '$buddyProfileRoute?username=${_currentItem.userName}&profileImage=${_currentItem.profileImage}&relationship=none',
-                  );
+                  _navigateToProfile(context);
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -791,6 +780,33 @@ class _FeedSheetState extends State<FeedSheet> with TickerProviderStateMixin {
         _isPaused = false;
       });
       _startTimer();
+    }
+  }
+
+  void _navigateToProfile(BuildContext context) {
+    // Map buddy usernames to creator usernames for navigation
+    final creatorUsernames = {
+      'emma.wave': 'sarah.creative',
+      'oliver_in_focus': 'alex.tech',
+      'liamdavis': 'maya.fitness',
+      'diya.codes': 'david.food',
+      'noah.the.explorer': 'lisa.travel',
+      'amara.now': 'james.art',
+    };
+
+    final username = _currentItem.userName ?? widget.feedData.userName;
+    final creatorUsername = creatorUsernames[username];
+
+    if (creatorUsername != null) {
+      // Navigate to creator profile
+      context.go(
+        '$creatorProfileRoute?username=$creatorUsername&profileImage=${_currentItem.profileImage}&relationship=none',
+      );
+    } else {
+      // Navigate to buddy profile (fallback)
+      context.go(
+        '$buddyProfileRoute?username=$username&profileImage=${_currentItem.profileImage}&relationship=none',
+      );
     }
   }
 }

@@ -52,7 +52,7 @@ class ProfileHighlight extends StatelessWidget {
               children: [
                 Text(
                   isCreator
-                      ? '${displayName} Showcase'
+                      ? '${_getFirstName(displayName)}\'s Showcase'
                       : '${displayName} Highlights',
                   style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                     fontSize: 15,
@@ -228,5 +228,9 @@ class ProfileHighlight extends StatelessWidget {
         caption: 'Sample caption for $name',
       );
     }).toList();
+  }
+
+  String _getFirstName(String fullName) {
+    return fullName.split(' ').first;
   }
 }

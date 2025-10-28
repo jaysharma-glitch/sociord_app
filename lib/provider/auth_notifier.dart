@@ -32,7 +32,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   FutureOr<AuthState> build() async {
     await _storage.deleteAll(); // 🧨 TEMPORARY LINE
     final token = await _storage.read(key: 'token');
-    print('📦 build(): read token = $token');
+    // Token read: $token
     return AuthState(isLoggedIn: token != null, token: token);
   }
 
@@ -42,7 +42,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   Future<void> login({required String token}) async {
     await _storage.write(key: 'token', value: token);
     state = AsyncValue.data(AuthState(isLoggedIn: true, token: token));
-    print('🔥 login(): isLoggedIn = true');
+    // Login successful
     _streamController.add(null);
   }
 
@@ -65,5 +65,6 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 }
 
 /// Provider declaration
-final authProvider =
-    AsyncNotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
+final authProvider = AsyncNotifierProvider<AuthNotifier, AuthState>(
+  AuthNotifier.new,
+);

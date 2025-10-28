@@ -1,7 +1,6 @@
 // lib/screens/onboarding/sign_up_flow.dart
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,7 +16,6 @@ import 'package:sociord/screens/onboarding/user_type.dart';
 import 'package:sociord/screens/onboarding/gender_selection.dart';
 import 'package:sociord/screens/onboarding/birthday_picker.dart';
 import 'package:sociord/screens/onboarding/widget/onboarding_page.dart';
-import 'package:sociord/utils/routes.dart';
 import 'package:sociord/widgets/go_back_btn.dart';
 import 'package:sociord/widgets/selection_widget.dart';
 
@@ -58,9 +56,9 @@ class _SignUpFlowState extends ConsumerState<SignUpFlow> {
                   },
                   child: Text(
                     'Continue',
-                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                          color: Colors.white,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.headlineSmall!.copyWith(color: Colors.white),
                   ),
                 ),
               ),

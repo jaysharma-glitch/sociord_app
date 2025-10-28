@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,9 +31,7 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -47,9 +43,10 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
       if (source == ImageSource.camera) {
         print('in ifff');
         pickedFile = await _picker.pickImage(
-            source: source,
-            preferredCameraDevice: CameraDevice.front,
-            imageQuality: 90);
+          source: source,
+          preferredCameraDevice: CameraDevice.front,
+          imageQuality: 90,
+        );
       } else {
         pickedFile = await _picker.pickImage(source: source);
       }
@@ -156,331 +153,320 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
               Text(
                 'You\'re all set. Ready to update your profile display image ?',
                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                      color: kAppPurple,
-                      fontSize: 15,
-                    ),
+                  color: kAppPurple,
+                  fontSize: 15,
+                ),
               ),
-              SizedBox(
-                height: 50,
-              ),
+              SizedBox(height: 50),
               _croppedFile == null
                   ? Column(
-                      children: [
-                        Center(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                _pickImage(ImageSource.gallery);
-                              },
-                              child: Text(
-                                'Upload from device',
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall,
-                              ),
+                    children: [
+                      Center(
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _pickImage(ImageSource.gallery);
+                            },
+                            child: Text(
+                              'Upload from device',
+                              style: Theme.of(context).textTheme.headlineSmall,
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Center(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                _pickImage(ImageSource.camera);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: kAppGreen,
-                              ),
-                              child: Text(
-                                'Take a selfie',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall!
-                                    .copyWith(color: kAppBlack),
-                              ),
+                      ),
+                      const SizedBox(height: 20),
+                      Center(
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _pickImage(ImageSource.camera);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kAppGreen,
+                            ),
+                            child: Text(
+                              'Take a selfie',
+                              style: Theme.of(context).textTheme.headlineSmall!
+                                  .copyWith(color: kAppBlack),
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Center(
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: OutlinedButton(
-                              onPressed: () {},
-                              child: Text(
-                                'Skip for now',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
-                                    ?.copyWith(color: kAppPurple),
-                              ),
+                      ),
+                      const SizedBox(height: 20),
+                      Center(
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: () {},
+                            child: Text(
+                              'Skip for now',
+                              style: Theme.of(context).textTheme.headlineSmall
+                                  ?.copyWith(color: kAppPurple),
                             ),
                           ),
-                        )
-                      ],
-                    )
+                        ),
+                      ),
+                    ],
+                  )
                   : Column(
-                      children: [
-                        Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: isImageLoading
-                                ? Container(
+                    children: [
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child:
+                              isImageLoading
+                                  ? Container(
                                     height: 200,
                                     width: 200,
                                     child: CircularProgressIndicator(),
                                   )
-                                : Image.file(
+                                  : Image.file(
                                     File(_croppedFile!.path),
                                     width:
                                         MediaQuery.sizeOf(context).width * 0.4,
                                   ),
+                        ),
+                      ),
+                      if (isTooLarge)
+                        Padding(
+                          padding: EdgeInsets.only(top: 20),
+                          child: Text(
+                            'Image size is too large. Kindly upload an image below 5MB in size',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmall!.copyWith(color: kAppRed),
                           ),
                         ),
-                        if (isTooLarge)
-                          Padding(
-                            padding: EdgeInsets.only(top: 20),
-                            child: Text(
-                              'Image size is too large. Kindly upload an image below 5MB in size',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall!
-                                  .copyWith(color: kAppRed),
+                      if (!isImageLoading && !isTooLarge)
+                        Row(
+                          children: [
+                            Text(
+                              'Needs adjustments?',
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
-                          ),
-                        if (!isImageLoading && !isTooLarge)
-                          Row(
-                            children: [
-                              Text(
-                                'Needs adjustments?',
-                                style: Theme.of(context).textTheme.bodySmall,
+                            SizedBox(width: 5),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                _cropImage(_croppedFile!.path);
+                              },
+                              icon: const Icon(
+                                Icons.edit,
+                                color: Colors.black,
+                                size: 15,
                               ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  _cropImage(_croppedFile!.path);
-                                },
-                                icon: const Icon(
-                                  Icons.edit,
+                              label: Text(
+                                'Edit',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineSmall?.copyWith(
+                                  fontSize: 12,
                                   color: Colors.black,
-                                  size: 15,
-                                ),
-                                label: Text('Edit',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall
-                                        ?.copyWith(
-                                            fontSize: 12,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w300)),
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: Size.zero,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
-                                  backgroundColor: kAppGreay,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        8), // Border radius
-                                  ),
+                                  fontWeight: FontWeight.w300,
                                 ),
                               ),
-                            ],
-                          ),
-                        const SizedBox(
-                          height: 30,
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: Size.zero,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                backgroundColor: kAppGreay,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    8,
+                                  ), // Border radius
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        if (!isImageLoading && !isTooLarge)
-                          Center(
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  if (_croppedFile == null) return;
-                                  final filetype =
-                                      'image/png'; // or detect the file type dynamically
+                      const SizedBox(height: 30),
+                      if (!isImageLoading && !isTooLarge)
+                        Center(
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                if (_croppedFile == null) return;
+                                final filetype =
+                                    'image/png'; // or detect the file type dynamically
 
-                                  try {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    final signedUrl = await userNotifier
-                                        .getSignedUrl(filetype);
-                                    await userNotifier.uploadImage(
-                                        File(_croppedFile!.path), signedUrl);
-                                    setState(() {
-                                      isLoading = false;
-                                    });
+                                try {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  final signedUrl = await userNotifier
+                                      .getSignedUrl(filetype);
+                                  await userNotifier.uploadImage(
+                                    File(_croppedFile!.path),
+                                    signedUrl,
+                                  );
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Upload successful!'),
+                                    ),
+                                  );
+                                } catch (e) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  if (e.toString().contains(
+                                    'Connection refused',
+                                  )) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text('Upload successful!')),
+                                      CustomSnackBar().build(context),
                                     );
-                                  } catch (e) {
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                    if (e
-                                        .toString()
-                                        .contains('Connection refused')) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                              CustomSnackBar().build(context));
-                                    } else {
-                                      print("Error ${e.toString()}");
-                                    }
+                                  } else {
+                                    print("Error ${e.toString()}");
                                   }
+                                }
 
-                                  // File imageFile = File(_croppedFile!.path);
-                                  // Uint8List imageBytes =
-                                  //     await imageFile.readAsBytes();
-                                  // String base64Image = base64Encode(imageBytes);
-                                  // String imageString =
-                                  //     "data:image/png;base64,$base64Image"; // Format to send to backend
+                                // File imageFile = File(_croppedFile!.path);
+                                // Uint8List imageBytes =
+                                //     await imageFile.readAsBytes();
+                                // String base64Image = base64Encode(imageBytes);
+                                // String imageString =
+                                //     "data:image/png;base64,$base64Image"; // Format to send to backend
 
-                                  // try {
-                                  //   setState(() {
-                                  //     isLoading = true;
-                                  //   });
+                                // try {
+                                //   setState(() {
+                                //     isLoading = true;
+                                //   });
 
-                                  //   var result = await userNotifier
-                                  //       .addProfilePic(imageString);
+                                //   var result = await userNotifier
+                                //       .addProfilePic(imageString);
 
-                                  //   setState(() {
-                                  //     isLoading = false;
-                                  //   });
-                                  //   if (result != null) {
-                                  //     print('success');
-                                  //   }
-                                  // } catch (e) {
-                                  //   setState(() {
-                                  //     isLoading = false;
-                                  //   });
-                                  //   if (e
-                                  //       .toString()
-                                  //       .contains('Connection refused')) {
-                                  //     ScaffoldMessenger.of(context).showSnackBar(
-                                  //         CustomSnackBar().build(context));
-                                  //   } else {
-                                  //     print("Error ${e.toString()}");
-                                  //   }
-                                  // }
-                                },
-                                child: isLoading
-                                    ? kLoadingIndicator
-                                    : Text(
+                                //   setState(() {
+                                //     isLoading = false;
+                                //   });
+                                //   if (result != null) {
+                                //     print('success');
+                                //   }
+                                // } catch (e) {
+                                //   setState(() {
+                                //     isLoading = false;
+                                //   });
+                                //   if (e
+                                //       .toString()
+                                //       .contains('Connection refused')) {
+                                //     ScaffoldMessenger.of(context).showSnackBar(
+                                //         CustomSnackBar().build(context));
+                                //   } else {
+                                //     print("Error ${e.toString()}");
+                                //   }
+                                // }
+                              },
+                              child:
+                                  isLoading
+                                      ? kLoadingIndicator
+                                      : Text(
                                         'Continue',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall,
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.headlineSmall,
                                       ),
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 20),
+                      if (!isImageLoading)
+                        Center(
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton(
+                              onPressed: () {
+                                if (!isLoading) {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return SizedBox(
+                                        height: 200,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Column(
+                                            children: [
+                                              const SizedBox(height: 20),
+                                              Center(
+                                                child: SizedBox(
+                                                  width: double.infinity,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      _pickImage(
+                                                        ImageSource.gallery,
+                                                      );
+                                                      context.pop();
+                                                    },
+                                                    style:
+                                                        ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              kAppBlack,
+                                                        ),
+                                                    child: Text(
+                                                      'Upload from device',
+                                                      style:
+                                                          Theme.of(context)
+                                                              .textTheme
+                                                              .headlineSmall,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              Center(
+                                                child: SizedBox(
+                                                  width: double.infinity,
+                                                  child: OutlinedButton(
+                                                    onPressed: () {
+                                                      _pickImage(
+                                                        ImageSource.camera,
+                                                      );
+                                                      context.pop();
+                                                    },
+                                                    style:
+                                                        OutlinedButton.styleFrom(
+                                                          side:
+                                                              const BorderSide(
+                                                                color:
+                                                                    kAppBlack,
+                                                              ),
+                                                        ),
+                                                    child: Text(
+                                                      'Take a Selfie',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headlineSmall
+                                                          ?.copyWith(
+                                                            color: kAppBlack,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                              child: Text(
+                                'Change Image',
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(color: kAppPurple),
                               ),
                             ),
                           ),
-                        const SizedBox(
-                          height: 20,
                         ),
-                        if (!isImageLoading)
-                          Center(
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  if (!isLoading) {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (context) {
-                                          return SizedBox(
-                                              height: 200,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(10.0),
-                                                child: Column(
-                                                  children: [
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    Center(
-                                                      child: SizedBox(
-                                                        width: double.infinity,
-                                                        child: ElevatedButton(
-                                                          onPressed: () {
-                                                            _pickImage(
-                                                                ImageSource
-                                                                    .gallery);
-                                                            context.pop();
-                                                          },
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                                  backgroundColor:
-                                                                      kAppBlack),
-                                                          child: Text(
-                                                            'Upload from device',
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .headlineSmall,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    Center(
-                                                      child: SizedBox(
-                                                        width: double.infinity,
-                                                        child: OutlinedButton(
-                                                          onPressed: () {
-                                                            _pickImage(
-                                                                ImageSource
-                                                                    .camera);
-                                                            context.pop();
-                                                          },
-                                                          style: OutlinedButton
-                                                              .styleFrom(
-                                                            side:
-                                                                const BorderSide(
-                                                              color: kAppBlack,
-                                                            ),
-                                                          ),
-                                                          child: Text(
-                                                            'Take a Selfie',
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .headlineSmall
-                                                                ?.copyWith(
-                                                                    color:
-                                                                        kAppBlack),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ));
-                                        });
-                                  }
-                                },
-                                child: Text(
-                                  'Change Image',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall
-                                      ?.copyWith(color: kAppPurple),
-                                ),
-                              ),
-                            ),
-                          )
-                      ],
-                    )
+                    ],
+                  ),
             ],
           ),
         ),

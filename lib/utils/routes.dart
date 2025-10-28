@@ -13,6 +13,7 @@ import 'package:sociord/screens/onboarding/location_search.dart';
 import 'package:sociord/screens/onboarding/other_gender.dart';
 import 'package:sociord/screens/profile/become_a_creator.dart';
 import 'package:sociord/screens/profile/buddy_profile_screen.dart';
+import 'package:sociord/screens/profile/creator_profile_screen.dart';
 import 'package:sociord/screens/profile/profile_screen.dart';
 import 'package:sociord/screens/sign_in_sign_up_screen.dart';
 import 'package:sociord/screens/onboarding/sign_up_flow.dart';
@@ -21,7 +22,9 @@ import 'package:sociord/screens/profile_pic.dart';
 import 'package:sociord/widgets/feed/feed_sheet.dart';
 import 'package:sociord/widgets/feed/feed_data.dart';
 import 'package:sociord/widgets/feed/feed_item.dart';
-import 'package:sociord/widgets/feed/feed_type.dart';
+import 'package:sociord/screens/chat/chat_screen.dart';
+import 'package:sociord/screens/messages/messages_screen.dart';
+import 'package:sociord/screens/messages/new_message_screen.dart';
 
 // shell
 import 'package:sociord/widgets/scaffold_with_nav.dart';
@@ -42,7 +45,11 @@ const String addRoute = '/add';
 const String exploreRoute = '/explore';
 const String profileRoute = '/profile';
 const String buddyProfileRoute = '/home/buddy-profile'; // Nested under home
+const String creatorProfileRoute = '/home/creator-profile'; // Nested under home
 const String buddyFeedRoute = '/buddy-feed';
+const String messagesRoute = '/home/messages';
+const String newMessageRoute = '/home/new-message';
+const String chatRoute = '/chat';
 
 /// Root navigator key (needed for full-screen dialogs, etc.)
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -111,6 +118,27 @@ final List<RouteBase> appRoutes = [
     },
   ),
 
+  /// Add Route (full-screen modal overlay)
+  GoRoute(
+    path: addRoute,
+    parentNavigatorKey: rootNavigatorKey,
+    builder: (_, __) => const AddScreen(),
+  ),
+
+  /// Chat Route (full-screen, no bottom nav)
+  GoRoute(
+    path: chatRoute,
+    parentNavigatorKey: rootNavigatorKey,
+    builder: (context, state) {
+      final extra = state.extra as Map<String, dynamic>? ?? {};
+      return ChatScreen(
+        contactName: extra['contactName'] ?? '',
+        contactUsername: extra['contactUsername'] ?? '',
+        contactProfileImage: extra['contactProfileImage'] ?? '',
+      );
+    },
+  ),
+
   /// ---- Bottom-nav shell with four branches ----
   StatefulShellRoute.indexedStack(
     parentNavigatorKey: rootNavigatorKey,
@@ -143,15 +171,38 @@ final List<RouteBase> appRoutes = [
                   );
                 },
               ),
+
+              /// Creator Profile Route (nested under home to keep bottom nav)
+              GoRoute(
+                path: 'creator-profile',
+                builder: (context, state) {
+                  final username = state.uri.queryParameters['username'] ?? '';
+                  final profileImage =
+                      state.uri.queryParameters['profileImage'] ?? '';
+                  final relationship =
+                      state.uri.queryParameters['relationship'] ?? 'none';
+
+                  return CreatorProfileScreen(
+                    username: username,
+                    profileImage: profileImage,
+                    relationship: _parseRelationship(relationship),
+                  );
+                },
+              ),
+
+              /// Messages Route (nested under home to keep bottom nav)
+              GoRoute(
+                path: 'messages',
+                builder: (_, __) => const MessagesScreen(),
+              ),
+
+              /// New Message Route (nested under home to keep bottom nav)
+              GoRoute(
+                path: 'new-message',
+                builder: (_, __) => const NewMessageScreen(),
+              ),
             ],
           ),
-        ],
-      ),
-
-      /// Add
-      StatefulShellBranch(
-        routes: [
-          GoRoute(path: addRoute, builder: (_, __) => const AddScreen()),
         ],
       ),
 

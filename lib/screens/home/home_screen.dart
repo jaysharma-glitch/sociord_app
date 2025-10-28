@@ -4,6 +4,10 @@ import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/home/feed_slider.dart';
 import 'package:sociord/widgets/home/post_widget.dart';
 import 'package:sociord/widgets/home/quicky_recommendation.dart';
+import 'package:sociord/screens/notifications/notifications_screen.dart';
+import 'package:sociord/screens/messages/messages_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sociord/utils/routes.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -362,12 +366,20 @@ class HomeScreenState extends State<HomeScreen> {
                       Image.asset(kChevronDown),
                       const Spacer(),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const NotificationsScreen(),
+                            ),
+                          );
+                        },
                         child: Image.asset(kNotification),
                       ),
                       const SizedBox(width: 15),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          context.go(messagesRoute);
+                        },
                         child: Image.asset(kMessage),
                       ),
                     ],

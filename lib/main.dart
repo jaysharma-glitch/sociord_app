@@ -6,7 +6,6 @@ import 'package:sms_autofill/sms_autofill.dart';
 // Themes + Routing
 import 'package:sociord/themes/app_theme.dart';
 import 'package:sociord/provider/router_provider.dart';
-import 'package:sociord/constants/color.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

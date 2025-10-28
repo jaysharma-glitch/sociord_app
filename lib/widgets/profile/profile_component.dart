@@ -3,12 +3,14 @@ import 'package:sociord/constants/color.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/profile/homePagePosts/profile_banner.dart';
 import 'package:sociord/widgets/profile/homePagePosts/profile_hero.dart';
+import 'package:sociord/widgets/profile/homePagePosts/creator_profile_hero.dart';
 import 'package:sociord/widgets/profile/homePagePosts/profile_highlight.dart';
 import 'package:sociord/widgets/profile/profile_posts.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/post_reader_page.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/post_source.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/mock_post_repo.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/grid_post_tile.dart';
+import 'package:sociord/widgets/common/options_bottom_sheet.dart';
 
 class ProfileData {
   final String imageUrl;
@@ -20,6 +22,9 @@ class ProfileData {
   final int buddies;
   final int subscriptions;
   final int following;
+  final int? subscribers;
+  final int? followers;
+  final double? rating;
   final String? creatorCategory;
   final bool isVerified;
   final bool hasHighlightData;
@@ -36,6 +41,9 @@ class ProfileData {
     required this.buddies,
     required this.subscriptions,
     required this.following,
+    this.subscribers,
+    this.followers,
+    this.rating,
     this.creatorCategory,
     this.isVerified = false,
     this.hasHighlightData = true,
@@ -84,6 +92,8 @@ class ProfileComponent extends StatefulWidget {
 
 class _ProfileComponentState extends State<ProfileComponent> {
   bool isHighlightExpanded = true;
+  bool _isLandscapeMode = false; // State for clips orientation
+  bool _isCollectionsHorizontal = true; // State for collections orientation
   final GlobalKey _tabBarKey = GlobalKey();
 
   void toggleHighlight() {
@@ -101,7 +111,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
       length: isCreator ? 3 : 2,
       child: Builder(
         builder: (ctx) {
-          final controller = DefaultTabController.of(ctx)!;
+          final controller = DefaultTabController.of(ctx);
 
           return Scaffold(
             appBar: _buildAppBar(isOwnProfile),
@@ -110,6 +120,28 @@ class _ProfileComponentState extends State<ProfileComponent> {
         },
       ),
     );
+  }
+
+  void _openSociordOptions(BuildContext context, bool isOwnProfile) {
+    if (isOwnProfile) {
+      // For own profile, we need to determine if it's personal or creator
+      final isCreator = widget.userType == UserType.creator;
+      OptionsBottomSheet.show(
+        context: context,
+        type:
+            isCreator
+                ? BottomSheetType.selfProfileCreator
+                : BottomSheetType.selfProfilePersonal,
+      );
+    } else {
+      // For other person's profile
+      final isCreator = widget.userType == UserType.creator;
+      OptionsBottomSheet.show(
+        context: context,
+        type: BottomSheetType.profileOptions,
+        isCreator: isCreator,
+      );
+    }
   }
 
   Widget _buildGestureDetector(TabController controller, bool isCreator) {
@@ -159,34 +191,53 @@ class _ProfileComponentState extends State<ProfileComponent> {
                 ),
 
               SliverToBoxAdapter(
-                child: ProfileHero(
-                  imageUrl: widget.userData.imageUrl,
-                  name: widget.userData.name,
-                  gender: widget.userData.gender,
-                  age: widget.userData.age,
-                  location: widget.userData.location,
-                  buddies: widget.userData.buddies,
-                  subscriptions: widget.userData.subscriptions,
-                  following: widget.userData.following,
-                  handle: widget.userData.handle,
-                  profileType: isCreator ? 'Creator' : 'Explorer',
-                  creatorCategory: widget.userData.creatorCategory ?? '',
-                  switchProfileType:
-                      widget.viewType == ProfileViewType.own
-                          ? widget.onToggleProfileType
-                          : null,
-                  syncContactOption: widget.viewType == ProfileViewType.own,
-                  // Action callbacks
-                  onEditProfile: widget.onEditProfilePressed,
-                  onAddBuddy: widget.onAddBuddyPressed,
-                  onFollow: widget.onFollowPressed,
-                  onSubscribe: widget.onSubscribePressed,
-                  onMessage: widget.onMessagePressed,
-                  onShare: widget.onSharePressed,
-                  // Relationship info
-                  relationship: widget.relationship,
-                  isOwnProfile: widget.viewType == ProfileViewType.own,
-                ),
+                child:
+                    isCreator
+                        ? CreatorProfileHero(
+                          name: widget.userData.name,
+                          gender: widget.userData.gender,
+                          age: widget.userData.age,
+                          location: widget.userData.location,
+                          handle: widget.userData.handle,
+                          subscribers: widget.userData.subscribers ?? 0,
+                          followers: widget.userData.followers ?? 0,
+                          rating: widget.userData.rating ?? 0.0,
+                          creatorCategory: widget.userData.creatorCategory,
+                          profileImage: widget.userData.imageUrl,
+                          onFollowPressed: widget.onFollowPressed,
+                          onSubscribePressed: widget.onSubscribePressed,
+                          onMessagePressed: widget.onMessagePressed,
+                        )
+                        : ProfileHero(
+                          imageUrl: widget.userData.imageUrl,
+                          name: widget.userData.name,
+                          gender: widget.userData.gender,
+                          age: widget.userData.age,
+                          location: widget.userData.location,
+                          buddies: widget.userData.buddies,
+                          subscriptions: widget.userData.subscriptions,
+                          following: widget.userData.following,
+                          handle: widget.userData.handle,
+                          profileType: isCreator ? 'Creator' : 'Personal',
+                          creatorCategory:
+                              widget.userData.creatorCategory ?? '',
+                          switchProfileType:
+                              widget.viewType == ProfileViewType.own
+                                  ? widget.onToggleProfileType
+                                  : null,
+                          syncContactOption:
+                              widget.viewType == ProfileViewType.own,
+                          // Action callbacks
+                          onEditProfile: widget.onEditProfilePressed,
+                          onAddBuddy: widget.onAddBuddyPressed,
+                          onFollow: widget.onFollowPressed,
+                          onSubscribe: widget.onSubscribePressed,
+                          onMessage: widget.onMessagePressed,
+                          onShare: widget.onSharePressed,
+                          // Relationship info
+                          relationship: widget.relationship,
+                          isOwnProfile: widget.viewType == ProfileViewType.own,
+                        ),
               ),
 
               SliverToBoxAdapter(
@@ -242,7 +293,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
                     widget.onBackPressed ?? () => Navigator.of(context).pop(),
               ),
       title: GestureDetector(
-        onTap: () {},
+        onTap: () => _openSociordOptions(context, isOwnProfile),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -308,11 +359,28 @@ class _ProfileComponentState extends State<ProfileComponent> {
     if (isCreator) {
       switch (index) {
         case 0:
-          return QuickiesSlivers();
+          return QuickiesSlivers(
+            itemCount: 9, // Creator quickies have 9 images (1-9)
+            itemBuilder: (ctx, i) => _buildCreatorQuickieItem(ctx, i),
+          );
         case 1:
-          return ClipsSlivers();
+          return ClipsSlivers(
+            isLandscapeMode: _isLandscapeMode,
+            onOrientationChanged: (isLandscape) {
+              setState(() {
+                _isLandscapeMode = isLandscape;
+              });
+            },
+          );
         case 2:
-          return CollectionsSlivers();
+          return CollectionsSlivers(
+            isHorizontalMode: _isCollectionsHorizontal,
+            onOrientationChanged: (isHorizontal) {
+              setState(() {
+                _isCollectionsHorizontal = isHorizontal;
+              });
+            },
+          );
         default:
           return [];
       }
@@ -360,17 +428,65 @@ class _ProfileComponentState extends State<ProfileComponent> {
             // Navigate to PostReaderPage
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (_) => PostReaderPage(
-                  userId: 'user_1', // Replace with actual user ID
-                  initialPostId: post.id, // Use actual post ID
-                  source: PostSource.uploads, // or tagged based on current tab
-                  userName: widget.userData.name,
-                  profileImage: widget.userData.imageUrl,
-                ),
+                builder:
+                    (_) => PostReaderPage(
+                      userId: 'user_1', // Replace with actual user ID
+                      initialPostId: post.id, // Use actual post ID
+                      source:
+                          PostSource.uploads, // or tagged based on current tab
+                      userName: widget.userData.name,
+                      profileImage: widget.userData.imageUrl,
+                      isCreator: widget.userType == UserType.creator,
+                    ),
                 fullscreenDialog: true, // feels like a sheet
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCreatorQuickieItem(BuildContext context, int index) {
+    if (index >= kCreatorQuickies.length) {
+      return Container();
+    }
+
+    final imagePath = kCreatorQuickies[index];
+
+    return Container(
+      margin: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(5),
+        child: GestureDetector(
+          onTap: () {
+            // Navigate to PostReaderPage for creator content
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder:
+                    (_) => PostReaderPage(
+                      userId: 'creator_1', // Replace with actual creator ID
+                      initialPostId: 'creator_post_$index',
+                      source: PostSource.uploads,
+                      userName: widget.userData.name,
+                      profileImage: widget.userData.imageUrl,
+                      isCreator: widget.userType == UserType.creator,
+                    ),
+                fullscreenDialog: true,
+              ),
+            );
+          },
+          child: Image.asset(imagePath, fit: BoxFit.cover),
         ),
       ),
     );

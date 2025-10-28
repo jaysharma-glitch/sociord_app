@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class MockShareUser {
   final String userImage;
   final String userName;

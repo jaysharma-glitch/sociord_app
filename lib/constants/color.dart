@@ -16,6 +16,7 @@ const kAppLightBlack = Color(0xFF6E6969);
 const kAppWhite = Color(0xFFFFFFFF);
 const kAppGreay = Color(0xffECECEC);
 const kAppLightGreay = Color(0xffFAF9FB);
+const kAppDarkGreay = Color(0xff868686);
 const kBorderGreay = Color(0xffD9D9D9);
 const kAppDarkGreen = Color(0xFF037002);
 const kAppRed = Color(0xFF8E0000);

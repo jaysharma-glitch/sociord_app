@@ -475,3 +475,272 @@ const List<String> kBuddyHighlights = [
   kBuddyHighlight5,
   kBuddyHighlight6,
 ];
+
+// Creator Uploads images
+const String kCreatorUpload1 = 'assets/images/creator-uploads/1.png';
+const String kCreatorUpload2 = 'assets/images/creator-uploads/2.png';
+const String kCreatorUpload3 = 'assets/images/creator-uploads/3.png';
+const String kCreatorUpload4 = 'assets/images/creator-uploads/4.png';
+const String kCreatorUpload5 = 'assets/images/creator-uploads/5.png';
+const String kCreatorUpload6 = 'assets/images/creator-uploads/6.png';
+const String kCreatorUpload7 = 'assets/images/creator-uploads/7.png';
+const String kCreatorUpload8 = 'assets/images/creator-uploads/8.png';
+const String kCreatorUpload9 = 'assets/images/creator-uploads/9.png';
+const String kCreatorUpload10 = 'assets/images/creator-uploads/10.png';
+const String kCreatorUpload11 = 'assets/images/creator-uploads/11.png';
+const String kCreatorUpload12 = 'assets/images/creator-uploads/12.png';
+const String kCreatorUpload13 = 'assets/images/creator-uploads/13.png';
+const String kCreatorUpload14 = 'assets/images/creator-uploads/14.png';
+const String kCreatorUpload15 = 'assets/images/creator-uploads/15.png';
+
+// Creator Uploads array for easy access
+const List<String> kCreatorUploads = [
+  kCreatorUpload1,
+  kCreatorUpload2,
+  kCreatorUpload3,
+  kCreatorUpload4,
+  kCreatorUpload5,
+  kCreatorUpload6,
+  kCreatorUpload7,
+  kCreatorUpload8,
+  kCreatorUpload9,
+  kCreatorUpload10,
+  kCreatorUpload11,
+  kCreatorUpload12,
+  kCreatorUpload13,
+  kCreatorUpload14,
+  kCreatorUpload15,
+];
+
+// Creator Showcase images (10-15)
+const List<String> kCreatorShowcase = [
+  kCreatorUpload10,
+  kCreatorUpload11,
+  kCreatorUpload12,
+  kCreatorUpload13,
+  kCreatorUpload14,
+  kCreatorUpload15,
+];
+
+// Creator Quickies images (1-9)
+const List<String> kCreatorQuickies = [
+  kCreatorUpload1,
+  kCreatorUpload2,
+  kCreatorUpload3,
+  kCreatorUpload4,
+  kCreatorUpload5,
+  kCreatorUpload6,
+  kCreatorUpload7,
+  kCreatorUpload8,
+  kCreatorUpload9,
+];
+
+// Creator Clip images
+const String kCreatorClip1 = 'assets/images/creator-clip/1.png';
+const String kCreatorClip2 = 'assets/images/creator-clip/2.png';
+const String kCreatorClip3 = 'assets/images/creator-clip/3.png';
+const String kCreatorClip4 = 'assets/images/creator-clip/4.png';
+const String kCreatorClip5 = 'assets/images/creator-clip/5.png';
+const String kCreatorClip6 = 'assets/images/creator-clip/6.png';
+
+// Creator Clip arrays for landscape and portrait
+const List<String> kCreatorClipsLandscape = [kCreatorClip1, kCreatorClip2];
+
+const List<String> kCreatorClipsPortrait = [
+  kCreatorClip3,
+  kCreatorClip4,
+  kCreatorClip5,
+  kCreatorClip6,
+];
+
+const List<String> kCreatorClipsAll = [
+  kCreatorClip1,
+  kCreatorClip2,
+  kCreatorClip3,
+  kCreatorClip4,
+  kCreatorClip5,
+  kCreatorClip6,
+];
+
+// Creator Collection images
+const String kCreatorCollection1 = 'assets/images/creator-collection/1.png';
+const String kCreatorCollection2 = 'assets/images/creator-collection/2.png';
+const String kCreatorCollection3 = 'assets/images/creator-collection/3.png';
+const String kCreatorCollection4 = 'assets/images/creator-collection/4.png';
+const String kCreatorCollection5 = 'assets/images/creator-collection/5.png';
+const String kCreatorCollection6 = 'assets/images/creator-collection/6.png';
+const String kCreatorCollection7 = 'assets/images/creator-collection/7.png';
+const String kCreatorCollection8 = 'assets/images/creator-collection/8.png';
+const String kCreatorCollection9 = 'assets/images/creator-collection/9.png';
+const String kCreatorCollection10 = 'assets/images/creator-collection/10.png';
+
+// Creator Collection arrays for portrait and landscape
+const List<String> kCreatorCollectionPortrait = [
+  kCreatorCollection1,
+  kCreatorCollection2,
+  kCreatorCollection3,
+  kCreatorCollection4,
+  kCreatorCollection5,
+  kCreatorCollection6,
+];
+
+const List<String> kCreatorCollectionLandscape = [
+  kCreatorCollection7,
+  kCreatorCollection8,
+  kCreatorCollection9,
+  kCreatorCollection10,
+];
+
+const List<String> kCreatorCollectionAll = [
+  kCreatorCollection1,
+  kCreatorCollection2,
+  kCreatorCollection3,
+  kCreatorCollection4,
+  kCreatorCollection5,
+  kCreatorCollection6,
+  kCreatorCollection7,
+  kCreatorCollection8,
+  kCreatorCollection9,
+  kCreatorCollection10,
+];
+
+// Explore Page Assets
+// Explore Profile Images
+const String kExploreProfile1 = 'assets/images/explore/profiles/1.png';
+const String kExploreProfile2 = 'assets/images/explore/profiles/2.png';
+const String kExploreProfile3 = 'assets/images/explore/profiles/3.png';
+const String kExploreProfile4 = 'assets/images/explore/profiles/4.png';
+const String kExploreProfile5 = 'assets/images/explore/profiles/5.png';
+const String kExploreProfile6 = 'assets/images/explore/profiles/6.png';
+const String kExploreProfile7 = 'assets/images/explore/profiles/7.png';
+const String kExploreProfile8 = 'assets/images/explore/profiles/8.png';
+const String kExploreProfile9 = 'assets/images/explore/profiles/9.png';
+const String kExploreProfile10 = 'assets/images/explore/profiles/10.png';
+const String kExploreProfile11 = 'assets/images/explore/profiles/11.png';
+const String kExploreProfile12 = 'assets/images/explore/profiles/12.png';
+const String kExploreProfile13 = 'assets/images/explore/profiles/13.png';
+const String kExploreProfile14 = 'assets/images/explore/profiles/14.png';
+const String kExploreProfile15 = 'assets/images/explore/profiles/15.png';
+const String kExploreProfile16 = 'assets/images/explore/profiles/16.png';
+const String kExploreProfile17 = 'assets/images/explore/profiles/17.png';
+const String kExploreProfile18 = 'assets/images/explore/profiles/18.png';
+const String kExploreProfile19 = 'assets/images/explore/profiles/19.png';
+const String kExploreProfile20 = 'assets/images/explore/profiles/20.png';
+const String kExploreProfile21 = 'assets/images/explore/profiles/21.png';
+const String kExploreProfile22 = 'assets/images/explore/profiles/22.png';
+const String kExploreProfile23 = 'assets/images/explore/profiles/23.png';
+const String kExploreProfile24 = 'assets/images/explore/profiles/24.png';
+
+// Explore Profile Arrays for different sections
+const List<String> kExploreProfilesRegional = [
+  kExploreProfile1,
+  kExploreProfile2,
+  kExploreProfile3,
+  kExploreProfile4,
+];
+
+const List<String> kExploreProfilesBestInGenre = [
+  kExploreProfile5,
+  kExploreProfile6,
+  kExploreProfile7,
+  kExploreProfile8,
+];
+
+const List<String> kExploreProfilesNewRising = [
+  kExploreProfile9,
+  kExploreProfile10,
+  kExploreProfile11,
+  kExploreProfile12,
+];
+
+const List<String> kExploreProfilesAllTime = [
+  kExploreProfile13,
+  kExploreProfile14,
+  kExploreProfile15,
+  kExploreProfile16,
+];
+
+const List<String> kExploreProfilesPromotional = [
+  kExploreProfile17,
+  kExploreProfile18,
+  kExploreProfile19,
+  kExploreProfile20,
+];
+
+// Explore Immersive Images
+const String kExploreImmersive1 = 'assets/images/explore/immersive/1.png';
+const String kExploreImmersive2 = 'assets/images/explore/immersive/2.png';
+
+// Explore Collection Horizontal Images
+const String kExploreCollectionHorizontal1 =
+    'assets/images/explore/collection-horizontal/1.png';
+const String kExploreCollectionHorizontal2 =
+    'assets/images/explore/collection-horizontal/2.png';
+
+// Explore Collection Vertical Images
+const String kExploreCollectionVertical1 =
+    'assets/images/explore/collection-vertical/1.png';
+const String kExploreCollectionVertical2 =
+    'assets/images/explore/collection-vertical/2.png';
+const String kExploreCollectionVertical3 =
+    'assets/images/explore/collection-vertical/3.png';
+const String kExploreCollectionVertical4 =
+    'assets/images/explore/collection-vertical/4.png';
+
+// Explore Quickies Images
+const String kExploreQuickies1 = 'assets/images/explore/quckies/1.png';
+const String kExploreQuickies2 = 'assets/images/explore/quckies/2.png';
+const String kExploreQuickies3 = 'assets/images/explore/quckies/3.png';
+const String kExploreQuickies4 = 'assets/images/explore/quckies/4.png';
+const String kExploreQuickies5 = 'assets/images/explore/quckies/5.png';
+const String kExploreQuickies6 = 'assets/images/explore/quckies/6.png';
+const String kExploreQuickies7 = 'assets/images/explore/quckies/7.png';
+const String kExploreQuickies8 = 'assets/images/explore/quckies/8.png';
+const String kExploreQuickies9 = 'assets/images/explore/quckies/9.png';
+const String kExploreQuickies10 = 'assets/images/explore/quckies/10.png';
+const String kExploreQuickies11 = 'assets/images/explore/quckies/11.png';
+const String kExploreQuickies12 = 'assets/images/explore/quckies/12.png';
+
+// Explore Content Arrays
+const List<String> kExploreContentCards = [
+  kExploreCollectionVertical1,
+  kExploreCollectionVertical2,
+  kExploreCollectionVertical3,
+  kExploreCollectionVertical4,
+  kExploreImmersive1,
+  kExploreImmersive2,
+];
+
+const List<String> kExploreHolidayContent = [
+  kExploreCollectionHorizontal1,
+  kExploreCollectionHorizontal2,
+  kExploreQuickies1,
+  kExploreQuickies2,
+];
+
+const List<String> kExploreHistoricContent = [
+  kExploreCollectionHorizontal1,
+  kExploreCollectionHorizontal2,
+];
+
+const List<String> kExploreAdditionalContent = [
+  kExploreQuickies3,
+  kExploreQuickies4,
+  kExploreQuickies5,
+  kExploreQuickies6,
+  kExploreQuickies7,
+  kExploreQuickies8,
+];
+
+//explore page icons
+const String kForYou = 'assets/images/explore/foryou.png';
+const String kEliteCircle = 'assets/images/explore/circle.png';
+const String kCategories = 'assets/images/explore/category.png';
+const String kNearMe = 'assets/images/explore/nearme.png';
+const String kFindBuddies = 'assets/images/explore/buddies.png';
+const String kLock = 'assets/images/explore/lock.png';
+const String kImmersiv = 'assets/images/explore/immersive.png';
+
+// Additional explore assets that were missing
+const String kExploreImmersiveIcon = 'assets/images/explore/immersive.png';
+const String kExploreLockIcon = 'assets/images/explore/lock.png';

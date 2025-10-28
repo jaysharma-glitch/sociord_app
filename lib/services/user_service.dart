@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sociord/graphql_config.dart';
 import 'package:sociord/models/user_model.dart';
@@ -12,7 +10,9 @@ class UserService {
   Future<UserModel?> getUser({required userId}) async {
     try {
       QueryResult result = await client.query(
-        QueryOptions(fetchPolicy: FetchPolicy.noCache, document: gql("""
+        QueryOptions(
+          fetchPolicy: FetchPolicy.noCache,
+          document: gql("""
         query GetUser(\$userId: ID!) {
           getUser(id: \$userId) {
             userId
@@ -39,7 +39,9 @@ class UserService {
             profilePic
           }
         }
-      """), variables: {"userId": userId}),
+      """),
+          variables: {"userId": userId},
+        ),
       );
       if (result.hasException) {
         throw Exception(result.exception);
@@ -58,12 +60,13 @@ class UserService {
     }
   }
 
-  Future<String?> createUser(
-      {required profileType,
-      required firstName,
-      required lastName,
-      required countryCode,
-      required phoneNumber}) async {
+  Future<String?> createUser({
+    required profileType,
+    required firstName,
+    required lastName,
+    required countryCode,
+    required phoneNumber,
+  }) async {
     try {
       QueryResult result = await client.mutate(
         MutationOptions(
@@ -86,8 +89,8 @@ class UserService {
               "firstName": firstName,
               "lastName": lastName,
               "countryCode": countryCode,
-              "phoneNumber": phoneNumber
-            }
+              "phoneNumber": phoneNumber,
+            },
           },
         ),
       );
@@ -108,8 +111,11 @@ class UserService {
     }
   }
 
-  Future<bool> confirmOtp(
-      {required countryCode, required phoneNumber, required otp}) async {
+  Future<bool> confirmOtp({
+    required countryCode,
+    required phoneNumber,
+    required otp,
+  }) async {
     try {
       QueryResult result = await client.mutate(
         MutationOptions(
@@ -125,7 +131,7 @@ class UserService {
           variables: {
             "phoneNumber": phoneNumber,
             "countryCode": countryCode,
-            "otp": otp
+            "otp": otp,
           },
         ),
       );
@@ -156,10 +162,7 @@ class UserService {
           resendOtp(countryCode: \$countryCode, phoneNumber: \$phoneNumber)
         }
       """),
-          variables: {
-            "phoneNumber": phoneNumber,
-            "countryCode": countryCode,
-          },
+          variables: {"phoneNumber": phoneNumber, "countryCode": countryCode},
         ),
       );
 
@@ -178,11 +181,15 @@ class UserService {
   Future<bool> checkUsername({required userName}) async {
     try {
       QueryResult result = await client.query(
-        QueryOptions(fetchPolicy: FetchPolicy.noCache, document: gql("""
+        QueryOptions(
+          fetchPolicy: FetchPolicy.noCache,
+          document: gql("""
         query Query(\$userName: String!) {
           checkUserName(userName: \$userName)
         }
-      """), variables: {"userName": userName}),
+      """),
+          variables: {"userName": userName},
+        ),
       );
       if (result.hasException) {
         throw Exception(result.exception);
@@ -198,15 +205,21 @@ class UserService {
     }
   }
 
-  Future<List> generateUsernameOptions(
-      {required userName, required userId}) async {
+  Future<List> generateUsernameOptions({
+    required userName,
+    required userId,
+  }) async {
     try {
       QueryResult result = await client.query(
-        QueryOptions(fetchPolicy: FetchPolicy.noCache, document: gql("""
+        QueryOptions(
+          fetchPolicy: FetchPolicy.noCache,
+          document: gql("""
         query Query(\$userName: String!, \$userId: ID!) {
           generateUsernameOptions(userName: \$userName, userId: \$userId)
         }
-      """), variables: {"userName": userName, "userId": userId}),
+      """),
+          variables: {"userName": userName, "userId": userId},
+        ),
       );
       if (result.hasException) {
         throw Exception(result.exception);
@@ -224,31 +237,36 @@ class UserService {
     }
   }
 
-  Future<Map?> completeOnboarding(
-      {required userId,
-      required userName,
-      required gender,
-      required otherIdenty,
-      required birthDate,
-      required contentType}) async {
+  Future<Map?> completeOnboarding({
+    required userId,
+    required userName,
+    required gender,
+    required otherIdenty,
+    required birthDate,
+    required contentType,
+  }) async {
     try {
       QueryResult result = await client.mutate(
-        MutationOptions(fetchPolicy: FetchPolicy.noCache, document: gql("""
+        MutationOptions(
+          fetchPolicy: FetchPolicy.noCache,
+          document: gql("""
         mutation CompleteOnboarding(\$input: CompleteOnboardingInput!) {
           completeOnboarding(input: \$input) {
             userId
           }
         }
-      """), variables: {
-          "input": {
-            "userId": userId,
-            "userName": userName,
-            "gender": gender,
-            "otherIdenty": otherIdenty,
-            "birthDate": birthDate,
-            "contentType": contentType
-          }
-        }),
+      """),
+          variables: {
+            "input": {
+              "userId": userId,
+              "userName": userName,
+              "gender": gender,
+              "otherIdenty": otherIdenty,
+              "birthDate": birthDate,
+              "contentType": contentType,
+            },
+          },
+        ),
       );
       if (result.hasException) {
         throw Exception(result.exception);
@@ -269,13 +287,17 @@ class UserService {
   Future<String?> addProfilePic({required userId, required image}) async {
     try {
       QueryResult result = await client.mutate(
-        MutationOptions(fetchPolicy: FetchPolicy.noCache, document: gql("""
+        MutationOptions(
+          fetchPolicy: FetchPolicy.noCache,
+          document: gql("""
         mutation AddProfilePic(\$input: UpdateImage!) {
           addProfilePic(input: \$input)
         }
-      """), variables: {
-          "input": {"userId": userId, "image": image}
-        }),
+      """),
+          variables: {
+            "input": {"userId": userId, "image": image},
+          },
+        ),
       );
 
       if (result.hasException) {
@@ -297,11 +319,15 @@ class UserService {
   Future<String?> getSignedUrl({required fileType, required folder}) async {
     try {
       QueryResult result = await client.query(
-        QueryOptions(fetchPolicy: FetchPolicy.noCache, document: gql("""
+        QueryOptions(
+          fetchPolicy: FetchPolicy.noCache,
+          document: gql("""
         query Query(\$fileType: String!, \$folder: String!) {
           getSignedUrl(fileType: \$fileType, folder: \$folder)
         }
-      """), variables: {"fileType": fileType, "folder": folder}),
+      """),
+          variables: {"fileType": fileType, "folder": folder},
+        ),
       );
 
       if (result.hasException) {
@@ -336,20 +362,23 @@ class UserService {
     }
   }
 
-  Future<String?> userLogin(
-      {required phoneNumber, required countryCode}) async {
+  Future<String?> userLogin({
+    required phoneNumber,
+    required countryCode,
+  }) async {
     print(countryCode);
     print(phoneNumber);
     try {
       QueryResult result = await client.query(
-        QueryOptions(fetchPolicy: FetchPolicy.noCache, document: gql("""
+        QueryOptions(
+          fetchPolicy: FetchPolicy.noCache,
+          document: gql("""
         query Query(\$phoneNumber: String!, \$countryCode: String!) {
           userLogin(phoneNumber: \$phoneNumber, countryCode: \$countryCode)
         }
-      """), variables: {
-          "phoneNumber": phoneNumber,
-          "countryCode": countryCode
-        }),
+      """),
+          variables: {"phoneNumber": phoneNumber, "countryCode": countryCode},
+        ),
       );
       print('servicee $result');
       if (result.hasException) {
