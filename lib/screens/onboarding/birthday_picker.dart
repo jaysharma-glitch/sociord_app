@@ -165,10 +165,28 @@ class _BirthdayPickerState extends ConsumerState<BirthdayPicker> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  widget.pageController!.nextPage(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeIn,
-                  );
+                  try {
+                    // Update profile basics (gender + birthdate) - moves status to 'profile_basic'
+                    final success = await userNotifier.updateProfileBasics();
+                    if (success) {
+                      widget.pageController!.nextPage(
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.easeIn,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Failed to save profile. Please try again.'),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: ${e.toString()}'),
+                      ),
+                    );
+                  }
                 },
                 child: Text(
                   'Continue',

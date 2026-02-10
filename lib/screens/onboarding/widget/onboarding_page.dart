@@ -31,13 +31,13 @@ class OnboardingPage extends StatelessWidget {
               Text(
                 subtitle!,
                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                      color: kAppPurple,
-                      fontSize: 15,
-                    ),
+                  color: kAppPurple,
+                  fontSize: 18,
+                ),
               ),
             ],
             const SizedBox(height: 20),
-            content
+            content,
           ],
         ),
       ),

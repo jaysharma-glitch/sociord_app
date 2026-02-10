@@ -15,8 +15,10 @@ class LoginRow extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text("Already have an account? ",
-            style: Theme.of(context).textTheme.bodyMedium),
+        Text(
+          "Already have an account? ",
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         GestureDetector(
           onTap: () {
             ref.read(userNotifierProvider.notifier).setCountryCode('');
@@ -25,9 +27,9 @@ class LoginRow extends ConsumerWidget {
           child: Text(
             'Login',
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: kAppPurple,
-                  fontWeight: FontWeight.w800,
-                ),
+              color: kAppPurple,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
         const SizedBox(width: 25),

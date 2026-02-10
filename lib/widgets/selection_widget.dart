@@ -50,7 +50,7 @@ class _SelectionWidgetState extends ConsumerState<SelectionWidget> {
           ),
           const SizedBox(height: 16),
           buildOption(
-            icon: Icons.business_outlined,
+            icon: Icons.diamond_outlined,
             title: 'Business',
             description:
                 'Create a brand page, list products, or showcase services',
@@ -64,83 +64,142 @@ class _SelectionWidgetState extends ConsumerState<SelectionWidget> {
   }
 
   Widget buildOption({
-    required IconData icon,
+    IconData? icon,
+    String? iconImage,
     required String title,
     required String description,
     required String subtext,
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: kAppLightGreay,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? Colors.purple : Colors.grey.shade300,
-            width: isSelected ? 1 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, 3),
-            ),
-          ],
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: kAppLightGreay,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color:
+              isSelected ? kAppPurple : Colors.grey.shade400.withOpacity(0.5),
+          width: isSelected ? 2 : 1,
         ),
-        child: Stack(
-          children: [
-            if (isSelected)
-              const Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Icon(Icons.check_circle_rounded, color: Colors.purple))
-            else
-              Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Icon(Icons.radio_button_unchecked,
-                      color: Colors.grey.shade300)),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Icon(icon, size: 30),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(title,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(color: kAppBlack)),
-                      Text(description,
-                          style:
-                              Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    color: kAppBlack,
-                                  )),
-                      const SizedBox(height: 8),
-                      Text(subtext,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(color: kAppPurple, fontSize: 12)),
-                    ],
+        boxShadow:
+            isSelected
+                ? [
+                  BoxShadow(
+                    color: kAppPurple.withOpacity(0.15),
+                    spreadRadius: 0,
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 0,
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+                : [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.05),
+                    spreadRadius: 0,
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          splashColor: kAppPurple.withOpacity(0.1),
+          highlightColor: kAppPurple.withOpacity(0.05),
+          child: Stack(
+            children: [
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                top: 0,
+                right: 0,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  transitionBuilder: (
+                    Widget child,
+                    Animation<double> animation,
+                  ) {
+                    return ScaleTransition(scale: animation, child: child);
+                  },
+                  child:
+                      isSelected
+                          ? Icon(
+                            Icons.check_circle_rounded,
+                            key: const ValueKey('selected'),
+                            color: kAppPurple,
+                          )
+                          : Icon(
+                            Icons.radio_button_unchecked,
+                            key: const ValueKey('unselected'),
+                            color: Colors.grey.shade300,
+                          ),
                 ),
-              ],
-            ),
-          ],
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      transform:
+                          Matrix4.identity()..scale(isSelected ? 1.05 : 1.0),
+                      child:
+                          iconImage != null
+                              ? Image.asset(
+                                iconImage,
+                                width: 24,
+                                height: 24,
+                                fit: BoxFit.contain,
+                              )
+                              : Icon(icon, size: 30),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 10),
+                        Text(
+                          title,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineSmall!.copyWith(color: kAppBlack),
+                        ),
+                        Text(
+                          description,
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w300,
+                            color: kAppBlack,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          subtext,
+                          style: Theme.of(context).textTheme.headlineSmall!
+                              .copyWith(color: kAppPurple, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

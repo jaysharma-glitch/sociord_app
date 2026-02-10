@@ -63,31 +63,57 @@ class _GenderSelectionState extends ConsumerState<UserType> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  // try {
-                  //   setState(() {
-                  //     isLoading = true;
-                  //   });
+                  try {
+                    setState(() {
+                      isLoading = true;
+                    });
 
-                  //   var result = await userNotifier.completeOnboarding();
+                    // Map contentType to creatorIntention
+                    final creatorIntention = userState.contentType == 'Creator' 
+                        ? 'creator' 
+                        : 'consumer';
+                    
+                    // Update profile type - moves status to 'profile_type_selected'
+                    final success = await userNotifier.updateProfileType(creatorIntention);
 
-                  //   setState(() {
-                  //     isLoading = false;
-                  //   });
-                  //   if (result != null) {
-                  //     context.go(finalOnboardingRoute);
-                  //   }
-                  // } catch (e) {
-                  //   setState(() {
-                  //     isLoading = false;
-                  //   });
-                  //   if (e.toString().contains('Connection refused')) {
-                  //     ScaffoldMessenger.of(context)
-                  //         .showSnackBar(CustomSnackBar().build(context));
-                  //   } else {
-                  //     print(e.toString());
-                  //   }
-                  // }
-                  context.go(finalOnboardingRoute);
+                    setState(() {
+                      isLoading = false;
+                    });
+                    
+                    if (success) {
+                      // Complete onboarding - sets status to 'completed'
+                      final completed = await userNotifier.completeOnboarding();
+                      if (completed != null) {
+                        context.go(finalOnboardingRoute);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Failed to complete onboarding. Please try again.'),
+                          ),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Failed to update profile type. Please try again.'),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    setState(() {
+                      isLoading = false;
+                    });
+                    if (e.toString().contains('Connection refused')) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(CustomSnackBar().build(context));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error: ${e.toString()}'),
+                        ),
+                      );
+                    }
+                  }
                 },
                 child: isLoading
                     ? kLoadingIndicator

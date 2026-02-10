@@ -21,6 +21,7 @@ class OptionsBottomSheet {
     VoidCallback? onBack,
     Map<String, VoidCallback>? customActions,
     bool? isCreator, // Add parameter to determine if user is creator
+    VoidCallback? onLogout, // Called when user taps Logout (self profile only)
   }) {
     showModalBottomSheet(
       context: context,
@@ -34,6 +35,7 @@ class OptionsBottomSheet {
             onBack: onBack,
             customActions: customActions,
             isCreator: isCreator,
+            onLogout: onLogout,
           ),
     );
   }
@@ -45,6 +47,7 @@ class _OptionsBottomSheetContent extends StatelessWidget {
   final VoidCallback? onBack;
   final Map<String, VoidCallback>? customActions;
   final bool? isCreator;
+  final VoidCallback? onLogout;
 
   const _OptionsBottomSheetContent({
     required this.type,
@@ -52,6 +55,7 @@ class _OptionsBottomSheetContent extends StatelessWidget {
     this.onBack,
     this.customActions,
     this.isCreator,
+    this.onLogout,
   });
 
   @override
@@ -552,7 +556,7 @@ class _OptionsBottomSheetContent extends StatelessWidget {
         text: 'Logout',
         onTap: () {
           Navigator.pop(context);
-          // TODO: Logout
+          onLogout?.call();
         },
       ),
     ];
@@ -607,7 +611,7 @@ class _OptionsBottomSheetContent extends StatelessWidget {
         text: 'Logout',
         onTap: () {
           Navigator.pop(context);
-          // TODO: Logout
+          onLogout?.call();
         },
       ),
     ];

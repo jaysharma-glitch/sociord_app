@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 import 'package:sociord/constants/color.dart';
-import 'package:sociord/constants/ui.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/widgets/custom_snack_bar.dart';
 
@@ -121,7 +120,6 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
     final userNotifier = ref.read(userNotifierProvider.notifier);
     try {
       setState(() {
-        isLoading = true;
         wrongOtp = false;
       });
       _startTimer();
@@ -132,8 +130,6 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
           context,
         ).showSnackBar(CustomSnackBar().build(context));
       }
-    } finally {
-      setState(() => isLoading = false);
     }
   }
 
@@ -161,9 +157,25 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
       length: 6,
       animationType: AnimationType.fade,
       enableActiveFill: false,
-      beforeTextPaste: (_) => true,
-      onChanged: (_) {},
-      onCompleted: (_) {},
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      beforeTextPaste: (text) {
+        // Allow pasting if the text contains only digits and has 6 characters
+        if (text != null && text.length == 6) {
+          return RegExp(r'^\d+$').hasMatch(text);
+        }
+        return false;
+      },
+      onChanged: (value) {
+        setState(() {
+          wrongOtp = false;
+        });
+      },
+      onCompleted: (value) {
+        // Auto-submit when OTP is complete (optional)
+        // Uncomment if you want auto-submit on completion
+        // _handleOtpSubmit(context);
+      },
       pinTheme: PinTheme(
         shape: PinCodeFieldShape.box,
         borderRadius: BorderRadius.circular(12),
@@ -192,16 +204,13 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: () => _handleOtpSubmit(context),
-        child:
-            isLoading
-                ? kSmallLoadingIndicator
-                : Text(
-                  'Continue',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.headlineSmall!.copyWith(color: Colors.white),
-                ),
+        onPressed: isLoading ? null : () => _handleOtpSubmit(context),
+        child: Text(
+          'Continue',
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall!.copyWith(color: Colors.white),
+        ),
       ),
     );
   }

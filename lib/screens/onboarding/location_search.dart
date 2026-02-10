@@ -17,7 +17,6 @@ class _LocationSearchState extends ConsumerState<LocationSearch> {
   final TextEditingController _controller = TextEditingController();
   final _uuid = const Uuid();
   String _sessionToken = '123456';
-  bool _initialized = false;
 
   @override
   void initState() {
@@ -34,9 +33,12 @@ class _LocationSearchState extends ConsumerState<LocationSearch> {
   }
 
   void _onSearchChanged() {
-    print('hi');
     final input = _controller.text.trim();
+    print('Search input changed: "$input" (length: ${input.length})');
     if (input.length > 2 && _sessionToken.isNotEmpty) {
+      print(
+        'Calling getSuggestion with input: "$input", token: $_sessionToken',
+      );
       ref
           .read(locationNotifierProvider.notifier)
           .getSuggestion(input, _sessionToken);
@@ -47,8 +49,17 @@ class _LocationSearchState extends ConsumerState<LocationSearch> {
   Widget build(BuildContext context) {
     final locationState = ref.watch(locationNotifierProvider);
     final suggestions = locationState.suggestions ?? [];
+    final isLoading = locationState.loading;
+    final error = locationState.error;
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+        title: const Text('Search Location'),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
@@ -65,15 +76,33 @@ class _LocationSearchState extends ConsumerState<LocationSearch> {
                   enabledBorder: kTextFormFieldBorderStyles,
                   suffixIcon: const Icon(Icons.search),
                 ),
+                autofocus: true,
               ),
+              if (error != null) ...[
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Error: $error',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.red),
+                  ),
+                ),
+              ],
               const SizedBox(height: 10),
               Expanded(
                 child:
-                    suggestions.isEmpty
+                    isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : suggestions.isEmpty
                         ? Center(
                           child: Text(
-                            'No suggestions yet',
+                            _controller.text.isEmpty
+                                ? 'Start typing to search for your location'
+                                : 'No suggestions found. Try a different search term.',
                             style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
                           ),
                         )
                         : ListView.builder(
@@ -83,23 +112,36 @@ class _LocationSearchState extends ConsumerState<LocationSearch> {
                             return ListTile(
                               leading: const Icon(Icons.location_on),
                               title: Text(
-                                suggestion['description'],
+                                suggestion['description'] ?? '',
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
+                              subtitle:
+                                  suggestion['structured_formatting'] != null
+                                      ? Text(
+                                        suggestion['structured_formatting']['secondary_text'] ??
+                                            '',
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.bodySmall,
+                                      )
+                                      : null,
                               onTap: () async {
                                 final placeId = suggestion['place_id'];
-                                await ref
-                                    .read(locationNotifierProvider.notifier)
-                                    .fetchPlaceDetails(placeId);
+                                if (placeId != null) {
+                                  await ref
+                                      .read(locationNotifierProvider.notifier)
+                                      .fetchPlaceDetails(placeId);
 
-                                final selectedCity =
-                                    ref
-                                        .read(locationNotifierProvider)
-                                        .location
-                                        ?.city;
+                                  final selectedCity =
+                                      ref
+                                          .read(locationNotifierProvider)
+                                          .location
+                                          ?.city;
 
-                                if (context.canPop()) {
-                                  context.pop(selectedCity);
+                                  if (context.canPop()) {
+                                    context.pop(selectedCity);
+                                  }
                                 }
                               },
                             );

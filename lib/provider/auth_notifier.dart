@@ -30,7 +30,6 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   /// ----------------------------------------------------------------
   @override
   FutureOr<AuthState> build() async {
-    await _storage.deleteAll(); // 🧨 TEMPORARY LINE
     final token = await _storage.read(key: 'token');
     // Token read: $token
     return AuthState(isLoggedIn: token != null, token: token);
@@ -58,7 +57,6 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   /// ----------------------------------------------------------------
   /// Dispose the stream when provider is destroyed
   /// ----------------------------------------------------------------
-  @override
   void onDispose() {
     _streamController.close();
   }

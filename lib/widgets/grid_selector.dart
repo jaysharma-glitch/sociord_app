@@ -1,7 +1,82 @@
 import 'package:flutter/material.dart';
-import 'package:sociord/models/personality_trait_model.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/widgets/network_image.dart';
+
+/// Shows description with a max line count; if over, shows "Read more" / "Read less" to expand.
+class ExpandableDescription extends StatefulWidget {
+  final String text;
+  final int maxLinesCollapsed;
+  final TextStyle? style;
+
+  const ExpandableDescription({
+    super.key,
+    required this.text,
+    this.maxLinesCollapsed = 2,
+    this.style,
+  });
+
+  @override
+  State<ExpandableDescription> createState() => _ExpandableDescriptionState();
+}
+
+class _ExpandableDescriptionState extends State<ExpandableDescription> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context).textTheme.bodySmall!.copyWith(
+          fontSize: 10,
+          height: 1.1,
+          fontFamily: 'Lato',
+        );
+    final style = widget.style ?? theme;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final span = TextSpan(text: widget.text, style: style);
+        final tp = TextPainter(
+          text: span,
+          maxLines: widget.maxLinesCollapsed,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: constraints.maxWidth);
+        final needsExpand = tp.didExceedMaxLines;
+
+        if (!needsExpand) {
+          return Text(
+            widget.text,
+            style: style,
+          );
+        }
+
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => setState(() => _expanded = !_expanded),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.text,
+                maxLines: _expanded ? null : widget.maxLinesCollapsed,
+                overflow: _expanded ? null : TextOverflow.ellipsis,
+                style: style,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                _expanded ? 'Read less' : 'Read more',
+                style: style.copyWith(
+                  color: kAppPurple,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 10,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
 
 class GridSelector extends StatefulWidget {
   final bool isFirst;
@@ -70,51 +145,83 @@ class _GridSelectorState extends State<GridSelector> {
                       }
                     },
                     child: widget.crossAxisCount != 1
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Stack(
+                        ? LayoutBuilder(
+                            builder: (context, constraints) {
+                              const spacing = 5.0;
+                              const buffer = 4.0;
+                              final titleHeight = 14.0;
+                              final descHeight = option.description != null
+                                  ? 24.0
+                                  : 0.0;
+                              final maxImageHeight = (constraints.maxHeight -
+                                      spacing -
+                                      titleHeight -
+                                      descHeight -
+                                      buffer)
+                                  .clamp(0.0, double.infinity);
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  CustomeNetworkImage(url: option!.image),
-                                  if (widget.selectedList[index])
-                                    const Positioned(
-                                        top: 0,
-                                        right: 0,
-                                        child: Icon(
-                                          Icons.check_circle_rounded,
-                                          color: Colors.purple,
-                                          size: 20,
-                                        ))
-                                  else
-                                    Positioned(
-                                        top: 1,
-                                        right: 1,
-                                        child: Icon(Icons.brightness_1,
-                                            size: 20,
-                                            color: Colors.grey.shade300)),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(option.title,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall!
-                                      .copyWith(
+                                  SizedBox(
+                                    height: maxImageHeight,
+                                    child: ClipRect(
+                                      child: Stack(
+                                        children: [
+                                          CustomeNetworkImage(
+                                              url: option!.image),
+                                        if (widget.selectedList[index])
+                                          const Positioned(
+                                              top: 0,
+                                              right: 0,
+                                              child: Icon(
+                                                Icons.check_circle_rounded,
+                                                color: Colors.purple,
+                                                size: 20,
+                                              ))
+                                        else
+                                          Positioned(
+                                            top: 1,
+                                            right: 1,
+                                            child: Icon(Icons.brightness_1,
+                                                size: 20,
+                                                color: Colors.grey.shade300)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    option.title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall!
+                                        .copyWith(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w400,
-                                          color: kAppBlack)),
-                              option.description == null
-                                  ? const SizedBox()
-                                  : Text(
-                                      option.description,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .copyWith(fontSize: 10, height: 1.1),
-                                    ),
-                            ],
+                                          color: kAppBlack,
+                                        ),
+                                  ),
+                                  option.description == null
+                                      ? const SizedBox()
+                                      : ExpandableDescription(
+                                          text: option.description!,
+                                          maxLinesCollapsed: 2,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .copyWith(
+                                                fontSize: 10,
+                                                height: 1.1,
+                                                fontFamily: 'Lato',
+                                                color: kAppBlack,
+                                              ),
+                                        ),
+                                ],
+                              );
+                            },
                           )
                         : Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,11 +255,13 @@ class _GridSelectorState extends State<GridSelector> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(option.title,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineMedium!
-                                            .copyWith(color: kAppBlack)),
+                                    Text(
+                                      option.title,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium!
+                                          .copyWith(color: kAppBlack),
+                                    ),
                                     option.description == null
                                         ? const SizedBox()
                                         : Text(
@@ -160,7 +269,10 @@ class _GridSelectorState extends State<GridSelector> {
                                             softWrap: true,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .bodySmall,
+                                                .bodySmall!
+                                                .copyWith(
+                                                  fontFamily: 'Lato',
+                                                ),
                                           ),
                                   ],
                                 ),

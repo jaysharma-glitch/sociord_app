@@ -54,20 +54,29 @@ class LocationNotifier extends _$LocationNotifier {
     return true;
   }
 
-  Future<void> getCurrentPosition() async {
-    state = state.copyWith(loading: true);
+  Future<LocationModel?> getCurrentPosition() async {
+    state = state.copyWith(loading: true, clearError: true);
     try {
-      final bool isAllowed = await handleLocationPermission();
-      if (!isAllowed) return;
-
+      // Don't check permission again - it should already be checked before calling this
+      print('Getting current position...');
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
       );
+      print('Position obtained: ${position.latitude}, ${position.longitude}');
+
+      print('Getting placemarks...');
       final placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
       );
+
+      if (placemarks.isEmpty) {
+        throw Exception('No placemarks found for coordinates');
+      }
+
       final place = placemarks[0];
+      print('Place found: ${place.locality}, ${place.administrativeArea}');
 
       final location = LocationModel(
         lat: position.latitude,
@@ -78,10 +87,13 @@ class LocationNotifier extends _$LocationNotifier {
         zipCode: place.postalCode ?? '',
       );
 
-      state = state.copyWith(loading: false, location: location);
-      print('location set');
+      state = state.copyWith(loading: false, location: location, clearError: true);
+      print('Location set successfully in state. Location: ${location.city}, ${location.state}. State error: ${state.error}, State location: ${state.location?.city}');
+      return location;
     } catch (e) {
+      print('Error in getCurrentPosition: $e');
       state = state.copyWith(loading: false, error: e.toString());
+      return null;
     }
   }
 
@@ -89,23 +101,50 @@ class LocationNotifier extends _$LocationNotifier {
     const String PLACES_API_KEY = "AIzaSyCEgHihARBlyKYC1lDjZohM8N5D88RUoRs";
 
     try {
+      state = state.copyWith(loading: true, error: null);
+
       String baseURL =
           'https://maps.googleapis.com/maps/api/place/autocomplete/json';
       String request =
           '$baseURL?input=$input&key=$PLACES_API_KEY&sessiontoken=$sessionToken';
+
+      print('Places API Request: $request');
+
       var response = await http.get(Uri.parse(request));
       var data = json.decode(response.body);
 
+      print('Places API Response Status: ${response.statusCode}');
+      print('Places API Response: ${response.body}');
+
       if (response.statusCode == 200) {
-        state = state.copyWith(
-          loading: false,
-          suggestions: data['predictions'],
-        );
+        if (data['status'] == 'OK' && data['predictions'] != null) {
+          state = state.copyWith(
+            loading: false,
+            suggestions: data['predictions'],
+            error: null,
+          );
+          print('Suggestions set: ${data['predictions'].length} items');
+        } else {
+          // Handle API errors like OVER_QUERY_LIMIT, REQUEST_DENIED, etc.
+          final status = data['status'] ?? 'UNKNOWN';
+          final errorMessage = data['error_message'] ?? 'Unknown error';
+          print('Places API Error Status: $status, Message: $errorMessage');
+          state = state.copyWith(
+            loading: false,
+            suggestions: [],
+            error: 'API Error: $status - $errorMessage',
+          );
+        }
       } else {
-        throw Exception('Failed to load predictions');
+        throw Exception('Failed to load predictions: ${response.statusCode}');
       }
     } catch (e) {
-      state = state.copyWith(error: e.toString());
+      print('Exception in getSuggestion: $e');
+      state = state.copyWith(
+        loading: false,
+        suggestions: [],
+        error: e.toString(),
+      );
     }
   }
 
@@ -157,18 +196,22 @@ class LocationNotifier extends _$LocationNotifier {
     }
   }
 
-  Future<LocationModel?> addLocation(userId) async {
+  Future<LocationModel?> addLocation(userId, LocationModel location) async {
     var locationService = LocationService();
     var res = await locationService.addLocation(
       userId: userId,
-      lat: state.location?.lat,
-      long: state.location?.long,
-      street: state.location?.street,
-      city: state.location?.city,
-      state: state.location?.state,
-      zipCode: state.location?.zipCode,
+      lat: location.lat,
+      long: location.long,
+      street: location.street,
+      city: location.city,
+      state: location.state,
+      zipCode: location.zipCode,
     );
     print('in provider $res');
+    
+    // Update state with the location after successful submission
+    state = state.copyWith(location: location);
+    
     return res;
   }
 }
@@ -191,12 +234,18 @@ class LocationState {
     LocationModel? location,
     List? suggestions,
     String? error,
+    bool clearError = false,
   }) {
     return LocationState(
       loading: loading ?? this.loading,
       location: location ?? this.location,
       suggestions: suggestions ?? this.suggestions,
-      error: error ?? this.error,
+      error: clearError ? null : (error ?? this.error),
     );
+  }
+
+  @override
+  String toString() {
+    return 'LocationState(loading: $loading, location: ${location?.city ?? "null"}, error: $error)';
   }
 }

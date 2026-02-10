@@ -32,6 +32,8 @@ class ProfileHero extends StatelessWidget {
   final VoidCallback? onShare;
   final RelationshipType? relationship;
   final bool? isOwnProfile;
+  /// When set, used for "Creator Dashboard" vs "Become a Creator" button; otherwise profileType is used.
+  final bool? isCertifiedCreator;
 
   const ProfileHero({
     super.key,
@@ -57,6 +59,7 @@ class ProfileHero extends StatelessWidget {
     this.onShare,
     this.relationship,
     this.isOwnProfile,
+    this.isCertifiedCreator,
   });
 
   @override
@@ -81,52 +84,71 @@ class ProfileHero extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        name,
-                        style: theme.headlineSmall!.copyWith(color: kAppBlack),
-                      ),
-                      const SizedBox(height: 4),
-                      if (isCreator && creatorCategory.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 3,
+                  child: ClipRect(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text(
+                          name,
+                          style: theme.headlineSmall!.copyWith(
+                            color: kAppBlack,
+                            height: 1.1,
                           ),
-                          decoration: BoxDecoration(
-                            color: kAppYellow,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.airplanemode_active,
-                                size: 12,
-                                color: kAppBlack,
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                creatorCategory,
-                                style: theme.bodySmall!.copyWith(
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 6),
+                        if (isCreator && creatorCategory.isNotEmpty)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: kAppYellow,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.airplanemode_active,
+                                  size: 12,
                                   color: kAppBlack,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 5),
+                                Flexible(
+                                  child: Text(
+                                    creatorCategory,
+                                    style: theme.bodySmall!.copyWith(
+                                      color: kAppBlack,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      const SizedBox(height: 2),
-                      _infoRow(Icons.person_rounded, '$gender, $age'),
-                      _infoRow(Icons.location_pin, location),
-                      const SizedBox(height: 5),
-                      if (syncContactOption)
-                        _syncContactsSection(context, theme),
-                      Spacer(),
-                      _statsRow(theme),
-                    ],
+                        const SizedBox(height: 4),
+                        if ([gender, age]
+                            .where((s) => s.toString().trim().isNotEmpty)
+                            .isNotEmpty)
+                          _infoRow(
+                            Icons.person_rounded,
+                            [gender, age]
+                                .where((s) => s.toString().trim().isNotEmpty)
+                                .join(', '),
+                          ),
+                        if (location.trim().isNotEmpty)
+                          _infoRow(Icons.location_pin, location),
+                        const SizedBox(height: 5),
+                        if (syncContactOption)
+                          _syncContactsSection(context, theme),
+                        Spacer(),
+                        _statsRow(theme),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -147,7 +169,13 @@ class ProfileHero extends StatelessWidget {
       children: [
         Icon(icon, size: 18, color: kAppPurple),
         const SizedBox(width: 4),
-        Text(text, style: const TextStyle(fontSize: 12)),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 12,
+            height: 1.3,
+          ),
+        ),
       ],
     );
   }
@@ -217,12 +245,20 @@ class ProfileHero extends StatelessWidget {
   Widget _handleAndProfileSwitch(BuildContext context, TextTheme theme) {
     final isCreator = profileType == 'Creator';
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(handle, style: theme.bodySmall!.copyWith(fontFamily: "Gibson")),
-        const SizedBox(width: 10),
-        const Icon(Icons.open_in_new, size: 15, color: kAppPurple),
-        const Spacer(),
+        Row(
+          children: [
+            Text(
+              handle,
+              style: theme.bodySmall!.copyWith(fontFamily: "Gibson"),
+            ),
+            const SizedBox(width: 10),
+            const Icon(Icons.open_in_new, size: 15, color: kAppPurple),
+          ],
+        ),
+        const SizedBox(height: 4),
         if (isOwnProfile ?? false)
           GestureDetector(
             onTap:
@@ -230,6 +266,7 @@ class ProfileHero extends StatelessWidget {
                     ? () => context.go("/profile/becomeACreator")
                     : switchProfileType,
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   isCreator ? 'Creator Profile' : 'Personal Profile',
@@ -263,6 +300,7 @@ class ProfileHero extends StatelessWidget {
   Widget _actionButtons(BuildContext context, TextTheme theme) {
     final isOwn = isOwnProfile ?? true;
     final isCreator = profileType == 'Creator';
+    final showCreatorDashboard = isCertifiedCreator ?? isCreator;
 
     if (isOwn) {
       // Own profile actions - match the original button style
@@ -271,15 +309,16 @@ class ProfileHero extends StatelessWidget {
           ElevatedButton(
             onPressed: onEditProfile ?? () {},
             style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
               backgroundColor: kAppBlack,
-              minimumSize: Size.zero,
+              minimumSize: const Size(0, 0),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
               'Edit Profile',
               style: theme.headlineSmall!.copyWith(
-                fontSize: 12,
+                fontSize: 13,
                 color: kAppWhite,
               ),
             ),
@@ -287,7 +326,7 @@ class ProfileHero extends StatelessWidget {
           const SizedBox(width: 5),
           ElevatedButton(
             onPressed: () {
-              if (isCreator) {
+              if (showCreatorDashboard) {
                 // Navigate to creator dashboard or settings
                 onEditProfile?.call();
               } else {
@@ -296,15 +335,16 @@ class ProfileHero extends StatelessWidget {
               }
             },
             style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
               backgroundColor: kAppPurple,
-              minimumSize: Size.zero,
+              minimumSize: const Size(0, 0),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
-              isCreator ? 'Creator Dashboard' : 'Become a Creator',
+              showCreatorDashboard ? 'Creator Dashboard' : 'Become a Creator',
               style: theme.headlineSmall!.copyWith(
-                fontSize: 12,
+                fontSize: 13,
                 color: kAppWhite,
               ),
             ),

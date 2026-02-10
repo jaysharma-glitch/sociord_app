@@ -52,6 +52,7 @@ class ProfileBanner extends StatelessWidget {
                 textAlign: centerAlign ? TextAlign.center : TextAlign.left,
                 style: textTheme.headlineSmall!.copyWith(
                   fontSize: centerAlign ? 20 : 12,
+                  color: kAppWhite,
                 ),
               ),
               const SizedBox(height: 2),
@@ -112,7 +113,7 @@ class ProfileBanner extends StatelessWidget {
             ],
           ),
           Positioned(
-            top: centerAlign ? 55 : -20,
+            top: centerAlign ? 55 : 0,
             left: centerAlign ? 0 : null,
             right: centerAlign ? 0 : -8,
             child: Align(

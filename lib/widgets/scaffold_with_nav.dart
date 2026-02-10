@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sociord/constants/color.dart';
+import 'package:sociord/widgets/user_hydration_listener.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/utils/routes.dart'; // for path constants
 import 'package:sociord/screens/home/home_screen.dart';
 import 'package:sociord/widgets/common/profile_avatar.dart';
 
-class ScaffoldWithNavBar extends StatelessWidget {
+class ScaffoldWithNavBar extends ConsumerWidget {
   const ScaffoldWithNavBar({
     super.key,
     required this.navigationShell, // <—
@@ -19,20 +21,21 @@ class ScaffoldWithNavBar extends StatelessWidget {
   static final GlobalKey<HomeScreenState> homeScreenKey = GlobalKey();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Adjust currentIndex to account for Add button being a modal
     final currentIndex = navigationShell.currentIndex;
 
-    return Scaffold(
-      body: navigationShell, // <— renders the active branch
-      bottomNavigationBar: BottomNavigationBar(
+    return UserHydrationListener(
+      child: Scaffold(
+        body: navigationShell, // <— renders the active branch
+        bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) {
           if (index == 1) {
             // Add button - navigate to full-screen modal
             context.go(addRoute);
           } else if (index == currentIndex && index == 0) {
-            homeScreenKey.currentState?.scrollToTop();
+            ScaffoldWithNavBar.homeScreenKey.currentState?.scrollToTop();
           } else {
             // Keeps each tab's history; doesn't rebuild the whole shell
             // Adjust index for Add button (index 1 is Add, so shift other indices)
@@ -48,6 +51,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
         showUnselectedLabels: false,
         items: _navBarItems,
       ),
+    ),
     );
   }
 

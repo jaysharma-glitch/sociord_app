@@ -20,7 +20,6 @@ class ProfilePicScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
-  File? _image;
   CroppedFile? _croppedFile;
   bool isLoading = false;
   bool isTooLarge = false;
@@ -63,7 +62,6 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
       } else {
         setState(() {
           isImageLoading = false;
-          _image = null;
           _croppedFile = null;
         });
       }
@@ -145,6 +143,27 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Skip button at the top (always visible)
+              if (_croppedFile != null)
+                Align(
+                  alignment: Alignment.topRight,
+                  child: TextButton(
+                    onPressed:
+                        isLoading
+                            ? null
+                            : () {
+                              // Navigate to home when skipping
+                              context.go('/home');
+                            },
+                    child: Text(
+                      'Skip',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.headlineSmall?.copyWith(color: kAppPurple),
+                    ),
+                  ),
+                ),
+              if (_croppedFile != null) const SizedBox(height: 20),
               Text(
                 'Welcome ${userState.firstName}!',
                 style: Theme.of(context).textTheme.headlineLarge,
@@ -199,7 +218,10 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
                         child: SizedBox(
                           width: double.infinity,
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              // Navigate to home when skipping
+                              context.go('/home');
+                            },
                             child: Text(
                               'Skip for now',
                               style: Theme.of(context).textTheme.headlineSmall
@@ -291,6 +313,22 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
                             child: ElevatedButton(
                               onPressed: () async {
                                 if (_croppedFile == null) return;
+
+                                // Check if userId exists before proceeding
+                                final currentUserId = userState.userId;
+                                if (currentUserId == null ||
+                                    currentUserId.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'User ID not found. Please try again.',
+                                      ),
+                                      duration: Duration(seconds: 3),
+                                    ),
+                                  );
+                                  return;
+                                }
+
                                 final filetype =
                                     'image/png'; // or detect the file type dynamically
 
@@ -298,33 +336,131 @@ class _ProfilePicScreenState extends ConsumerState<ProfilePicScreen> {
                                   setState(() {
                                     isLoading = true;
                                   });
+
+                                  print('=== Profile Pic Upload ===');
+                                  print('User ID: $currentUserId');
+                                  print('File path: ${_croppedFile!.path}');
+
                                   final signedUrl = await userNotifier
                                       .getSignedUrl(filetype);
+                                  if (signedUrl == null) {
+                                    throw Exception(
+                                      'Failed to get signed URL from server',
+                                    );
+                                  }
+
+                                  print(
+                                    'Signed URL received: ${signedUrl.substring(0, 50)}...',
+                                  );
+
                                   await userNotifier.uploadImage(
                                     File(_croppedFile!.path),
                                     signedUrl,
                                   );
+
                                   setState(() {
                                     isLoading = false;
                                   });
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                       content: Text('Upload successful!'),
+                                      duration: Duration(seconds: 2),
                                     ),
                                   );
+                                  // Navigate to home after successful upload
+                                  if (mounted) {
+                                    context.go('/home');
+                                  }
                                 } catch (e) {
                                   setState(() {
                                     isLoading = false;
                                   });
-                                  if (e.toString().contains(
-                                    'Connection refused',
-                                  )) {
+
+                                  print('=== Upload Error ===');
+                                  print('Error type: ${e.runtimeType}');
+                                  print('Error message: $e');
+                                  print('Full error: ${e.toString()}');
+                                  print('===================');
+
+                                  String errorMessage =
+                                      'An error occurred while uploading your image.';
+
+                                  // Check for GraphQL errors first
+                                  if (e.toString().contains('GraphQL Error:')) {
+                                    // Extract the GraphQL error message
+                                    final errorStr = e.toString();
+                                    if (errorStr.contains('GraphQL Error:')) {
+                                      final startIndex =
+                                          errorStr.indexOf('GraphQL Error:') +
+                                          'GraphQL Error:'.length;
+                                      errorMessage =
+                                          errorStr.substring(startIndex).trim();
+                                    } else {
+                                      errorMessage = errorStr;
+                                    }
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(errorMessage),
+                                        duration: const Duration(seconds: 4),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  } else if (e.toString().contains(
+                                        'Connection refused',
+                                      ) ||
+                                      e.toString().contains(
+                                        'SocketException',
+                                      ) ||
+                                      e.toString().contains(
+                                        'Failed host lookup',
+                                      )) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       CustomSnackBar().build(context),
                                     );
+                                  } else if (e.toString().contains(
+                                        'INTERNAL_SERVER_ERROR',
+                                      ) ||
+                                      e.toString().contains(
+                                        'Internal Server Error',
+                                      )) {
+                                    errorMessage =
+                                        'Server error occurred. Please try again later.';
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(errorMessage),
+                                        duration: const Duration(seconds: 3),
+                                      ),
+                                    );
+                                  } else if (e.toString().contains(
+                                    'Failed to get signed URL',
+                                  )) {
+                                    errorMessage =
+                                        'Failed to get upload URL. Please try again.';
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(errorMessage),
+                                        duration: const Duration(seconds: 3),
+                                      ),
+                                    );
                                   } else {
-                                    print("Error ${e.toString()}");
+                                    // Show the actual error message to help debug
+                                    errorMessage = e.toString();
+                                    if (errorMessage.length > 100) {
+                                      errorMessage =
+                                          errorMessage.substring(0, 100) +
+                                          '...';
+                                    }
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Error: $errorMessage'),
+                                        duration: const Duration(seconds: 4),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
                                   }
+                                  print(
+                                    "Final error message shown to user: $errorMessage",
+                                  );
                                 }
 
                                 // File imageFile = File(_croppedFile!.path);

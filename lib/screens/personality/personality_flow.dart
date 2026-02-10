@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sociord/models/user_personality_model.dart';
+import 'package:sociord/provider/onboarding_provider.dart';
 import 'package:sociord/provider/user_personality_provider.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/screens/personality/connect_selection.dart';
@@ -13,8 +13,8 @@ import 'package:sociord/constants/color.dart';
 import 'package:sociord/widgets/custom_snack_bar.dart';
 import 'package:sociord/widgets/dashed_progress_indicator.dart';
 import 'package:sociord/widgets/go_back_btn.dart';
-import 'package:sociord/constants/ui.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 
 class PersonalityFlow extends ConsumerStatefulWidget {
   static const routeName = '/personality-flow';
@@ -28,6 +28,7 @@ class _PersonalityFlowState extends ConsumerState<PersonalityFlow> {
   late PageController _pageController;
   int _currentPage = 0;
   bool isLoading = false;
+  bool showSuccess = false;
 
   final List<bool> soundtrackSelectedOptions = List.generate(11, (_) => false);
   final List<bool> weekendSelectedOptions = List.generate(11, (_) => false);
@@ -40,6 +41,15 @@ class _PersonalityFlowState extends ConsumerState<PersonalityFlow> {
     super.initState();
     _pageController = PageController();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+    // Debug: Check userId when screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userState = ref.read(userNotifierProvider);
+      print('=== Personality Flow Init ===');
+      print('User ID on init: ${userState.userId}');
+      print('User ID is empty: ${userState.userId?.isEmpty ?? true}');
+      print('============================');
+    });
   }
 
   @override
@@ -49,73 +59,200 @@ class _PersonalityFlowState extends ConsumerState<PersonalityFlow> {
   }
 
   Future<void> handleContinueClick() async {
+    // Prevent multiple clicks while processing
+    if (isLoading) return;
+
     final notifier = ref.read(userPersonalityNotifierProvider.notifier);
     final state = ref.read(userPersonalityNotifierProvider);
-    final userId = ref.read(userNotifierProvider).userId;
 
-    _pageController.nextPage(
-        duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+    // Get userId - try both watch and read
+    final userState = ref.watch(userNotifierProvider);
+    final userId = userState.userId;
 
-    // try {
-    //   setState(() => isLoading = true);
+    // Debug logging
+    print('=== Personality Flow Debug ===');
+    print('User State: $userState');
+    print('User ID: $userId');
+    print('User ID is null: ${userId == null}');
+    print('User ID is empty: ${userId?.isEmpty ?? true}');
+    print('=============================');
 
-    //   List<String> selectedIds = [];
-    //   List<bool> selectedOptions = [];
-    //   List<dynamic> options = [];
-    //   Future<dynamic> Function(String, List<String>)? submitFn;
+    // Validate userId exists - use the one we got or try direct access
+    String? finalUserId = userId;
+    if (finalUserId == null || finalUserId.isEmpty) {
+      // Try to get it from the notifier directly
+      final directUserId = ref.read(userNotifierProvider).userId;
+      print('Direct User ID check: $directUserId');
 
-    //   switch (_currentPage) {
-    //     case 0:
-    //       selectedOptions = soundtrackSelectedOptions;
-    //       options = state.soundTrackOption;
-    //       submitFn = notifier.addUserSoundtrackSelection;
-    //       break;
-    //     case 1:
-    //       selectedOptions = weekendSelectedOptions;
-    //       options = state.weekendOption;
-    //       submitFn = notifier.addUserWeekendSelection;
-    //       break;
-    //     case 2:
-    //       selectedOptions = connectionSelectedOptions;
-    //       options = state.connectOption;
-    //       submitFn = notifier.addUserConnectSelection;
-    //       break;
-    //     case 3:
-    //       selectedOptions = movieSelectedOptions;
-    //       options = state.bingeWatchOption;
-    //       submitFn = notifier.addUserBingeWatchSelection;
-    //       break;
-    //     case 4:
-    //       selectedOptions = petSelectedOptions;
-    //       options = state.petOption;
-    //       submitFn = notifier.addUserPetSelection;
-    //       break;
-    //   }
+      if (directUserId == null || directUserId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('User ID not found. Please login again.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+        return;
+      }
+      finalUserId = directUserId;
+    }
 
-    //   for (int i = 0; i < selectedOptions.length; i++) {
-    //     if (selectedOptions[i]) selectedIds.add(options[i]!.id);
-    //   }
+    // Use finalUserId for the rest of the function
+    // At this point, finalUserId is guaranteed to be non-null and non-empty
+    final String actualUserId = finalUserId;
 
-    //   final result = await submitFn!(userId!, selectedIds);
-    //   setState(() => isLoading = false);
+    try {
+      setState(() {
+        isLoading = true;
+        showSuccess = false;
+      });
 
-    //   if (result != null) {
-    //     if (_currentPage < 4) {
-    //       _pageController.nextPage(
-    //           duration: Duration(milliseconds: 200), curve: Curves.easeIn);
-    //     } else {
-    //       context.go('/home'); // Adjust as per next step after personality
-    //     }
-    //   }
-    // } catch (e) {
-    //   setState(() => isLoading = false);
-    //   if (e.toString().contains('Connection refused')) {
-    //     ScaffoldMessenger.of(context)
-    //         .showSnackBar(CustomSnackBar().build(context));
-    //   } else {
-    //     print(e);
-    //   }
-    // }
+      List<String> selectedIds = [];
+      List<bool> selectedOptions = [];
+      List<dynamic> options = [];
+      Future<String?> Function(String, List<String>)? submitFn;
+
+      // Determine which page we're on and get the corresponding data
+      switch (_currentPage) {
+        case 0: // Soundtrack selection
+          selectedOptions = soundtrackSelectedOptions;
+          options = state.soundTrackOption;
+          submitFn = notifier.addUserSoundtrackSelection;
+          break;
+        case 1: // Weekend selection
+          selectedOptions = weekendSelectedOptions;
+          options = state.weekendOption;
+          submitFn = notifier.addUserWeekendSelection;
+          break;
+        case 2: // Connect selection
+          selectedOptions = connectionSelectedOptions;
+          options = state.connectOption;
+          submitFn = notifier.addUserConnectSelection;
+          break;
+        case 3: // Movie/Binge watch selection
+          selectedOptions = movieSelectedOptions;
+          options = state.bingeWatchOption;
+          submitFn = notifier.addUserBingeWatchSelection;
+          break;
+        case 4: // Pet selection (last page)
+          selectedOptions = petSelectedOptions;
+          options = state.petOption;
+          submitFn = notifier.addUserPetSelection;
+          break;
+        default:
+          setState(() => isLoading = false);
+          return;
+      }
+
+      // Check if options are loaded
+      if (options.isEmpty) {
+        // If options aren't loaded yet, try to load them
+        switch (_currentPage) {
+          case 0:
+            options = await notifier.getSoundtrackOptions();
+            break;
+          case 1:
+            options = await notifier.getWeekendOption();
+            break;
+          case 2:
+            options = await notifier.getConnectOption();
+            break;
+          case 3:
+            options = await notifier.getBingeWatchOption();
+            break;
+          case 4:
+            options = await notifier.getPetOption();
+            break;
+        }
+      }
+
+      // Collect selected option IDs
+      for (int i = 0; i < selectedOptions.length && i < options.length; i++) {
+        if (selectedOptions[i] && options[i] != null) {
+          selectedIds.add(options[i]!.id);
+        }
+      }
+
+      // Validate that at least one option is selected
+      if (selectedIds.isEmpty) {
+        setState(() => isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select at least one option to continue.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+
+      // Save selection to backend
+      // submitFn is guaranteed to be non-null after the switch statement
+      final result = await submitFn(actualUserId, selectedIds);
+
+      if (!mounted) return;
+
+      if (result != null && result.isNotEmpty) {
+        // Brief success state with checkmark before navigating
+        setState(() {
+          isLoading = false;
+          showSuccess = true;
+        });
+
+        await Future.delayed(const Duration(milliseconds: 400));
+
+        if (!mounted) return;
+
+        if (_currentPage < 4) {
+          _pageController.nextPage(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeIn,
+          );
+        } else {
+          // Mark onboarding complete and go to profile
+          ref.read(onboardingProvider.notifier).setDone(true);
+          context.go('/profile');
+        }
+
+        // Reset button back to normal for next screen
+        setState(() {
+          showSuccess = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          showSuccess = false;
+        });
+        // If save failed, show error
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to save selection. Please try again.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          showSuccess = false;
+        });
+      }
+      print('Error in handleContinueClick: $e');
+
+      if (e.toString().contains('Connection refused') ||
+          e.toString().contains('SocketException') ||
+          e.toString().contains('Failed host lookup')) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(CustomSnackBar().build(context));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An error occurred: ${e.toString()}'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -170,16 +307,17 @@ class _PersonalityFlowState extends ConsumerState<PersonalityFlow> {
           const SizedBox(height: 50),
           Padding(
             padding: const EdgeInsets.only(left: 20.0),
-            child: _currentPage > 0
-                ? GoBackButton(
-                    onPressedFunction: () {
-                      _pageController.previousPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeIn,
-                      );
-                    },
-                  )
-                : const SizedBox(),
+            child:
+                _currentPage > 0
+                    ? GoBackButton(
+                      onPressedFunction: () {
+                        _pageController.previousPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                        );
+                      },
+                    )
+                    : const SizedBox(),
           ),
           const SizedBox(height: 25),
           Padding(
@@ -207,16 +345,26 @@ class _PersonalityFlowState extends ConsumerState<PersonalityFlow> {
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 shape: const RoundedRectangleBorder(),
               ),
+              // Keep button visually enabled; guard inside handler instead
               onPressed: handleContinueClick,
-              child: isLoading
-                  ? kLoadingIndicator
-                  : Text(
-                      'Continuee',
-                      style:
-                          Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                color: Colors.white,
-                              ),
-                    ),
+              child:
+                  showSuccess
+                      ? const Icon(Icons.check_circle, color: Colors.white)
+                      : isLoading
+                      ? Shimmer.fromColors(
+                        baseColor: Colors.white,
+                        highlightColor: Colors.white70,
+                        child: Text(
+                          '...',
+                          style: Theme.of(context).textTheme.headlineSmall!
+                              .copyWith(color: Colors.white),
+                        ),
+                      )
+                      : Text(
+                        'Continue',
+                        style: Theme.of(context).textTheme.headlineSmall!
+                            .copyWith(color: Colors.white),
+                      ),
             ),
           ),
         ],
@@ -250,12 +398,14 @@ class PersonalityPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
               title!,
-              style: largeText
-                  ? Theme.of(context).textTheme.headlineLarge
-                  : Theme.of(context)
-                      .textTheme
-                      .headlineLarge!
-                      .copyWith(fontSize: 18),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style:
+                  largeText
+                      ? Theme.of(context).textTheme.headlineLarge
+                      : Theme.of(
+                        context,
+                      ).textTheme.headlineLarge!.copyWith(fontSize: 18),
             ),
           ),
         SizedBox(height: largeText ? 5 : 3),
@@ -264,13 +414,15 @@ class PersonalityPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Text(
               subtitle!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                    color: kAppPurple,
-                    fontSize: largeText ? 15 : 12,
-                  ),
+                color: kAppPurple,
+                fontSize: largeText ? 15 : 12,
+              ),
             ),
           ),
-        content,
+        Expanded(child: content),
       ],
     );
   }

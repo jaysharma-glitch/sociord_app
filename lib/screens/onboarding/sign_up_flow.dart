@@ -16,6 +16,7 @@ import 'package:sociord/screens/onboarding/user_type.dart';
 import 'package:sociord/screens/onboarding/gender_selection.dart';
 import 'package:sociord/screens/onboarding/birthday_picker.dart';
 import 'package:sociord/screens/onboarding/widget/onboarding_page.dart';
+import 'package:sociord/utils/routes.dart';
 import 'package:sociord/widgets/go_back_btn.dart';
 import 'package:sociord/widgets/selection_widget.dart';
 
@@ -31,12 +32,36 @@ class _SignUpFlowState extends ConsumerState<SignUpFlow> {
   int _currentPage = 0;
 
   @override
+  void initState() {
+    super.initState();
+    // Track activity when user is on onboarding pages
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateActivity();
+    });
+
+    // Listen to page changes to track activity
+    _pageController.addListener(() {
+      _updateActivity();
+    });
+  }
+
+  void _updateActivity() {
+    final userNotifier = ref.read(userNotifierProvider.notifier);
+    userNotifier.updateActivity();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final userState = ref.watch(userNotifierProvider);
-    final userNotifier = ref.read(userNotifierProvider.notifier);
     final viewTop = MediaQuery.of(context).viewPadding.top;
 
-    final List<Widget> _pages = [
+    final List<Widget> pages = [
       OnboardingPage(
         title: "What account are you creating today?",
         content: Column(
@@ -71,8 +96,8 @@ class _SignUpFlowState extends ConsumerState<SignUpFlow> {
         content: RegisterWidget(pageController: _pageController),
       ),
       OnboardingPage(
-        title: "Enter the OTP sent to ${userState.phoneNumber}",
-        subtitle: "Crea8. Appreci8. Celebr8",
+        title: "Enter the OTP sent to",
+        subtitle: "${userState.phoneNumber}",
         content: Otp(pageController: _pageController),
       ),
       OnboardingPage(
@@ -112,7 +137,7 @@ class _SignUpFlowState extends ConsumerState<SignUpFlow> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: LinearProgressIndicator(
-              value: (_currentPage + 1) / _pages.length,
+              value: (_currentPage + 1) / pages.length,
               borderRadius: BorderRadius.circular(20),
               backgroundColor: kAppGreay,
             ),
@@ -125,7 +150,9 @@ class _SignUpFlowState extends ConsumerState<SignUpFlow> {
             child: GoBackButton(
               onPressedFunction: () {
                 if (_currentPage == 0) {
-                  context.pop();
+                  context.canPop()
+                      ? context.pop()
+                      : context.go(signInSignUpRoute);
                 } else {
                   _pageController.previousPage(
                     duration: const Duration(milliseconds: 300),
@@ -145,8 +172,8 @@ class _SignUpFlowState extends ConsumerState<SignUpFlow> {
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
               onPageChanged: (int page) => setState(() => _currentPage = page),
-              itemCount: _pages.length,
-              itemBuilder: (_, index) => _pages[index],
+              itemCount: pages.length,
+              itemBuilder: (_, index) => pages[index],
             ),
           ),
         ],

@@ -4,7 +4,6 @@ import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/widgets/feed/feed_data.dart';
 import 'package:sociord/widgets/feed/feed_item.dart';
 import 'package:sociord/widgets/feed/feed_slider.dart';
-import 'package:sociord/widgets/feed/feed_type.dart';
 import 'package:sociord/widgets/feed/feed_sheet.dart';
 
 class ProfileHighlight extends StatelessWidget {
@@ -100,20 +99,21 @@ class ProfileHighlight extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: Container(
-                            width: 80,
-                            height: 100,
+                            width: 110, // ~30% wider
+                            height: 130, // ~30% taller
                             decoration: BoxDecoration(
                               color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(
                                   Icons.add,
-                                  size: 35,
+                                  size: 40,
                                   color: kAppPurple,
                                 ),
+                                const SizedBox(height: 6),
                                 Center(
                                   child: Text(
                                     isCreator
@@ -123,7 +123,7 @@ class ProfileHighlight extends StatelessWidget {
                                     style: Theme.of(
                                       context,
                                     ).textTheme.bodySmall!.copyWith(
-                                      fontSize: 9,
+                                      fontSize: 10,
                                       color: kAppPurple,
                                     ),
                                   ),
@@ -205,27 +205,6 @@ class ProfileHighlight extends StatelessWidget {
         imagePath: imagePath,
         title: highlightName,
         caption: 'Sample caption for $highlightName',
-      );
-    }).toList();
-  }
-
-  List<FeedItem> _generateAllPostsForHighlight(
-    String highlightName,
-    List<String> highlightImages,
-    List<String> highlightNames,
-  ) {
-    return highlightImages.asMap().entries.map((entry) {
-      final index = entry.key;
-      final imagePath = entry.value;
-      final name =
-          index < highlightNames.length
-              ? highlightNames[index]
-              : 'Highlight ${index + 1}';
-
-      return FeedItem(
-        imagePath: imagePath,
-        title: name,
-        caption: 'Sample caption for $name',
       );
     }).toList();
   }

@@ -17,10 +17,9 @@ class GenderSelection extends ConsumerStatefulWidget {
 class _GenderSelectionState extends ConsumerState<GenderSelection> {
   bool get isOtherGenderSelected {
     final gender = ref.watch(userNotifierProvider).gender;
-    return gender != null &&
-        gender != 'Male' &&
-        gender != 'Female' &&
-        gender != 'Others';
+    final otherIdentity = ref.watch(userNotifierProvider).otherIdentity;
+    // If gender is "Other" and otherIdentity is set, then other gender is selected
+    return gender == 'Other' && otherIdentity != null && otherIdentity.isNotEmpty;
   }
 
   @override
@@ -43,19 +42,35 @@ class _GenderSelectionState extends ConsumerState<GenderSelection> {
           OptionSelector(
             title: 'Male',
             isSelected: gender == 'Male',
-            onTap: () => setState(() => userNotifier.setGender('Male')),
+            onTap: () {
+              setState(() {
+                userNotifier.setGender('Male');
+                // Clear otherIdentity and pronouns when selecting Male/Female
+                userNotifier.setOtherIdentity(null);
+                userNotifier.setPronouns(null);
+              });
+            },
           ),
           const SizedBox(height: 20),
           OptionSelector(
             title: 'Female',
             isSelected: gender == 'Female',
-            onTap: () => setState(() => userNotifier.setGender('Female')),
+            onTap: () {
+              setState(() {
+                userNotifier.setGender('Female');
+                // Clear otherIdentity and pronouns when selecting Male/Female
+                userNotifier.setOtherIdentity(null);
+                userNotifier.setPronouns(null);
+              });
+            },
           ),
           const SizedBox(height: 20),
           OptionSelector(
-            title: isOtherGenderSelected ? gender : 'Others',
-            isSelected: gender == 'Others' || isOtherGenderSelected,
-            onTap: () => setState(() => userNotifier.setGender('Others')),
+            title: isOtherGenderSelected 
+                ? ref.watch(userNotifierProvider).otherIdentity ?? 'Other'
+                : 'Other',
+            isSelected: gender == 'Other' || isOtherGenderSelected,
+            onTap: () => setState(() => userNotifier.setGender('Other')),
           ),
           const SizedBox(height: 40),
           if (gender.isNotEmpty)
@@ -63,19 +78,44 @@ class _GenderSelectionState extends ConsumerState<GenderSelection> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  if (gender == 'Others' || isOtherGenderSelected) {
-                    final result = await context.push(otherGenderRoute);
-                    if (result != null && widget.pageController != null) {
+                  final currentUserState = ref.read(userNotifierProvider);
+                  
+                  // If Other is selected but data is not filled, navigate to other gender screen
+                  if (gender == 'Other' && 
+                      (currentUserState.otherIdentity == null || 
+                       currentUserState.otherIdentity!.isEmpty ||
+                       currentUserState.pronouns == null ||
+                       currentUserState.pronouns!.isEmpty)) {
+                    // Navigate to other gender screen to get custom identity and pronouns
+                    await context.push(otherGenderRoute);
+                    // After returning, check if data is now filled and proceed
+                    final updatedUserState = ref.read(userNotifierProvider);
+                    if (updatedUserState.otherIdentity != null && 
+                        updatedUserState.otherIdentity!.isNotEmpty &&
+                        updatedUserState.pronouns != null &&
+                        updatedUserState.pronouns!.isNotEmpty &&
+                        widget.pageController != null) {
+                      widget.pageController!.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeIn,
+                      );
+                    }
+                  } else if (gender == 'Other' && isOtherGenderSelected) {
+                    // Other is selected and data is filled, proceed to next screen
+                    if (widget.pageController != null) {
                       widget.pageController!.nextPage(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeIn,
                       );
                     }
                   } else {
-                    widget.pageController!.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeIn,
-                    );
+                    // For Male/Female, just proceed to next screen
+                    if (widget.pageController != null) {
+                      widget.pageController!.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeIn,
+                      );
+                    }
                   }
                 },
                 child: Text(

@@ -22,10 +22,15 @@ class _OtherGenderDesState extends ConsumerState<OtherGenderDes> {
   void initState() {
     super.initState();
     final user = ref.read(userNotifierProvider);
+    // Initialize with existing otherIdentity if available, otherwise empty
     _identityController = TextEditingController(
-      text: user.gender == 'Others' ? '' : user.gender,
+      text: user.otherIdentity ?? '',
     );
-    _pronounsController = TextEditingController(text: user.otherIdenty);
+    _pronounsController = TextEditingController(text: user.pronouns ?? '');
+    // Ensure gender is set to "Other"
+    if (user.gender != 'Other') {
+      ref.read(userNotifierProvider.notifier).setGender('Other');
+    }
   }
 
   @override
@@ -38,7 +43,6 @@ class _OtherGenderDesState extends ConsumerState<OtherGenderDes> {
   @override
   Widget build(BuildContext context) {
     final userNotifier = ref.read(userNotifierProvider.notifier);
-    final user = ref.watch(userNotifierProvider);
 
     return Scaffold(
       body: Padding(
@@ -66,8 +70,8 @@ class _OtherGenderDesState extends ConsumerState<OtherGenderDes> {
               TextFormField(
                 controller: _identityController,
                 decoration: InputDecoration(
-                  labelText: 'Trans Man',
-                  labelStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  hintText: 'Trans Man',
+                  hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: kAppLightBlack,
                         fontWeight: FontWeight.w300,
                       ),
@@ -78,7 +82,11 @@ class _OtherGenderDesState extends ConsumerState<OtherGenderDes> {
                           color: kAppDarkGreen, size: 20)
                       : null,
                 ),
-                onChanged: userNotifier.setGender,
+                onChanged: (value) {
+                  // Store custom identity in otherIdentity, keep gender as "Other"
+                  userNotifier.setOtherIdentity(value);
+                  setState(() {}); // Update suffix icon
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your identity';
@@ -93,8 +101,8 @@ class _OtherGenderDesState extends ConsumerState<OtherGenderDes> {
               TextFormField(
                 controller: _pronounsController,
                 decoration: InputDecoration(
-                  labelText: 'She/Her',
-                  labelStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  hintText: 'She/Her',
+                  hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: kAppLightBlack,
                         fontWeight: FontWeight.w300,
                       ),
@@ -105,7 +113,10 @@ class _OtherGenderDesState extends ConsumerState<OtherGenderDes> {
                           color: kAppDarkGreen, size: 20)
                       : null,
                 ),
-                onChanged: userNotifier.setOtherIdenty,
+                onChanged: (value) {
+                  userNotifier.setPronouns(value);
+                  setState(() {}); // Update suffix icon
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your pronouns';
@@ -119,7 +130,10 @@ class _OtherGenderDesState extends ConsumerState<OtherGenderDes> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState?.validate() ?? false) {
-                      context.pop(user.otherIdenty);
+                      // Ensure gender is set to "Other" before returning
+                      userNotifier.setGender('Other');
+                      // Pop back to gender selection screen
+                      context.pop(true); // Return true to indicate success
                     }
                   },
                   child: Text(

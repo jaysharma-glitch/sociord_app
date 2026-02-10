@@ -8,8 +8,6 @@ import 'package:sociord/widgets/profile/homePagePosts/profile_highlight.dart';
 import 'package:sociord/widgets/profile/profile_posts.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/post_reader_page.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/post_source.dart';
-import 'package:sociord/widgets/profile/buddyProfilePost/mock_post_repo.dart';
-import 'package:sociord/widgets/profile/buddyProfilePost/grid_post_tile.dart';
 import 'package:sociord/widgets/common/options_bottom_sheet.dart';
 
 class ProfileData {
@@ -66,7 +64,10 @@ class ProfileComponent extends StatefulWidget {
   final VoidCallback? onMessagePressed;
   final VoidCallback? onSharePressed;
   final VoidCallback? onToggleProfileType;
+  final VoidCallback? onLogout;
   final String? profileImage;
+  /// When true, show "Creator Dashboard"; when false, show "Become a Creator". Omit to use userType.
+  final bool? isCertifiedCreator;
 
   const ProfileComponent({
     super.key,
@@ -83,7 +84,9 @@ class ProfileComponent extends StatefulWidget {
     this.onMessagePressed,
     this.onSharePressed,
     this.onToggleProfileType,
+    this.onLogout,
     this.profileImage,
+    this.isCertifiedCreator,
   });
 
   @override
@@ -108,6 +111,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
     final isCreator = widget.userType == UserType.creator;
 
     return DefaultTabController(
+      key: ValueKey<bool>(isCreator),
       length: isCreator ? 3 : 2,
       child: Builder(
         builder: (ctx) {
@@ -132,6 +136,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
             isCreator
                 ? BottomSheetType.selfProfileCreator
                 : BottomSheetType.selfProfilePersonal,
+        onLogout: widget.onLogout,
       );
     } else {
       // For other person's profile
@@ -221,6 +226,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
                           profileType: isCreator ? 'Creator' : 'Personal',
                           creatorCategory:
                               widget.userData.creatorCategory ?? '',
+                          isCertifiedCreator: widget.isCertifiedCreator,
                           switchProfileType:
                               widget.viewType == ProfileViewType.own
                                   ? widget.onToggleProfileType
@@ -356,6 +362,20 @@ class _ProfileComponentState extends State<ProfileComponent> {
       viewType ?? ProfileViewType.own,
     );
 
+    // Own profile: hide mock posts, show empty state + upload buttons.
+    if (viewType == ProfileViewType.own) {
+      if (index == 0) {
+        return UploadsEmptyStateSlivers(
+          message: msg,
+          onUploadImage: _showComingSoon,
+          onUploadVideo: _showComingSoon,
+        );
+      } else {
+        return TaggedSlivers(message: msg);
+      }
+    }
+
+    // For other profiles, we can still use existing mock content.
     if (isCreator) {
       switch (index) {
         case 0:
@@ -387,10 +407,7 @@ class _ProfileComponentState extends State<ProfileComponent> {
     } else {
       switch (index) {
         case 0:
-          return UploadsSlivers(
-            itemCount: MockPostRepo.allPosts.length, // Use actual post count
-            itemBuilder: (ctx, i) => _buildGridItem(ctx, i),
-          );
+          return TaggedSlivers(message: msg);
         case 1:
           return TaggedSlivers(message: msg);
         default:
@@ -399,50 +416,11 @@ class _ProfileComponentState extends State<ProfileComponent> {
     }
   }
 
-  Widget _buildGridItem(BuildContext context, int index) {
-    // Get the actual post from mock data
-    final posts = MockPostRepo.allPosts;
-    if (index >= posts.length) {
-      return Container(); // Return empty container if index out of bounds
-    }
-
-    final post = posts[index];
-
-    return Container(
-      margin: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(5),
-        child: GridPostTile(
-          post: post,
-          onTap: () {
-            // Navigate to PostReaderPage
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder:
-                    (_) => PostReaderPage(
-                      userId: 'user_1', // Replace with actual user ID
-                      initialPostId: post.id, // Use actual post ID
-                      source:
-                          PostSource.uploads, // or tagged based on current tab
-                      userName: widget.userData.name,
-                      profileImage: widget.userData.imageUrl,
-                      isCreator: widget.userType == UserType.creator,
-                    ),
-                fullscreenDialog: true, // feels like a sheet
-              ),
-            );
-          },
-        ),
+  void _showComingSoon() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Post uploads are coming soon.'),
+        duration: Duration(seconds: 2),
       ),
     );
   }

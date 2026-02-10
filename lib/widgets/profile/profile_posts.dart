@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/post_reader_page.dart';
 import 'package:sociord/widgets/profile/buddyProfilePost/post_source.dart';
-import 'package:sociord/widgets/profile/buddyProfilePost/grid_post_tile.dart';
-import 'package:sociord/widgets/profile/buddyProfilePost/mock_post_repo.dart';
-import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/mock_data/clips_mock_data.dart';
 import 'package:sociord/models/clip_model.dart';
 import 'package:sociord/widgets/profile/clips_header.dart';
@@ -54,80 +51,6 @@ class PostsTabsBar extends StatelessWidget {
   }
 }
 
-Widget _buildGridItem(
-  BuildContext context,
-  int index, {
-  bool isCreator = false,
-}) {
-  if (isCreator) {
-    // For creators, use creator quickies (images 1-9)
-    if (index >= kCreatorQuickies.length) {
-      return Container(); // Return empty container if index out of bounds
-    }
-
-    final imagePath = kCreatorQuickies[index];
-
-    return GestureDetector(
-      onTap: () {
-        // Navigate to PostReaderPage for creator content
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder:
-                (_) => PostReaderPage(
-                  userId: 'creator_1', // Replace with actual creator ID
-                  initialPostId: 'creator_post_$index',
-                  source: PostSource.uploads,
-                  userName: 'Creator Name', // Replace with actual creator name
-                  profileImage:
-                      'assets/images/creator/1.jpeg', // Replace with actual profile image
-                  isCreator: true, // This is creator content
-                ),
-            fullscreenDialog: true,
-          ),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6),
-          image: DecorationImage(
-            image: AssetImage(imagePath),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-    );
-  } else {
-    // For explorers, use the existing mock posts
-    final posts = MockPostRepo.allPosts;
-
-    if (index >= posts.length) {
-      return Container();
-    }
-
-    final post = posts[index];
-
-    return GridPostTile(
-      post: post,
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder:
-                (_) => PostReaderPage(
-                  userId: 'user_1',
-                  initialPostId: post.id,
-                  source: PostSource.uploads,
-                  userName: 'Arjun Sethi',
-                  profileImage: 'assets/images/profileImage.png',
-                  isCreator: false, // This is personal content
-                ),
-            fullscreenDialog: true,
-          ),
-        );
-      },
-    );
-  }
-}
-
 // Sliver helper methods
 List<Widget> UploadsSlivers({
   required int itemCount,
@@ -153,6 +76,94 @@ List<Widget> TaggedSlivers({required String message}) => [
     sliver: SliverToBoxAdapter(child: Center(child: Text(message))),
   ),
 ];
+
+// Empty-state slivers for own profile uploads tab: message + action buttons.
+List<Widget> UploadsEmptyStateSlivers({
+  required String message,
+  required VoidCallback onUploadImage,
+  required VoidCallback onUploadVideo,
+}) =>
+    [
+      SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        sliver: SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: kAppBlack,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: onUploadImage,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        side: const BorderSide(color: kAppPurple, width: 1.4),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.image_outlined, color: kAppBlack, size: 18),
+                          SizedBox(width: 8),
+                          Text(
+                            'Upload an image',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: kAppBlack,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: onUploadVideo,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        side: const BorderSide(color: kAppPurple, width: 1.4),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.videocam_outlined, color: kAppBlack, size: 18),
+                          SizedBox(width: 8),
+                          Text(
+                            'Upload a video',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: kAppBlack,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ];
 
 List<Widget> QuickiesSlivers({
   required int itemCount,

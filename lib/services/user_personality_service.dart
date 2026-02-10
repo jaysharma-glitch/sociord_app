@@ -181,6 +181,7 @@ class UserPersonalityService {
     }
   }
 
+  /// Sends full list of selected option IDs; backend should store as array/JSON to avoid truncation.
   Future<String?> addUserSoundtrackSelection(
       {required userId, required data}) async {
     try {

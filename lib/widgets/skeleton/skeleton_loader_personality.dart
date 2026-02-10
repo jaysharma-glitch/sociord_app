@@ -7,138 +7,69 @@ class SkeletonLoaderPersonality extends StatelessWidget {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Example of a skeleton loader for a list of items
-            // Container(
-            //   width: 150.0,
-            //   height: 20.0,
-            //   color: Colors.white,
-            // ),
-            // SizedBox(height: 10),
-            // Container(
-            //   width: 100.0,
-            //   height: 20.0,
-            //   color: Colors.white,
-            // ),
-            SizedBox(
-              height: 30,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final padding = 20.0;
+          final maxWidth = constraints.maxWidth.isInfinite
+              ? MediaQuery.of(context).size.width
+              : constraints.maxWidth;
+          final availableWidth = maxWidth - (padding * 2);
+          final itemWidth = (availableWidth - 20) / 3;
+          final textBarWidth = itemWidth.clamp(0.0, 50.0);
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      height: 150.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 10),
-                    Container(
-                      width: 50.0,
-                      height: 10.0,
-                      color: Colors.white,
-                    ),
+                    _skeletonColumn(itemWidth, 150.0, textBarWidth, 10.0),
+                    _skeletonColumn(itemWidth, 150.0, textBarWidth, 10.0),
+                    _skeletonColumn(itemWidth, 150.0, textBarWidth, 10.0),
                   ],
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      height: 150.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 10),
-                    Container(
-                      width: 50.0,
-                      height: 10.0,
-                      color: Colors.white,
-                    ),
+                    _skeletonColumn(itemWidth, 150.0, textBarWidth, 10.0),
+                    _skeletonColumn(itemWidth, 150.0, textBarWidth, 10.0),
+                    _skeletonColumn(itemWidth, 150.0, textBarWidth, 10.0),
                   ],
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      height: 150.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 10),
-                    Container(
-                      width: 50.0,
-                      height: 10.0,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
+                SizedBox(height: 20),
               ],
             ),
-
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      height: 150.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 10),
-                    Container(
-                      width: 50.0,
-                      height: 10.0,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      height: 150.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 10),
-                    Container(
-                      width: 50.0,
-                      height: 10.0,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      height: 150.0,
-                      color: Colors.white,
-                    ),
-                    SizedBox(height: 10),
-                    Container(
-                      width: 50.0,
-                      height: 10.0,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-          ],
-        ),
+          );
+        },
       ),
+    );
+  }
+
+  Widget _skeletonColumn(
+    double imageWidth,
+    double imageHeight,
+    double textWidth,
+    double textHeight,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: imageWidth,
+          height: imageHeight,
+          color: Colors.white,
+        ),
+        SizedBox(height: 10),
+        Container(
+          width: textWidth,
+          height: textHeight,
+          color: Colors.white,
+        ),
+      ],
     );
   }
 }
