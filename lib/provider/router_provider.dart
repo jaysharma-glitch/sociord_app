@@ -11,10 +11,18 @@ import 'package:sociord/utils/routes.dart';
 /// Cached so we never recreate the router when auth changes (e.g. after login during sign-up).
 /// Recreating would use initialLocation and send user to home, skipping OTP/onboarding.
 GoRouter? _cachedRouter;
+AsyncValue<AuthState>? _latestAuthState;
 
 final goRouterProvider = Provider<GoRouter?>((ref) {
   ref.watch(onboardingProvider);
   final authState = ref.watch(authProvider);
+
+  // Keep an up-to-date snapshot for the redirect callback while still
+  // reusing the same GoRouter instance.
+  _latestAuthState = authState;
+  ref.listen<AsyncValue<AuthState>>(authProvider, (_, next) {
+    _latestAuthState = next;
+  });
 
   if (authState.isLoading || !authState.hasValue) {
     return null; // Delay until auth has loaded
@@ -31,11 +39,17 @@ final goRouterProvider = Provider<GoRouter?>((ref) {
     debugLogDiagnostics: true,
     refreshListenable:
         GoRouterRefreshStream(ref.watch(authProvider.notifier).stream),
+    // IMPORTANT: Do not use `ref` inside this redirect. This callback can be
+    // invoked after provider dependencies change, which would violate
+    // Riverpod's ref usage rules. Instead, rely on the latest `authState`
+    // snapshot that was used to build this provider, and keep guards simple.
     redirect: (_, state) {
       final location = state.matchedLocation;
-      final auth = ref.read(authProvider);
-      if (auth.isLoading || !auth.hasValue) return null;
-      final isLoggedIn = auth.value!.isLoggedIn;
+      final snapshot = _latestAuthState;
+      if (snapshot == null || snapshot.isLoading || !snapshot.hasValue) {
+        return null;
+      }
+      final isLoggedIn = snapshot.value!.isLoggedIn;
 
       final isAuthOrOnboarding = [
         signInSignUpRoute,
@@ -59,6 +73,7 @@ final goRouterProvider = Provider<GoRouter?>((ref) {
         return null;
       }
 
+      // While logged out, guard all non-auth/onboarding routes.
       if (!isLoggedIn && !isAuthOrOnboarding) {
         return signInSignUpRoute;
       }

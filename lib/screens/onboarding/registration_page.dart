@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:sociord/provider/user_provider.dart';
-import 'package:sociord/provider/auth_notifier.dart';
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/screens/onboarding/widget/tandc_checkbox.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
@@ -588,8 +587,6 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                           );
                           return;
                         }
-                        // Log the user in so they stay authenticated through onboarding
-                        await ref.read(authProvider.notifier).login(token: createdUserId);
                         widget.pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeIn,
