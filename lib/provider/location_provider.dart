@@ -208,10 +208,10 @@ class LocationNotifier extends _$LocationNotifier {
       zipCode: location.zipCode,
     );
     print('in provider $res');
-    
+
     // Update state with the location after successful submission
     state = state.copyWith(location: location);
-    
+
     return res;
   }
 }

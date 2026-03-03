@@ -340,33 +340,36 @@ class _PersonalityFlowState extends ConsumerState<PersonalityFlow> {
               itemBuilder: (_, index) => pages[index],
             ),
           ),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                shape: const RoundedRectangleBorder(),
-              ),
-              // Keep button visually enabled; guard inside handler instead
-              onPressed: handleContinueClick,
-              child:
-                  showSuccess
-                      ? const Icon(Icons.check_circle, color: Colors.white)
-                      : isLoading
-                      ? Shimmer.fromColors(
-                        baseColor: Colors.white,
-                        highlightColor: Colors.white70,
-                        child: Text(
-                          '...',
+          SafeArea(
+            top: false,
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  shape: const RoundedRectangleBorder(),
+                ),
+                // Keep button visually enabled; guard inside handler instead
+                onPressed: handleContinueClick,
+                child:
+                    showSuccess
+                        ? const Icon(Icons.check_circle, color: Colors.white)
+                        : isLoading
+                        ? Shimmer.fromColors(
+                          baseColor: Colors.white,
+                          highlightColor: Colors.white70,
+                          child: Text(
+                            '...',
+                            style: Theme.of(context).textTheme.headlineSmall!
+                                .copyWith(color: Colors.white),
+                          ),
+                        )
+                        : Text(
+                          'Continue',
                           style: Theme.of(context).textTheme.headlineSmall!
                               .copyWith(color: Colors.white),
                         ),
-                      )
-                      : Text(
-                        'Continue',
-                        style: Theme.of(context).textTheme.headlineSmall!
-                            .copyWith(color: Colors.white),
-                      ),
+              ),
             ),
           ),
         ],

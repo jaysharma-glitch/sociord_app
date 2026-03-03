@@ -106,188 +106,161 @@ class _GridSelectorState extends State<GridSelector> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 00.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: widget.paddingFromAround),
-            child: SizedBox(
-              height: widget.isFirst
-                  ? MediaQuery.of(context).size.height * 0.69
-                  : MediaQuery.of(context).size.height * 0.57,
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: widget.crossAxisCount,
-                  childAspectRatio: widget.aspectRatio,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: widget.list.length,
-                itemBuilder: (context, index) {
-                  final option = widget.list[index];
-                  return GestureDetector(
-                    onTap: () {
-                      if (widget.canSelectOnlyOne) {
-                        setState(() {
-                          for (int i = 0; i < widget.selectedList.length; i++) {
-                            widget.selectedList[i] = false;
-                          }
-                          widget.selectedList[index] =
-                              !widget.selectedList[index];
-                        });
-                      } else {
-                        setState(() {
-                          widget.selectedList[index] =
-                              !widget.selectedList[index];
-                        });
-                      }
-                    },
-                    child: widget.crossAxisCount != 1
-                        ? LayoutBuilder(
-                            builder: (context, constraints) {
-                              const spacing = 5.0;
-                              const buffer = 4.0;
-                              final titleHeight = 14.0;
-                              final descHeight = option.description != null
-                                  ? 24.0
-                                  : 0.0;
-                              final maxImageHeight = (constraints.maxHeight -
-                                      spacing -
-                                      titleHeight -
-                                      descHeight -
-                                      buffer)
-                                  .clamp(0.0, double.infinity);
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                    height: maxImageHeight,
-                                    child: ClipRect(
-                                      child: Stack(
-                                        children: [
-                                          CustomeNetworkImage(
-                                              url: option!.image),
-                                        if (widget.selectedList[index])
-                                          const Positioned(
-                                              top: 0,
-                                              right: 0,
-                                              child: Icon(
-                                                Icons.check_circle_rounded,
-                                                color: Colors.purple,
-                                                size: 20,
-                                              ))
-                                        else
-                                          Positioned(
-                                            top: 1,
-                                            right: 1,
-                                            child: Icon(Icons.brightness_1,
-                                                size: 20,
-                                                color: Colors.grey.shade300)),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    option.title,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineSmall!
-                                        .copyWith(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                          color: kAppBlack,
-                                        ),
-                                  ),
-                                  option.description == null
-                                      ? const SizedBox()
-                                      : ExpandableDescription(
-                                          text: option.description!,
-                                          maxLinesCollapsed: 2,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!
-                                              .copyWith(
-                                                fontSize: 10,
-                                                height: 1.1,
-                                                fontFamily: 'Lato',
-                                                color: kAppBlack,
-                                              ),
-                                        ),
-                                ],
-                              );
-                            },
-                          )
-                        : Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+      padding: EdgeInsets.only(
+        top: 0.0,
+        left: widget.paddingFromAround,
+        right: widget.paddingFromAround,
+      ),
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: widget.crossAxisCount,
+          childAspectRatio: widget.aspectRatio,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
+        itemCount: widget.list.length,
+        itemBuilder: (context, index) {
+          final option = widget.list[index];
+          return GestureDetector(
+            onTap: () {
+              if (widget.canSelectOnlyOne) {
+                setState(() {
+                  for (int i = 0; i < widget.selectedList.length; i++) {
+                    widget.selectedList[i] = false;
+                  }
+                  widget.selectedList[index] = !widget.selectedList[index];
+                });
+              } else {
+                setState(() {
+                  widget.selectedList[index] = !widget.selectedList[index];
+                });
+              }
+            },
+            child: widget.crossAxisCount != 1
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: ClipRect(
+                          child: Stack(
                             children: [
-                              Stack(
-                                children: [
-                                  CustomeNetworkImage(url: option!.image),
-                                  if (widget.selectedList[index])
-                                    const Positioned(
-                                        top: 0,
-                                        right: 0,
-                                        child: Icon(
-                                          Icons.check_circle_rounded,
-                                          color: Colors.purple,
-                                          size: 20,
-                                        ))
-                                  else
-                                    Positioned(
-                                        top: 1,
-                                        right: 1,
-                                        child: Icon(Icons.brightness_1,
-                                            size: 20,
-                                            color: Colors.grey.shade300)),
-                                ],
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      option.title,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium!
-                                          .copyWith(color: kAppBlack),
-                                    ),
-                                    option.description == null
-                                        ? const SizedBox()
-                                        : Text(
-                                            option.description,
-                                            softWrap: true,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall!
-                                                .copyWith(
-                                                  fontFamily: 'Lato',
-                                                ),
-                                          ),
-                                  ],
+                              CustomeNetworkImage(url: option!.image),
+                              if (widget.selectedList[index])
+                                const Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: Icon(
+                                    Icons.check_circle_rounded,
+                                    color: Colors.purple,
+                                    size: 20,
+                                  ),
+                                )
+                              else
+                                Positioned(
+                                  top: 1,
+                                  right: 1,
+                                  child: Icon(
+                                    Icons.brightness_1,
+                                    size: 20,
+                                    color: Colors.grey.shade300,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
                             ],
                           ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        option.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .copyWith(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: kAppBlack,
+                            ),
+                      ),
+                      option.description == null
+                          ? const SizedBox()
+                          : ExpandableDescription(
+                              text: option.description!,
+                              maxLinesCollapsed: 2,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall!
+                                  .copyWith(
+                                    fontSize: 10,
+                                    height: 1.1,
+                                    fontFamily: 'Lato',
+                                    color: kAppBlack,
+                                  ),
+                            ),
+                    ],
+                  )
+                : Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Stack(
+                        children: [
+                          CustomeNetworkImage(url: option!.image),
+                          if (widget.selectedList[index])
+                            const Positioned(
+                                top: 0,
+                                right: 0,
+                                child: Icon(
+                                  Icons.check_circle_rounded,
+                                  color: Colors.purple,
+                                  size: 20,
+                                ))
+                          else
+                            Positioned(
+                                top: 1,
+                                right: 1,
+                                child: Icon(Icons.brightness_1,
+                                    size: 20,
+                                    color: Colors.grey.shade300)),
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              option.title,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium!
+                                  .copyWith(color: kAppBlack),
+                            ),
+                            option.description == null
+                                ? const SizedBox()
+                                : Text(
+                                    option.description,
+                                    softWrap: true,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .copyWith(
+                                          fontFamily: 'Lato',
+                                        ),
+                                  ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                    ],
+                  ),
+          );
+        },
       ),
     );
   }
