@@ -862,8 +862,12 @@ class UserService {
         QueryOptions(
           fetchPolicy: FetchPolicy.noCache,
           document: gql("""
-        query Query(\$phoneNumber: String!, \$countryCode: String!) {
-          userLogin(phoneNumber: \$phoneNumber, countryCode: \$countryCode)
+        query UserLogin(\$phoneNumber: String!, \$countryCode: String!) {
+          userLogin(phoneNumber: \$phoneNumber, countryCode: \$countryCode) {
+            userId
+            onboardingStatus
+            userName
+          }
         }
       """),
           variables: {"phoneNumber": phoneNumber, "countryCode": countryCode},
@@ -873,12 +877,13 @@ class UserService {
       if (result.hasException) {
         throw Exception(result.exception);
       }
-      var res = result.data?['userLogin'];
+      final res = result.data?['userLogin'];
       print("service $res");
-      if (res == null || res.isEmpty) {
+      if (res == null) {
         return null;
       }
-      return res;
+      final userId = res['userId'] as String?;
+      return userId;
     } catch (error) {
       throw Exception(error);
     }

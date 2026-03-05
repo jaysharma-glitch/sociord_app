@@ -88,16 +88,36 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
           setState(() => isLoading = true);
           final auth = ref.read(authProvider.notifier);
           final onboarding = ref.read(onboardingProvider.notifier);
-          // Capture current userId once before any async gaps to avoid Riverpod ref timing issues
-          final userId = ref.read(userNotifierProvider).userId;
 
-          // Optionally refresh user from API (userId already set from userLogin)
+          // Ensure we have a valid userId (login flow should have set this via userLogin)
+          String? userId = ref.read(userNotifierProvider).userId;
+          if (userId == null || userId.isEmpty) {
+            // Fallback: re-call login endpoint to obtain userId
+            userId = await userNotifier.userLogin();
+          }
+
+          if (userId == null || userId.isEmpty) {
+            setState(() {
+              isLoading = false;
+              wrongOtp = true;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('We could not find your account. Please try logging in again.'),
+              ),
+            );
+            return;
+          }
+
+          // First persist auth token so router and hydration logic see user as logged in
+          await auth.login(token: userId);
+
+          // Then refresh user from API so profile screen has up-to-date data after login
           await userNotifier.getUser();
           if (!context.mounted) return;
           setState(() => isLoading = false);
 
           onboarding.setDone(true);
-          await auth.login(token: userId ?? 'login_token');
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Login Successful')),
