@@ -11,7 +11,7 @@ import 'package:sociord/constants/ui.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/utils/routes.dart';
 import 'package:sociord/provider/user_provider.dart';
-import 'package:sociord/widgets/bottom_sheet_signUp.dart';
+import 'package:sociord/widgets/bottom_sheet_signUp.dart'; 
 import 'package:sociord/widgets/custom_snack_bar.dart';
 import 'package:sociord/widgets/move_with_keyboard_elevated_btn.dart';
 
