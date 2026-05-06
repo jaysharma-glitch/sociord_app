@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 import 'package:sociord/constants/color.dart';
+import 'package:sociord/provider/auth_notifier.dart';
+import 'package:sociord/provider/onboarding_provider.dart';
 import 'package:sociord/provider/user_provider.dart';
+import 'package:sociord/utils/routes.dart';
 import 'package:sociord/widgets/custom_snack_bar.dart';
 
 class Otp extends ConsumerStatefulWidget {
@@ -62,58 +66,88 @@ class _OtpState extends ConsumerState<Otp> with CodeAutoFill {
   Future<void> _handleOtpSubmit(BuildContext context) async {
     final userNotifier = ref.read(userNotifierProvider.notifier);
 
-    ///Comment the code from here to remove otp checking
-    // try {
-    //   setState(() {
-    //     isLoading = true;
-    //     wrongOtp = false;
-    //   });
-    //   final result = await userNotifier.confirmOtp(_otpController.text);
-    //   setState(() => isLoading = false);
-    //   if (result) {
-    ///Comment the code till here to remove otp checking
+    try {
+      setState(() {
+        isLoading = true;
+        wrongOtp = false;
+      });
 
-    if (widget.isLogin) {
-      try {
-        setState(() => isLoading = true);
-        final result = await userNotifier.getUser();
-        setState(() => isLoading = false);
+      // Call backend to confirm OTP; backend should mark isVerified = true
+      final otpResult = await userNotifier.confirmOtp(_otpController.text);
+      setState(() => isLoading = false);
 
-        if (result != null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Login Successful')));
-        }
-      } catch (e) {
-        setState(() => isLoading = false);
-        if (e.toString().contains('Connection refused')) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(CustomSnackBar().build(context));
-        } else {
-          setState(() => wrongOtp = true);
-        }
+      if (!otpResult) {
+        // Backend says OTP is wrong – show error and stop here
+        setState(() => wrongOtp = true);
+        return;
       }
-    } else {
-      widget.pageController?.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeIn,
-      );
-    }
 
-    ///Comment the code from here to remove otp checking
-    //   }
-    // } catch (e) {
-    //   setState(() {
-    //     isLoading = false;
-    //     wrongOtp = true;
-    //   });
-    //   if (e.toString().contains('Connection refused')) {
-    //     ScaffoldMessenger.of(context)
-    //         .showSnackBar(CustomSnackBar().build(context));
-    //   }
-    // }
-    ///Comment the code till here to remove otp checking
+      // OTP confirmed successfully, proceed with login or signup flow
+      if (widget.isLogin) {
+        try {
+          setState(() => isLoading = true);
+          final auth = ref.read(authProvider.notifier);
+          final onboarding = ref.read(onboardingProvider.notifier);
+
+          // Ensure we have a valid userId (login flow should have set this via userLogin)
+          String? userId = ref.read(userNotifierProvider).userId;
+          if (userId == null || userId.isEmpty) {
+            // Fallback: re-call login endpoint to obtain userId
+            userId = await userNotifier.userLogin();
+          }
+
+          if (userId == null || userId.isEmpty) {
+            setState(() {
+              isLoading = false;
+              wrongOtp = true;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('We could not find your account. Please try logging in again.'),
+              ),
+            );
+            return;
+          }
+
+          // First persist auth token so router and hydration logic see user as logged in
+          await auth.login(token: userId);
+
+          // Then refresh user from API so profile screen has up-to-date data after login
+          await userNotifier.getUser();
+          if (!context.mounted) return;
+          setState(() => isLoading = false);
+
+          onboarding.setDone(true);
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Login Successful')),
+          );
+          context.go(profileRoute);
+        } catch (e) {
+          setState(() => isLoading = false);
+          if (e.toString().contains('Connection refused')) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(CustomSnackBar().build(context));
+          } else {
+            setState(() => wrongOtp = true);
+          }
+        }
+      } else {
+        widget.pageController?.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeIn,
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        wrongOtp = true;
+      });
+      if (e.toString().contains('Connection refused')) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(CustomSnackBar().build(context));
+      }
+    }
   }
 
   Future<void> _resendOtp() async {

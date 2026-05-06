@@ -49,6 +49,8 @@ class _LocationPageState extends ConsumerState<LocationPage> {
     // Then get current position - it now returns the location directly
     final location = await locationNotifier.getCurrentPosition();
 
+    if (!mounted) return;
+
     // Also read the state for error checking
     final currentState = ref.read(locationNotifierProvider);
     final error = currentState.error;
@@ -67,12 +69,14 @@ class _LocationPageState extends ConsumerState<LocationPage> {
       print('Location error: $error');
       // Check if it's a permission error
       if (error.contains('permission') || error.contains('denied')) {
+        if (!mounted) return;
         setState(() {
           permissionDenied = true;
           isLoading = false;
         });
       } else {
         // Other errors (like location services disabled, network, etc.)
+        if (!mounted) return;
         setState(() {
           isLoading = false;
         });
@@ -85,6 +89,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
 
     // Fallback: no location and no error (shouldn't happen)
     print('No location and no error - showing generic error');
+    if (!mounted) return;
     setState(() {
       isLoading = false;
     });
@@ -100,9 +105,11 @@ class _LocationPageState extends ConsumerState<LocationPage> {
     final notifier = ref.read(locationNotifierProvider.notifier);
 
     try {
+      if (!mounted) return;
       setState(() => isLoading = true);
       print('Submitting location: lat=${location.lat}, long=${location.long}, city=${location.city}');
       final success = await notifier.addLocation(userId!, location);
+      if (!mounted) return;
       setState(() => isLoading = false);
 
       if (success != null) {
@@ -112,6 +119,7 @@ class _LocationPageState extends ConsumerState<LocationPage> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() => isLoading = false);
       final isConnectionError = e.toString().contains('Connection refused');
       ScaffoldMessenger.of(context).showSnackBar(

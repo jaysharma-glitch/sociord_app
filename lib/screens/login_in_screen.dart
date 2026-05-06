@@ -8,12 +8,11 @@ import 'package:country_code_picker/country_code_picker.dart';
 
 import 'package:sociord/constants/color.dart';
 import 'package:sociord/constants/ui.dart';
-import 'package:sociord/provider/auth_notifier.dart';
-import 'package:sociord/provider/onboarding_provider.dart';
 import 'package:sociord/utils/asset_path_constants.dart';
 import 'package:sociord/utils/routes.dart';
 import 'package:sociord/provider/user_provider.dart';
-import 'package:sociord/widgets/bottom_sheet_signUp.dart';
+import 'package:sociord/widgets/bottom_sheet_signUp.dart'; 
+import 'package:sociord/widgets/custom_snack_bar.dart';
 import 'package:sociord/widgets/move_with_keyboard_elevated_btn.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -105,8 +104,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       /// Country Picker
                       _CountryCodeRow(
                         onChanged: (val) {
+                          final parts = val.toString().split('+');
                           userNotifier.setCountryCode(
-                              val.toString().split('+')[1] ?? '');
+                              parts.length > 1 ? parts[1] : '');
                         },
                       ),
                       const SizedBox(height: 20),
@@ -166,49 +166,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ],
             ),
           ),
-
+            
           /// Bottom CTA
           MoveWithKeyboardElevatedBtn(
             spaceFromBottom: MediaQuery.of(context).size.height * 0.3,
-
-            // onPressed: () async {
-            //   if (_formKey.currentState?.validate() == true) {
-            //     setState(() => userNotFound = false);
-            //     try {
-            //       setState(() => isLoading = true);
-            //       var result = await userNotifier.userLogin();
-            //       setState(() => isLoading = false);
-            //       if (result != null) {
-            //         context.push(loginOtpRoute);
-            //       } else {
-            //         setState(() => userNotFound = true);
-            //       }
-            //     } catch (e) {
-            //       setState(() => isLoading = false);
-            //       if (e.toString().contains('Connection refused')) {
-            //         setState(() => userNotFound = false);
-            //         ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar().build(context));
-            //       } else {
-            //         setState(() => userNotFound = true);
-            //       }
-            //     }
-            //   } else {
-            //     setState(() => userNotFound = false);
-            //   }
-            // },
             onPressed: () async {
-              // ✅ Wait to update onboarding + auth states FIRST
-              final onboarding = ref.read(onboardingProvider.notifier);
-              final auth = ref.read(authProvider.notifier);
-
-              onboarding.setDone(true);
-              await auth.login(token: 'fake_token');
-
-              // ✅ Wait until both states are visible to router
-              await Future.delayed(Duration(milliseconds: 100));
-
-              // ✅ Now navigate
-              if (context.mounted) context.go(profileRoute);
+              if (_formKey.currentState?.validate() != true) {
+                setState(() => userNotFound = false);
+                return;
+              }
+              setState(() => userNotFound = false);
+              try {
+                setState(() => isLoading = true);
+                // Check if user exists in DB; returns userId if exists, null otherwise
+                final result = await userNotifier.userLogin();
+                if (!context.mounted) return;
+                setState(() => isLoading = false);
+                if (result != null && result.isNotEmpty) {
+                  context.push(loginOtpRoute);
+                } else {
+                  setState(() => userNotFound = true);
+                }
+              } catch (e) {
+                if (context.mounted) setState(() => isLoading = false);
+                if (!context.mounted) return;
+                if (e.toString().contains('Connection refused')) {
+                  setState(() => userNotFound = false);
+                  ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar().build(context));
+                } else {
+                  setState(() => userNotFound = true);
+                }
+              }
             },
             child: isLoading
                 ? kLoadingIndicator

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sociord/provider/onboarding_provider.dart';
+import 'package:sociord/provider/auth_notifier.dart';
 import 'package:sociord/provider/user_personality_provider.dart';
 import 'package:sociord/provider/user_provider.dart';
 import 'package:sociord/screens/personality/connect_selection.dart';
@@ -207,7 +208,8 @@ class _PersonalityFlowState extends ConsumerState<PersonalityFlow> {
             curve: Curves.easeIn,
           );
         } else {
-          // Mark onboarding complete and go to profile
+          // Final step of onboarding: log user in, mark onboarding complete, then go to profile
+          await ref.read(authProvider.notifier).login(token: actualUserId);
           ref.read(onboardingProvider.notifier).setDone(true);
           context.go('/profile');
         }
@@ -338,33 +340,36 @@ class _PersonalityFlowState extends ConsumerState<PersonalityFlow> {
               itemBuilder: (_, index) => pages[index],
             ),
           ),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                shape: const RoundedRectangleBorder(),
-              ),
-              // Keep button visually enabled; guard inside handler instead
-              onPressed: handleContinueClick,
-              child:
-                  showSuccess
-                      ? const Icon(Icons.check_circle, color: Colors.white)
-                      : isLoading
-                      ? Shimmer.fromColors(
-                        baseColor: Colors.white,
-                        highlightColor: Colors.white70,
-                        child: Text(
-                          '...',
+          SafeArea(
+            top: false,
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  shape: const RoundedRectangleBorder(),
+                ),
+                // Keep button visually enabled; guard inside handler instead
+                onPressed: handleContinueClick,
+                child:
+                    showSuccess
+                        ? const Icon(Icons.check_circle, color: Colors.white)
+                        : isLoading
+                        ? Shimmer.fromColors(
+                          baseColor: Colors.white,
+                          highlightColor: Colors.white70,
+                          child: Text(
+                            '...',
+                            style: Theme.of(context).textTheme.headlineSmall!
+                                .copyWith(color: Colors.white),
+                          ),
+                        )
+                        : Text(
+                          'Continue',
                           style: Theme.of(context).textTheme.headlineSmall!
                               .copyWith(color: Colors.white),
                         ),
-                      )
-                      : Text(
-                        'Continue',
-                        style: Theme.of(context).textTheme.headlineSmall!
-                            .copyWith(color: Colors.white),
-                      ),
+              ),
             ),
           ),
         ],

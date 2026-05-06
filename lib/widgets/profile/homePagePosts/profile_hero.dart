@@ -99,37 +99,41 @@ class ProfileHero extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 6),
-                        if (isCreator && creatorCategory.isNotEmpty)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: kAppYellow,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.airplanemode_active,
-                                  size: 12,
-                                  color: kAppBlack,
-                                ),
-                                const SizedBox(width: 5),
-                                Flexible(
-                                  child: Text(
-                                    creatorCategory,
-                                    style: theme.bodySmall!.copyWith(
-                                      color: kAppBlack,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
+                        // User type pill with airplane icon: "Creator" or "Explorer"
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 3,
                           ),
+                          decoration: BoxDecoration(
+                            color: kAppYellow,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.airplanemode_active,
+                                size: 12,
+                                color: kAppBlack,
+                              ),
+                              const SizedBox(width: 5),
+                              Flexible(
+                                child: Text(
+                                  isCreator
+                                      ? (creatorCategory.isNotEmpty
+                                          ? 'Creator · $creatorCategory'
+                                          : 'Creator')
+                                      : 'Explorer',
+                                  style: theme.bodySmall!.copyWith(
+                                    color: kAppBlack,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         const SizedBox(height: 4),
                         if ([gender, age]
                             .where((s) => s.toString().trim().isNotEmpty)
