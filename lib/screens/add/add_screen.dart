@@ -23,7 +23,9 @@ class _AddScreenState extends ConsumerState<AddScreen> {
   @override
   void initState() {
     super.initState();
-    _requestPermissionsOnLoad();
+    // Intentionally avoid eager permission prompts here.
+    // On iOS this flow can crash the app in native code for some devices/OS
+    // combinations; permission checks are handled lazily inside upload flows.
   }
 
   Future<void> _requestPermissionsOnLoad() async {

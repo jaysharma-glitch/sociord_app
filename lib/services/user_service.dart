@@ -105,6 +105,64 @@ class UserService {
     }
   }
 
+  Future<List<Map<String, String>>> searchUsers({
+    required String query,
+    String? excludeUserId,
+    int limit = 20,
+  }) async {
+    try {
+      final trimmedQuery = query.trim();
+      if (trimmedQuery.length < 2) return <Map<String, String>>[];
+
+      QueryResult result = await client.query(
+        QueryOptions(
+          fetchPolicy: FetchPolicy.noCache,
+          document: gql("""
+        query SearchUsers(\$query: String!, \$limit: Int, \$excludeUserId: ID) {
+          searchUsers(query: \$query, limit: \$limit, excludeUserId: \$excludeUserId) {
+            userId
+            userName
+            firstName
+            lastName
+            profilePic
+          }
+        }
+      """),
+          variables: {
+            "query": trimmedQuery,
+            "limit": limit,
+            "excludeUserId": excludeUserId,
+          },
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception(result.exception);
+      }
+
+      final data = result.data?['searchUsers'];
+      if (data is! List) return <Map<String, String>>[];
+
+      return data.map<Map<String, String>>((item) {
+        final row = Map<String, dynamic>.from(item as Map);
+        final firstName = (row['firstName'] ?? '').toString().trim();
+        final lastName = (row['lastName'] ?? '').toString().trim();
+        final userName = (row['userName'] ?? '').toString().trim();
+        final displayName =
+            userName.isNotEmpty
+                ? userName
+                : '$firstName $lastName'.trim();
+        return <String, String>{
+          'id': (row['userId'] ?? '').toString(),
+          'username': displayName,
+          'profilePic': (row['profilePic'] ?? '').toString(),
+        };
+      }).where((row) => row['id']!.isNotEmpty).toList();
+    } catch (error) {
+      throw Exception(error);
+    }
+  }
+
   Future<Map<String, dynamic>?> createUser({
     required firstName,
     required lastName,

@@ -9,6 +9,11 @@ class GraphQLConfig {
       'GRAPHQL_URL',
       defaultValue: 'http://localhost:9090/graphql',
     ),
+    defaultHeaders: const <String, String>{
+      // Required by Apollo Server CSRF prevention for multipart uploads.
+      'apollo-require-preflight': 'true',
+      'x-apollo-operation-name': 'sociord-mobile',
+    },
   );
 
   GraphQLClient clientToQuery() =>
